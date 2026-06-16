@@ -8,12 +8,17 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Auth
+  // -----------------------------
+  // AUTH INIT
+  // -----------------------------
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    const initAuth = async () => {
+      const { data } = await supabase.auth.getSession();
       setUser(data.session?.user ?? null);
       setLoading(false);
-    });
+    };
+
+    initAuth();
 
     const {
       data: { subscription },
@@ -24,20 +29,22 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Load stars from Supabase when user logs in
+  // -----------------------------
+  // LOAD STARS (SAFE VERSION)
+  // -----------------------------
   useEffect(() => {
     const loadStars = async () => {
       if (!user) return;
 
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('stars')
         .eq('id', user.id)
-        .single();
+        .maybeSingle(); // safer than .single()
 
-      // If no profile exists, create it
+      // If row doesn't exist, create it
       if (error || !data) {
-        await supabase.from('profiles').insert({
+        await supabase.from('profiles').upsert({
           id: user.id,
           stars: 0,
         });
@@ -46,13 +53,15 @@ export default function App() {
         return;
       }
 
-      setStars(data.stars || 0);
+      setStars(data.stars ?? 0);
     };
 
     loadStars();
   }, [user]);
 
-  // Save stars to Supabase
+  // -----------------------------
+  // UPDATE STARS
+  // -----------------------------
   const handleAddStars = async (amount: number) => {
     if (!user) return;
 
@@ -69,9 +78,16 @@ export default function App() {
     });
   };
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  // -----------------------------
+  // UI STATES
+  // -----------------------------
+  if (loading) {
+    return <div style={{ padding: 20 }}>Loading...</div>;
+  }
 
-  if (!user) return <LoginScreen />;
+  if (!user) {
+    return <LoginScreen />;
+  }
 
   return (
     <TurnedTables
