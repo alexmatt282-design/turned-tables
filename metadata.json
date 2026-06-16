@@ -1,0 +1,6 @@
+{
+  "name": "ThinkFast",
+  "description": "An molecular-synthesis periodic table battle dashboard. Customize your chemist, draft active elements, synthesize compounds, and go head-to-head in single player local or 3v3 team modes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
