@@ -3,47 +3,71 @@ import { supabase } from '../lib/supabase';
 
 export function LoginScreen() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const signIn = async () => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
 
-    if (error) {
-      setMessage(error.message);
-    } else {
-      setMessage('Check your email for a login link.');
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          // IMPORTANT: this must match your deployed site
+          emailRedirectTo: 'https://turned-tables.vercel.app',
+        },
+      });
+
+      if (error) {
+        setMessage(error.message);
+      } else {
+        setMessage('Check your email for the login link.');
+      }
+    } catch (err: any) {
+      setMessage(err.message || 'Something went wrong.');
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md p-6 border rounded-lg">
-        <h1 className="text-2xl font-bold mb-4">Turned Tables Login</h1>
+    <div style={{ padding: 20, maxWidth: 400, margin: '0 auto' }}>
+      <h1>Login</h1>
 
+      <form onSubmit={handleLogin}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border p-2 mb-3"
+          style={{
+            width: '100%',
+            padding: 10,
+            marginTop: 10,
+            marginBottom: 10,
+          }}
+          required
         />
 
         <button
-          onClick={signIn}
-          className="w-full border p-2"
+          type="submit"
+          disabled={loading}
+          style={{
+            width: '100%',
+            padding: 10,
+          }}
         >
-          Sign In
+          {loading ? 'Sending link...' : 'Send Magic Link'}
         </button>
+      </form>
 
-        {message && (
-          <p className="mt-3">{message}</p>
-        )}
-      </div>
+      {message && (
+        <p style={{ marginTop: 10 }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }
