@@ -32,7 +32,7 @@ export default function App() {
   }, []);
 
   // -----------------------------
-  // LOAD USER PROGRESS (STARS + XP)
+  // LOAD PROGRESS (STARS + XP)
   // -----------------------------
   useEffect(() => {
     const loadUserProgress = async () => {
@@ -44,7 +44,6 @@ export default function App() {
         .eq('id', user.id)
         .single();
 
-      // If no profile exists, create one
       if (error || !data) {
         await supabase.from('profiles').upsert({
           id: user.id,
@@ -65,7 +64,7 @@ export default function App() {
   }, [user]);
 
   // -----------------------------
-  // UPDATE PROGRESS
+  // UPDATE SUPABASE
   // -----------------------------
   const updateProgress = async (newStars: number, newXp: number) => {
     if (!user) return;
@@ -80,7 +79,7 @@ export default function App() {
   };
 
   // -----------------------------
-  // ADD STARS (GAME ACTION)
+  // GAME ACTIONS
   // -----------------------------
   const handleAddStars = async (amount: number) => {
     setStars((prev) => {
@@ -90,9 +89,6 @@ export default function App() {
     });
   };
 
-  // -----------------------------
-  // ADD XP (GAME ACTION)
-  // -----------------------------
   const handleAddXP = async (amount: number) => {
     setXp((prev) => {
       const next = prev + amount;
@@ -100,6 +96,21 @@ export default function App() {
       return next;
     });
   };
+
+  // -----------------------------
+  // LEVEL SYSTEM
+  // -----------------------------
+  const calculateLevel = (xp: number) => {
+    if (xp < 100) return 1;
+    if (xp < 250) return 2;
+    if (xp < 450) return 3;
+    if (xp < 700) return 4;
+    if (xp < 1000) return 5;
+
+    return Math.floor((xp - 1000) / 500) + 6;
+  };
+
+  const level = calculateLevel(xp);
 
   // -----------------------------
   // UI STATES
@@ -117,6 +128,7 @@ export default function App() {
       onBack={() => {}}
       onAddStars={handleAddStars}
       stars={stars}
+      level={level}
     />
   );
 }
