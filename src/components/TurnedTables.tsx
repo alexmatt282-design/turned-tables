@@ -12,6 +12,7 @@ interface TurnedTablesProps {
   onBack: () => void;
   onAddStars: (amount: number) => void;
   stars: number;
+  level: number;
 }
 
 // Full-featured Type Definitions
