@@ -5,11 +5,13 @@ import { LoginScreen } from './components/LoginScreen';
 
 export default function App() {
   const [stars, setStars] = useState<number>(0);
+  const [xp, setXp] = useState<number>(0);
+
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // -----------------------------
-  // AUTH INIT
+  // AUTH
   // -----------------------------
   useEffect(() => {
     const initAuth = async () => {
@@ -30,50 +32,71 @@ export default function App() {
   }, []);
 
   // -----------------------------
-  // LOAD STARS (SAFE VERSION)
+  // LOAD USER PROGRESS (STARS + XP)
   // -----------------------------
   useEffect(() => {
-    const loadStars = async () => {
+    const loadUserProgress = async () => {
       if (!user) return;
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('stars')
+        .select('stars, xp')
         .eq('id', user.id)
-        .maybeSingle(); // safer than .single()
+        .single();
 
-      // If row doesn't exist, create it
+      // If no profile exists, create one
       if (error || !data) {
         await supabase.from('profiles').upsert({
           id: user.id,
           stars: 0,
+          xp: 0,
         });
 
         setStars(0);
+        setXp(0);
         return;
       }
 
       setStars(data.stars ?? 0);
+      setXp(data.xp ?? 0);
     };
 
-    loadStars();
+    loadUserProgress();
   }, [user]);
 
   // -----------------------------
-  // UPDATE STARS
+  // UPDATE PROGRESS
   // -----------------------------
-  const handleAddStars = async (amount: number) => {
+  const updateProgress = async (newStars: number, newXp: number) => {
     if (!user) return;
 
+    await supabase
+      .from('profiles')
+      .update({
+        stars: newStars,
+        xp: newXp,
+      })
+      .eq('id', user.id);
+  };
+
+  // -----------------------------
+  // ADD STARS (GAME ACTION)
+  // -----------------------------
+  const handleAddStars = async (amount: number) => {
     setStars((prev) => {
       const next = prev + amount;
+      updateProgress(next, xp);
+      return next;
+    });
+  };
 
-      supabase
-        .from('profiles')
-        .update({ stars: next })
-        .eq('id', user.id)
-        .then();
-
+  // -----------------------------
+  // ADD XP (GAME ACTION)
+  // -----------------------------
+  const handleAddXP = async (amount: number) => {
+    setXp((prev) => {
+      const next = prev + amount;
+      updateProgress(stars, next);
       return next;
     });
   };
