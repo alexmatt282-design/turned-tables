@@ -1,3 +1,4 @@
+import { supabase } from '../lib/supabase';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -260,6 +261,15 @@ const generateRandomThemedName = () => {
   const s = suffixes[Math.floor(Math.random() * suffixes.length)];
   return `${p} ${s}`;
 };
+
+<button
+  onClick={async () => {
+    await supabase.auth.signOut();
+  }}
+  className="px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white"
+>
+  Logout
+</button>
 
 const GAME_AVATARS = [
   { emoji: '🧪', name: 'Alchemist', color: 'from-cyan-500 to-blue-500 bg-cyan-100 hover:bg-cyan-200 text-cyan-600' },
