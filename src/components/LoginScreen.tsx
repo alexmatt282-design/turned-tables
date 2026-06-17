@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-
+import {
+  Sparkles,
+  Trophy,
+  BookOpen,
+  Shield,
+  Send
+} from 'lucide-react';
 export function LoginScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
