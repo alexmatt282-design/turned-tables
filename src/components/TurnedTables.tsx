@@ -308,9 +308,9 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Proton Pioneer',
     desc: 'Explorer taking first steps in atomic molecular chambers.',
     emoji: '⚛️',
-    gradient: 'from-blue-500 via-indigo-650 to-indigo-800',
-    border: 'border-indigo-400 shadow-indigo-500/30',
-    text: 'text-indigo-100',
+    gradient: 'from-blue-600 via-indigo-700 to-slate-900',
+    border: 'border-blue-400/60 shadow-blue-500/30',
+    text: 'text-blue-100',
     unlockDesc: 'Default Starting Badge'
   },
   elemental_overlord: {
@@ -318,8 +318,8 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Elemental Overlord',
     desc: 'Mastered element acquisitions and atomic collection.',
     emoji: '🔮',
-    gradient: 'from-sky-400 via-cyan-500 to-blue-600',
-    border: 'border-cyan-300 shadow-cyan-500/35',
+    gradient: 'from-cyan-500 via-sky-600 to-blue-800',
+    border: 'border-cyan-400/60 shadow-cyan-500/35',
     text: 'text-cyan-50',
     unlockDesc: 'Unlock at 100 XP milestone'
   },
@@ -328,8 +328,8 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Molecular Marvel',
     desc: 'Successfully synthesized molecules inside the synthesis room.',
     emoji: '🧪',
-    gradient: 'from-emerald-500 via-teal-600 to-green-700',
-    border: 'border-emerald-400 shadow-emerald-500/30',
+    gradient: 'from-emerald-500 via-teal-600 to-emerald-900',
+    border: 'border-emerald-400/60 shadow-emerald-500/30',
     text: 'text-emerald-50',
     unlockDesc: 'Unlock at 300 XP milestone'
   },
@@ -338,8 +338,8 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Noble Knighthood',
     desc: 'Harnessed inert valencies to establish atomic shields.',
     emoji: '🎈',
-    gradient: 'from-pink-500 via-red-500 to-amber-500',
-    border: 'border-amber-300 shadow-pink-500/30',
+    gradient: 'from-amber-500 via-orange-600 to-red-800',
+    border: 'border-amber-400/60 shadow-amber-500/30',
     text: 'text-amber-50',
     unlockDesc: 'Unlock at 500 XP milestone'
   },
@@ -348,9 +348,9 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Valency Vanguard',
     desc: 'Maintained advanced electronic shells defense coverage.',
     emoji: '🛡️',
-    gradient: 'from-violet-600 via-purple-700 to-pink-600',
-    border: 'border-violet-400 shadow-violet-500/30',
-    text: 'text-violet-100',
+    gradient: 'from-rose-500 via-pink-600 to-rose-900',
+    border: 'border-rose-400/60 shadow-rose-500/30',
+    text: 'text-rose-100',
     unlockDesc: 'Unlock at 800 XP milestone'
   },
   halogen_hero: {
@@ -358,9 +358,9 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Halogen Hero',
     desc: 'Unleased high electronegativity salt-forming attacks.',
     emoji: '🔥',
-    gradient: 'from-orange-500 via-rose-600 to-red-700',
-    border: 'border-red-400 shadow-red-500/35',
-    text: 'text-rose-100',
+    gradient: 'from-red-500 via-orange-600 to-amber-800',
+    border: 'border-orange-400/60 shadow-orange-500/35',
+    text: 'text-orange-100',
     unlockDesc: 'Unlock at 1100 XP milestone'
   },
   doc_conqueror: {
@@ -368,8 +368,8 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Doctor Conqueror',
     desc: 'Defeated AI Doc Proton on expert high-hazard difficulties.',
     emoji: '👑',
-    gradient: 'from-yellow-400 via-amber-500 to-yellow-700',
-    border: 'border-yellow-300 shadow-yellow-500/40',
+    gradient: 'from-yellow-400 via-amber-500 to-yellow-800',
+    border: 'border-yellow-400/70 shadow-yellow-500/40',
     text: 'text-yellow-50',
     unlockDesc: 'Unlock at 1500 XP'
   },
@@ -378,8 +378,8 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     name: 'Monthly Slayer',
     desc: 'Eradicated the Chrono-Fusion Monthly Boss Challenger.',
     emoji: '👾',
-    gradient: 'from-fuchsia-600 via-fuchsia-750 to-pink-700',
-    border: 'border-fuchsia-400 shadow-fuchsia-505/30',
+    gradient: 'from-fuchsia-600 via-fuchsia-800 to-slate-900',
+    border: 'border-fuchsia-400/60 shadow-fuchsia-500/30',
     text: 'text-fuchsia-50',
     unlockDesc: 'Defeat the Monthly Bot'
   }
@@ -390,13 +390,19 @@ const WARDROBE_CLOTHING = [
   { id: 'lab_coat', name: 'Chemist Lab Coat', emoji: '🥼', fill: '#F1F5F9' },
   { id: 'cyber_suit', name: 'Cosmic Jumpsuit', emoji: '🧑‍🚀', fill: '#6366F1' },
   { id: 'mystic_robe', name: 'Alchemist Cloak', emoji: '🥋', fill: '#312E81' },
-  { id: 'hazmat', name: 'Radioactive Hazmat', emoji: '☢️', fill: '#EAB308' }
+  { id: 'hazmat', name: 'Radioactive Hazmat', emoji: '☢️', fill: '#EAB308' },
+  { id: 'battle_armor', name: 'Titanium Battle Armor', emoji: '🛡️', fill: '#475569' },
+  { id: 'plasma_suit', name: 'Plasma Exosuit', emoji: '⚡', fill: '#06B6D4' },
+  { id: 'fire_fighter', name: 'Furnace Fireproof', emoji: '🔥', fill: '#DC2626' },
+  { id: 'solar_robe', name: 'Solar Photon Cloak', emoji: '☀️', fill: '#F59E0B' },
 ];
 
 const WARDROBE_ACCESSORIES = [
   { id: 'safety_goggles', name: 'Safety Goggles', emoji: '🥽' },
   { id: 'cyberspace_visor', name: 'Cyber Laser Visor', emoji: '🕶️' },
   { id: 'alchemist_crown', name: 'Elemental Crown', emoji: '👑' },
+  { id: 'reactor_core', name: 'Reactor Core Necklace', emoji: '💎' },
+  { id: 'quantum_band', name: 'Quantum Headband', emoji: '🌀' },
   { id: 'none', name: 'No Accessory', emoji: '❌' }
 ];
 
@@ -404,7 +410,18 @@ const WARDROBE_HAIR = [
   { id: 'wild_scientist', name: 'Crazy Dev Hair', emoji: '🦁' },
   { id: 'neon_spikes', name: 'Cyber Spikes', emoji: '⚡' },
   { id: 'slick_bob', name: 'Smooth Helmet', emoji: '💇' },
+  { id: 'plasma_mohawk', name: 'Plasma Mohawk', emoji: '🔥' },
+  { id: 'frost_tips', name: 'Cryo Frost Tips', emoji: '❄️' },
+  { id: 'golden_wave', name: 'Golden Wave', emoji: '✨' },
   { id: 'none', name: 'Sleek/Bald', emoji: '🥚' }
+];
+
+const WARDROBE_FACIAL = [
+  { id: 'none', name: 'Clean Shaven', emoji: '😊' },
+  { id: 'goatee', name: 'Quantum Goatee', emoji: '🧔' },
+  { id: 'mask', name: 'Half Respirator', emoji: '😷' },
+  { id: 'scar', name: 'Battle Scar', emoji: '⚔️' },
+  { id: 'war_paint', name: 'Tribal War Paint', emoji: '🎨' },
 ];
 
 const WARDROBE_SKIN_COLORS = [
@@ -412,7 +429,10 @@ const WARDROBE_SKIN_COLORS = [
   { id: 'bronze', name: 'Quantum Bronze', value: '#E29C68' },
   { id: 'deep_brown', name: 'Organic Umber', value: '#8A5229' },
   { id: 'neon_glow', name: 'Bioluminescent Neon', value: '#87EE2A' },
-  { id: 'spectral_blue', name: 'Plasma Blue', value: '#2AE7EE' }
+  { id: 'spectral_blue', name: 'Plasma Blue', value: '#2AE7EE' },
+  { id: 'crimson_haze', name: 'Crimson Haze', value: '#FF6B6B' },
+  { id: 'violet_shift', name: 'Violet Phase Shift', value: '#C084FC' },
+  { id: 'gold_fusion', name: 'Gold Fusion', value: '#FBBF24' },
 ];
 
 // --- RETRO 8-BIT CHARACTER VECTOR RENDERER ---
@@ -421,11 +441,12 @@ const PixelCharacter: React.FC<{
   clothing?: string;
   accessory?: string;
   hair?: string;
+  facial?: string;
   skinColor?: string;
   size?: 'sm' | 'md' | 'lg';
-}> = ({ skin = 'spectral_cyan', clothing = 'lab_coat', accessory = 'safety_goggles', hair = 'wild_scientist', skinColor = '#FFD1A9', size = 'md' }) => {
+}> = ({ skin = 'spectral_cyan', clothing = 'lab_coat', accessory = 'safety_goggles', hair = 'wild_scientist', facial = 'none', skinColor = '#FFD1A9', size = 'md' }) => {
   const pxSize = size === 'sm' ? 'w-12 h-12' : size === 'md' ? 'w-24 h-24' : 'w-36 h-36';
-  
+
   let bodyFill = 'url(#grad-spectral)';
   let glowColor = 'rgba(6, 182, 212, 0.3)';
   if (skin === 'solid_slate') { bodyFill = 'url(#grad-slate)'; glowColor = 'rgba(100, 116, 139, 0.2)'; }
@@ -438,23 +459,32 @@ const PixelCharacter: React.FC<{
   if (clothing === 'cyber_suit') clothFill = '#6366F1';
   else if (clothing === 'mystic_robe') clothFill = '#312E81';
   else if (clothing === 'hazmat') clothFill = '#EAB308';
+  else if (clothing === 'battle_armor') clothFill = '#475569';
+  else if (clothing === 'plasma_suit') clothFill = '#06B6D4';
+  else if (clothing === 'fire_fighter') clothFill = '#DC2626';
+  else if (clothing === 'solar_robe') clothFill = '#F59E0B';
 
   let hairFill = '#334155';
   if (hair === 'neon_spikes') hairFill = '#0ea5e9';
   else if (hair === 'slick_bob') hairFill = '#ec4899';
   else if (hair === 'wild_scientist') hairFill = '#94a3b8';
+  else if (hair === 'plasma_mohawk') hairFill = '#f97316';
+  else if (hair === 'frost_tips') hairFill = '#a5f3fc';
+  else if (hair === 'golden_wave') hairFill = '#fbbf24';
 
   let accFill = '#ef4444';
   if (accessory === 'cyberspace_visor') accFill = '#ec4899';
   else if (accessory === 'alchemist_crown') accFill = '#fbbf24';
+  else if (accessory === 'reactor_core') accFill = '#22d3ee';
+  else if (accessory === 'quantum_band') accFill = '#a855f7';
 
   return (
-    <svg 
-      viewBox="0 0 16 16" 
+    <svg
+      viewBox="0 0 16 16"
       className={`${pxSize} cubic-bezier rounded-xl select-none`}
-      style={{ 
-        imageRendering: 'pixelated', 
-        filter: `drop-shadow(0 4px 10px ${glowColor})` 
+      style={{
+        imageRendering: 'pixelated',
+        filter: `drop-shadow(0 4px 10px ${glowColor})`
       }}
     >
       <defs>
@@ -508,6 +538,34 @@ const PixelCharacter: React.FC<{
           <rect x="7" y="8" width="2" height="2" fill="#1e293b" />
         </>
       )}
+      {clothing === 'battle_armor' && (
+        <>
+          <rect x="6" y="7" width="4" height="1" fill="#64748b" />
+          <rect x="7" y="8" width="2" height="1" fill="#94a3b8" />
+          <rect x="4" y="10" width="1" height="2" fill="#64748b" />
+          <rect x="11" y="10" width="1" height="2" fill="#64748b" />
+        </>
+      )}
+      {clothing === 'plasma_suit' && (
+        <>
+          <rect x="7" y="7" width="2" height="5" fill="#0891b2" />
+          <rect x="5" y="8" width="1" height="1" fill="#67e8f9" />
+          <rect x="10" y="8" width="1" height="1" fill="#67e8f9" />
+        </>
+      )}
+      {clothing === 'fire_fighter' && (
+        <>
+          <rect x="7" y="7" width="2" height="5" fill="#991b1b" />
+          <rect x="5" y="9" width="1" height="1" fill="#fbbf24" />
+          <rect x="10" y="9" width="1" height="1" fill="#fbbf24" />
+        </>
+      )}
+      {clothing === 'solar_robe' && (
+        <>
+          <rect x="3" y="11" width="10" height="1" fill="#d97706" />
+          <rect x="7" y="7" width="2" height="5" fill="#fcd34d" />
+        </>
+      )}
 
       {/* Arms & Hands */}
       <rect x="2" y="8" width="2" height="3" fill={clothFill} />
@@ -522,6 +580,30 @@ const PixelCharacter: React.FC<{
       {/* Eyes */}
       <rect x="6" y="3" width="1" height="1" fill="#0f172a" />
       <rect x="9" y="3" width="1" height="1" fill="#0f172a" />
+
+      {/* Facial Features */}
+      {facial === 'goatee' && (
+        <rect x="7" y="5" width="2" height="1" fill="#475569" />
+      )}
+      {facial === 'mask' && (
+        <>
+          <rect x="5" y="4" width="6" height="2" fill="#64748b" opacity="0.7" />
+          <rect x="6" y="3" width="1" height="1" fill="#a5f3fc" />
+          <rect x="9" y="3" width="1" height="1" fill="#a5f3fc" />
+        </>
+      )}
+      {facial === 'scar' && (
+        <>
+          <rect x="9" y="2" width="1" height="3" fill="#dc2626" opacity="0.6" />
+        </>
+      )}
+      {facial === 'war_paint' && (
+        <>
+          <rect x="5" y="3" width="1" height="2" fill="#f97316" opacity="0.7" />
+          <rect x="10" y="3" width="1" height="2" fill="#f97316" opacity="0.7" />
+          <rect x="7" y="5" width="2" height="0.5" fill="#f97316" opacity="0.5" />
+        </>
+      )}
 
       {/* Hairstyles */}
       {hair !== 'none' && (
@@ -546,6 +628,33 @@ const PixelCharacter: React.FC<{
               <rect x="4" y="1" width="8" height="2" fill={hairFill} />
               <rect x="4" y="3" width="1" height="2" fill={hairFill} />
               <rect x="11" y="3" width="1" height="2" fill={hairFill} />
+            </>
+          )}
+          {hair === 'plasma_mohawk' && (
+            <>
+              <rect x="7" y="0" width="2" height="2" fill={hairFill} />
+              <rect x="6" y="0" width="4" height="1" fill={hairFill} />
+              <rect x="5" y="1" width="6" height="1" fill={hairFill} />
+            </>
+          )}
+          {hair === 'frost_tips' && (
+            <>
+              <rect x="4" y="1" width="8" height="1" fill={hairFill} />
+              <rect x="3" y="2" width="2" height="3" fill={hairFill} />
+              <rect x="11" y="2" width="2" height="3" fill={hairFill} />
+              <rect x="4" y="1" width="1" height="1" fill="#ffffff" opacity="0.5" />
+              <rect x="6" y="1" width="1" height="1" fill="#ffffff" opacity="0.5" />
+              <rect x="8" y="1" width="1" height="1" fill="#ffffff" opacity="0.5" />
+              <rect x="10" y="1" width="1" height="1" fill="#ffffff" opacity="0.5" />
+            </>
+          )}
+          {hair === 'golden_wave' && (
+            <>
+              <rect x="4" y="1" width="8" height="2" fill={hairFill} />
+              <rect x="3" y="2" width="2" height="3" fill={hairFill} />
+              <rect x="11" y="2" width="2" height="3" fill={hairFill} />
+              <rect x="5" y="1" width="2" height="1" fill="#fef08a" opacity="0.5" />
+              <rect x="9" y="1" width="2" height="1" fill="#fef08a" opacity="0.5" />
             </>
           )}
         </>
@@ -574,6 +683,18 @@ const PixelCharacter: React.FC<{
               <rect x="7" y="0" width="1" height="1" fill={accFill} />
               <rect x="9" y="0" width="1" height="1" fill={accFill} />
               <rect x="10" y="0" width="1" height="1" fill={accFill} />
+            </>
+          )}
+          {accessory === 'reactor_core' && (
+            <>
+              <rect x="7" y="7" width="2" height="2" fill={accFill} />
+              <rect x="7.5" y="7.5" width="1" height="1" fill="#ffffff" opacity="0.7" />
+            </>
+          )}
+          {accessory === 'quantum_band' && (
+            <>
+              <rect x="4" y="1.5" width="8" height="0.8" fill={accFill} />
+              <rect x="7" y="1.2" width="2" height="0.4" fill="#e9d5ff" />
             </>
           )}
         </>
@@ -643,6 +764,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const [charSkinColor, setCharSkinColor] = useState<string>(() => {
     const saved = localStorage.getItem('tt_char_skin_color');
     return saved || 'peach';
+  });
+  const [charFacial, setCharFacial] = useState<string>(() => {
+    const saved = localStorage.getItem('tt_char_facial');
+    return saved || 'none';
   });
 
   const [customDisplayedBadges, setCustomDisplayedBadges] = useState<string[]>(() => {
@@ -997,7 +1122,8 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     localStorage.setItem('tt_char_accessory', charAccessory);
     localStorage.setItem('tt_char_hair', charHair);
     localStorage.setItem('tt_char_skin_color', charSkinColor);
-  }, [charClothing, charAccessory, charHair, charSkinColor]);
+    localStorage.setItem('tt_char_facial', charFacial);
+  }, [charClothing, charAccessory, charHair, charSkinColor, charFacial]);
 
   // Handle manual badge selection toggles
   const handleToggleBadgeDisplay = (badgeId: string) => {
@@ -1037,14 +1163,27 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   // Helper colors for Categories
   const getCategoryColor = (cat: ElementCard['category']) => {
     switch (cat) {
-      case 'noble': return 'bg-purple-100 text-purple-700 border-purple-300';
-      case 'halogen': return 'bg-rose-100 text-rose-700 border-rose-300';
-      case 'alkali': return 'bg-cyan-100 text-cyan-700 border-cyan-300';
-      case 'alkaline': return 'bg-amber-100 text-amber-700 border-amber-300';
-      case 'transition': return 'bg-teal-100 text-teal-700 border-teal-300';
-      case 'metalloid': return 'bg-emerald-100 text-emerald-700 border-emerald-300';
-      case 'nonmetal': return 'bg-sky-100 text-sky-700 border-sky-300';
-      default: return 'bg-slate-100 text-slate-700 border-slate-300';
+      case 'noble': return 'bg-gradient-to-br from-purple-100 to-purple-200 text-purple-800 border-purple-400';
+      case 'halogen': return 'bg-gradient-to-br from-rose-100 to-rose-200 text-rose-800 border-rose-400';
+      case 'alkali': return 'bg-gradient-to-br from-cyan-100 to-cyan-200 text-cyan-800 border-cyan-400';
+      case 'alkaline': return 'bg-gradient-to-br from-amber-100 to-amber-200 text-amber-800 border-amber-400';
+      case 'transition': return 'bg-gradient-to-br from-teal-100 to-teal-200 text-teal-800 border-teal-400';
+      case 'metalloid': return 'bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-800 border-emerald-400';
+      case 'nonmetal': return 'bg-gradient-to-br from-sky-100 to-sky-200 text-sky-800 border-sky-400';
+      default: return 'bg-gradient-to-br from-slate-100 to-slate-200 text-slate-800 border-slate-400';
+    }
+  };
+
+  const getCategoryAccentColor = (cat: ElementCard['category']) => {
+    switch (cat) {
+      case 'noble': return '#a855f7';
+      case 'halogen': return '#f43f5e';
+      case 'alkali': return '#06b6d4';
+      case 'alkaline': return '#f59e0b';
+      case 'transition': return '#14b8a6';
+      case 'metalloid': return '#10b981';
+      case 'nonmetal': return '#0ea5e9';
+      default: return '#64748b';
     }
   };
 
@@ -1419,7 +1558,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         triggerToast(`Correct! ${activeQuizCard.name} joins ${player2.name}'s hand. +${pointsScored} pts!`);
       }
 
-      // Add stars to overall explorer achievement!
+      // Add tokens to overall explorer achievement!
       onAddStars(2);
     } else {
       audio.playPop(); // error buzz
@@ -2702,13 +2841,13 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
               </div>
             )}
 
-            <motion.div 
-              className="bg-cyan-50 border-2 border-cyan-300 px-5 py-2 rounded-xl text-cyan-700 font-black flex items-center gap-2 text-sm shadow-xs"
+            <motion.div
+              className="bg-amber-50 border-2 border-amber-300 px-5 py-2 rounded-xl text-amber-700 font-black flex items-center gap-2 text-sm shadow-xs"
               animate={{ y: [0, -2, 0] }}
               transition={{ repeat: Infinity, duration: 4 }}
             >
-              <Star className="w-4 h-4 fill-cyan-400 text-cyan-500" />
-              <span>{stars} STARS</span>
+              <Zap className="w-4 h-4 fill-amber-400 text-amber-500" />
+              <span>{stars} TOKENS</span>
             </motion.div>
           </div>
         </header>
@@ -2770,13 +2909,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                 <div className="flex items-center gap-4.5">
                   <div className="w-20 h-20 bg-slate-950/70 border-2 border-white/20 backdrop-blur-md rounded-2.5xl flex items-center justify-center shadow-lg overflow-hidden shrink-0">
-                    <PixelCharacter 
-                      skin={activeSkin} 
-                      clothing={charClothing} 
-                      accessory={charAccessory} 
-                      hair={charHair} 
-                      skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'} 
-                      size="md" 
+                    <PixelCharacter
+                      skin={activeSkin}
+                      clothing={charClothing}
+                      accessory={charAccessory}
+                      hair={charHair}
+                      facial={charFacial}
+                      skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
+                      size="md"
                     />
                   </div>
                   <div className="text-left">
@@ -2802,18 +2942,28 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 <div className="flex flex-col items-end gap-2 text-right">
                   <span className="text-[10px] text-cyan-300 font-extrabold uppercase tracking-widest">Active Profile Badges (max 5)</span>
-                  <div className="flex flex-wrap gap-1.5 justify-end">
+                  <div className="flex flex-wrap gap-2 justify-end">
                     {getProfileDisplayedBadges().map(badgeId => {
                       const bInfo = ALL_GAME_BADGES[badgeId];
                       if (!bInfo) return null;
                       return (
-                        <div 
-                          key={badgeId} 
-                          className={`px-3 py-1.5 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-xl text-[10px] font-black flex items-center gap-1.5 ${bInfo.text} shadow-sm uppercase tracking-wide cursor-help`}
+                        <div
+                          key={badgeId}
+                          className="group relative"
                           title={bInfo.desc}
                         >
-                          <span>{bInfo.emoji}</span>
-                          <span>{bInfo.name}</span>
+                          <div className={`relative px-3 py-2 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-xl shadow-lg overflow-hidden cursor-help transition-transform hover:scale-105`}>
+                            {/* Shine overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
+                            {/* Foil texture dots */}
+                            <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
+                            <div className="relative flex items-center gap-1.5">
+                              <span className="text-base drop-shadow-sm">{bInfo.emoji}</span>
+                              <span className={`text-[9px] font-black uppercase tracking-wide ${bInfo.text}`}>{bInfo.name}</span>
+                            </div>
+                            {/* Bottom edge accent */}
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20" />
+                          </div>
                         </div>
                       );
                     })}
@@ -3078,12 +3228,13 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-slate-200 border rounded-xl overflow-hidden flex items-center justify-center">
-                            <PixelCharacter 
-                              skin={friend.activeSkin || friend.skin || 'spectral_cyan'} 
-                              clothing={friend.pixelChar?.clothing || 'lab_coat'} 
-                              accessory={friend.pixelChar?.accessory || 'safety_goggles'} 
-                              hair={friend.pixelChar?.hair || 'wild_scientist'} 
-                              skinColor={friend.pixelChar?.skinColor || '#FFD1A9'} 
+                            <PixelCharacter
+                              skin={friend.activeSkin || friend.skin || 'spectral_cyan'}
+                              clothing={friend.pixelChar?.clothing || 'lab_coat'}
+                              accessory={friend.pixelChar?.accessory || 'safety_goggles'}
+                              hair={friend.pixelChar?.hair || 'wild_scientist'}
+                              facial={friend.pixelChar?.facial || 'none'}
+                              skinColor={friend.pixelChar?.skinColor || '#FFD1A9'}
                               size="sm" 
                             />
                           </div>
@@ -3127,13 +3278,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       <div className="absolute top-2 left-2 bg-slate-900 border border-slate-850 text-slate-300 text-[8px] font-black px-1.5 rounded uppercase tracking-widest">
                         Preview
                       </div>
-                      <PixelCharacter 
-                        skin={activeSkin} 
-                        clothing={charClothing} 
-                        accessory={charAccessory} 
-                        hair={charHair} 
-                        skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'} 
-                        size="lg" 
+                      <PixelCharacter
+                        skin={activeSkin}
+                        clothing={charClothing}
+                        accessory={charAccessory}
+                        hair={charHair}
+                        facial={charFacial}
+                        skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
+                        size="lg"
                       />
                       <div className="mt-3 text-center">
                         <span className="text-[10px] font-black text-cyan-400 block uppercase tracking-wide">
@@ -3263,6 +3415,24 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                               >
                                 <span className="w-2.5 h-2.5 rounded-full border border-slate-400" style={{ backgroundColor: tone.value }} />
                                 {tone.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* E. Facial Features */}
+                        <div>
+                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Facial Feature</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {WARDROBE_FACIAL.map(f => (
+                              <button
+                                key={f.id}
+                                onClick={() => { audio.playPop(); setCharFacial(f.id); }}
+                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                                  charFacial === f.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
+                                }`}
+                              >
+                                {f.name}
                               </button>
                             ))}
                           </div>
@@ -3560,38 +3730,67 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                             <motion.button
                               key={matchedElement.number}
                               onClick={() => handleElementClick(matchedElement)}
-                              whileHover={((isUnclaimed || owner === 'side') && !isBotTurn && !isBlockedByHandLimit) ? { scale: 1.08, zIndex: 10 } : {}}
-                              className={`aspect-square sm:p-1 rounded-xl flex flex-col justify-between select-none border-2 transition-all origin-center ${
-                                isBlockedByHandLimit ? 'opacity-30 bg-slate-100 border-slate-200 border-dashed cursor-not-allowed' :
-                                isBotTurn ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'
+                              whileHover={((isUnclaimed || owner === 'side') && !isBotTurn && !isBlockedByHandLimit) ? { scale: 1.12, zIndex: 10 } : {}}
+                              className={`aspect-square rounded-lg flex flex-col justify-between select-none transition-all origin-center relative overflow-hidden ${
+                                isBlockedByHandLimit ? 'opacity-30 bg-slate-100 border border-slate-300 border-dashed cursor-not-allowed' :
+                                isBotTurn ? 'cursor-not-allowed opacity-80 border-2' : 'cursor-pointer border-2'
                               } ${
                                 isBlockedByHandLimit ? '' :
-                                owner === 1 
-                                  ? 'bg-cyan-500 text-white border-cyan-600 font-extrabold shadow-cyan-200/50 shadow-md'
+                                owner === 1
+                                  ? 'bg-gradient-to-br from-cyan-400 to-cyan-600 text-white border-cyan-500 shadow-lg shadow-cyan-400/30'
                                   : owner === 2
-                                  ? 'bg-amber-400 text-slate-900 border-amber-500 font-extrabold shadow-amber-100/50 shadow-md'
+                                  ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-slate-900 border-amber-400 shadow-lg shadow-amber-300/30'
                                   : owner === 'side'
-                                  ? 'bg-emerald-50 text-indigo-900 border-dashed border-emerald-400 hover:bg-emerald-100 shadow-emerald-150/50 shadow-xs'
-                                  : `${getCategoryColor(matchedElement.category)} border-slate-300 ${!isBotTurn ? 'hover:shadow-md' : ''}`
+                                  ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-800 border-dashed border-emerald-400 hover:border-emerald-500'
+                                  : `${getCategoryColor(matchedElement.category)} ${!isBotTurn ? 'hover:shadow-lg' : ''}`
                               }`}
                             >
-                              <div className="flex justify-between w-full text-[9px] font-bold leading-none opacity-85">
-                                <span>{matchedElement.number}</span>
-                                <span className="uppercase text-[7px] tracking-wide">{matchedElement.category.slice(0, 3)}</span>
+                              {/* Card inner border / frame */}
+                              {(!isBlockedByHandLimit && isUnclaimed) && (
+                                <div className="absolute inset-[3px] rounded-md border border-white/20 pointer-events-none" />
+                              )}
+
+                              {/* Top bar: atomic number + category */}
+                              <div className="flex justify-between w-full px-1 pt-0.5 text-[8px] font-bold leading-none">
+                                <span className="opacity-80">{matchedElement.number}</span>
+                                <span className="uppercase text-[6px] tracking-wider opacity-60">{matchedElement.category.slice(0, 3)}</span>
                               </div>
 
-                              <div className="text-center font-display leading-tight my-auto">
-                                <span className="text-lg md:text-xl font-black block">
-                                  {owner ? matchedElement.symbol : '?'}
-                                </span>
-                                <span className="text-[9px] -mt-1 uppercase block tracking-[0.02em] font-mono opacity-80">
-                                  {owner ? matchedElement.symbol : `[${matchedElement.symbol}]`}
-                                </span>
+                              {/* Center: symbol or mystery */}
+                              <div className="text-center flex-1 flex flex-col items-center justify-center leading-tight">
+                                {owner ? (
+                                  <>
+                                    <span className="text-base md:text-lg font-black block drop-shadow-sm">{matchedElement.symbol}</span>
+                                    <span className="text-[7px] uppercase block tracking-widest font-mono opacity-50 mt-0.5">{matchedElement.name}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="text-lg md:text-xl font-black block opacity-70">?</span>
+                                    <span className="text-[7px] uppercase block tracking-widest font-mono opacity-40">[{matchedElement.symbol}]</span>
+                                  </>
+                                )}
                               </div>
 
-                              <span className="text-[8px] font-extrabold tracking-tight leading-none truncate block w-full text-center">
-                                {isBlockedByHandLimit ? '⚔️ LOCK' : owner === 'side' ? '⚖️ RECLAIM' : owner ? matchedElement.name : 'Discovery'}
-                              </span>
+                              {/* Bottom: action label + powerup hint dot */}
+                              <div className="flex items-center justify-center w-full pb-0.5 px-1">
+                                <span className="text-[7px] font-extrabold tracking-tight leading-none truncate">
+                                  {isBlockedByHandLimit ? 'LOCK' : owner === 'side' ? 'RECLAIM' : owner ? '' : 'DRAW'}
+                                </span>
+                                {isUnclaimed && !isBlockedByHandLimit && (
+                                  <span
+                                    className="w-1.5 h-1.5 rounded-full ml-1 shrink-0"
+                                    style={{ backgroundColor: getCategoryAccentColor(matchedElement.category) }}
+                                  />
+                                )}
+                              </div>
+
+                              {/* Owned overlay shine */}
+                              {owner === 1 && (
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent pointer-events-none" />
+                              )}
+                              {owner === 2 && (
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+                              )}
                             </motion.button>
                           );
                         })}
@@ -3602,14 +3801,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 {/* Subtitle legends */}
                 <div className="flex flex-wrap items-center gap-4 mt-6 text-[10px] font-bold text-slate-500 pt-5 border-t border-dashed border-slate-200">
-                  <span>LEGENDS:</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-cyan-100 border border-cyan-300" /> Alkali</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-amber-100 border border-amber-300" /> Alkaline Earth</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-teal-100 border border-teal-300" /> Transition Metals</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-100 border border-emerald-300" /> Metalloids</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-sky-100 border border-sky-300" /> Non-metals</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-rose-100 border border-rose-300" /> Halogens</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-purple-100 border border-purple-300" /> Noble Gases</span>
+                  <span>CARD RARITY:</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-cyan-100 to-cyan-300 border border-cyan-400" /> Alkali</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-amber-100 to-amber-300 border border-amber-400" /> Alkaline Earth</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-teal-100 to-teal-300 border border-teal-400" /> Transition Metals</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-emerald-100 to-emerald-300 border border-emerald-400" /> Metalloids</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-sky-100 to-sky-300 border border-sky-400" /> Non-metals</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-rose-100 to-rose-300 border border-rose-400" /> Halogens</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-gradient-to-br from-purple-100 to-purple-300 border border-purple-400" /> Noble Gases</span>
                 </div>
 
               </div>
@@ -4025,13 +4224,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 <div className={`bg-white border-2 p-5 rounded-3xl shadow-sm transition-all ${currentTurn === 1 ? 'border-cyan-400 ring-2 ring-cyan-100' : 'border-slate-250'}`}>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-cyan-950 rounded-2xl flex items-center justify-center overflow-hidden border border-cyan-800">
-                      <PixelCharacter 
-                        skin={activeSkin} 
-                        clothing={charClothing} 
-                        accessory={charAccessory} 
-                        hair={charHair} 
-                        skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'} 
-                        size="sm" 
+                      <PixelCharacter
+                        skin={activeSkin}
+                        clothing={charClothing}
+                        accessory={charAccessory}
+                        hair={charHair}
+                        facial={charFacial}
+                        skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
+                        size="sm"
                       />
                     </div>
                     <div>
@@ -4067,13 +4267,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 <div className={`bg-white border-2 p-5 rounded-3xl shadow-sm transition-all ${currentTurn === 2 ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-250'}`}>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-slate-950 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800">
-                      <PixelCharacter 
-                        skin="solid_slate" 
-                        clothing="hazmat" 
-                        accessory="safety_goggles" 
-                        hair="wild_scientist" 
-                        skinColor="#CFD8DC" 
-                        size="sm" 
+                      <PixelCharacter
+                        skin="solid_slate"
+                        clothing="hazmat"
+                        accessory="safety_goggles"
+                        hair="wild_scientist"
+                        facial="none"
+                        skinColor="#CFD8DC"
+                        size="sm"
                       />
                     </div>
                     <div>
@@ -4154,7 +4355,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       {(currentTurn === 1 ? player1.deck : player2.deck).map(card => {
                         const cd = getCardCooldown('element', card.number);
                         return (
-                          <div 
+                          <div
                             key={`b-el-${card.number}`}
                             onClick={() => {
                               if (vsBot && currentTurn === 2) return;
@@ -4164,24 +4365,40 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                               }
                               executeCombatMove('element', card.number);
                             }}
-                            className={`border-2 rounded-2xl p-3 flex flex-col justify-between relative hover:border-cyan-400 cursor-pointer hover:shadow-md transition-all active:scale-95 text-center ${
-                              cd > 0 ? 'bg-slate-800 text-slate-550 border-slate-600 opacity-60 grayscale' : getCategoryColor(card.category)
+                            className={`border-2 rounded-xl p-3 flex flex-col justify-between relative cursor-pointer transition-all active:scale-95 text-center overflow-hidden ${
+                              cd > 0 ? 'bg-slate-800 text-slate-400 border-slate-600 opacity-50 grayscale' : `${getCategoryColor(card.category)} hover:shadow-lg hover:-translate-y-1`
                             }`}
                           >
                             {/* Cooldown overlay banner */}
                             {cd > 0 && (
-                              <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xxs flex flex-col items-center justify-center rounded-2xl z-20 text-white font-black text-xs select-none">
+                              <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl z-20 text-white font-black text-xs select-none">
                                 <span className="text-lg animate-bounce">⏳</span>
                                 <span className="mt-1 font-mono tracking-widest">{cd} TURN{cd > 1 ? 'S' : ''}</span>
                               </div>
                             )}
-                            <div className="text-right text-[10px] font-black opacity-80 mb-2">#{card.number}</div>
-                            <div className="text-3xl font-bold font-noodle tracking-tight">{card.symbol}</div>
-                            <p className="text-[10px] font-black text-slate-800 truncate mt-1">{card.name}</p>
 
-                            <div className="border-t border-dashed border-slate-200/50 mt-2.5 pt-2 text-[8px] leading-tight font-semibold text-slate-500">
-                              <strong>{card.powerup.name}:</strong> {card.powerup.desc}
+                            {/* Card frame inner border */}
+                            <div className="absolute inset-[3px] rounded-lg border border-white/10 pointer-events-none" />
+
+                            <div className="flex justify-between items-start text-[9px] font-bold">
+                              <span className="bg-black/10 px-1 rounded text-[8px]">#{card.number}</span>
+                              <span className="uppercase text-[6px] tracking-wider opacity-50">{card.category.slice(0, 3)}</span>
                             </div>
+
+                            <div className="flex-1 flex flex-col items-center justify-center my-1">
+                              <span className="text-2xl font-black drop-shadow-sm">{card.symbol}</span>
+                              <span className="text-[8px] font-bold opacity-60 truncate max-w-full">{card.name}</span>
+                            </div>
+
+                            <div className="border-t border-white/15 pt-1.5 text-[7px] leading-tight font-semibold opacity-70">
+                              {card.powerup.name}
+                            </div>
+
+                            {/* Rarity accent dot */}
+                            <span
+                              className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: getCategoryAccentColor(card.category) }}
+                            />
                           </div>
                         );
                       })}
@@ -4383,11 +4600,13 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                           <div
                             key={`tray-mini-${card.number}`}
                             onClick={() => setSelectedTrayElement(card)}
-                            className={`aspect-square p-2.5 border-2 rounded-xl text-center cursor-pointer transition-all hover:scale-105 flex flex-col justify-between ${isSelected ? 'border-indigo-500 ring-2 ring-indigo-100 scale-103 shadow-md' : 'border-slate-200 hover:border-slate-400 bg-slate-50'} ${getCategoryColor(card.category)}`}
+                            className={`aspect-square p-2 border-2 rounded-lg text-center cursor-pointer transition-all hover:scale-105 flex flex-col justify-between relative overflow-hidden ${isSelected ? 'border-indigo-500 ring-2 ring-indigo-200 scale-105 shadow-lg' : 'border-slate-200 hover:border-slate-400'} ${getCategoryColor(card.category)}`}
                           >
-                            <span className="text-[8px] font-bold text-left leading-none opacity-80">#{card.number}</span>
-                            <span className="text-lg font-black leading-tight">{card.symbol}</span>
-                            <span className="text-[7px] font-black text-slate-800 truncate block uppercase max-w-full">{card.name}</span>
+                            <div className="absolute inset-[2px] rounded border border-white/10 pointer-events-none" />
+                            <span className="text-[7px] font-bold text-left leading-none opacity-70">#{card.number}</span>
+                            <span className="text-base font-black leading-tight drop-shadow-sm">{card.symbol}</span>
+                            <span className="text-[6px] font-bold truncate block uppercase max-w-full opacity-60">{card.name}</span>
+                            <span className="absolute bottom-0.5 right-0.5 w-1 h-1 rounded-full" style={{ backgroundColor: getCategoryAccentColor(card.category) }} />
                           </div>
                         );
                       })}
@@ -4404,9 +4623,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   {selectedTrayElement ? (
                     <div className="border-t pt-5 space-y-4">
                       <div className="flex items-start gap-4">
-                        <div className={`w-14 h-14 rounded-2xl border-2 flex flex-col items-center justify-center font-black ${getCategoryColor(selectedTrayElement.category)}`}>
-                          <span className="text-[8px] leading-none opacity-75">#{selectedTrayElement.number}</span>
-                          <span className="text-xl leading-none">{selectedTrayElement.symbol}</span>
+                        <div className={`w-16 h-16 rounded-xl border-2 flex flex-col items-center justify-center font-black shadow-lg relative overflow-hidden ${getCategoryColor(selectedTrayElement.category)}`}>
+                          <div className="absolute inset-[2px] rounded-lg border border-white/15 pointer-events-none" />
+                          <span className="text-xl font-black drop-shadow-sm">{selectedTrayElement.symbol}</span>
+                          <span className="text-[7px] opacity-50 font-bold">#{selectedTrayElement.number}</span>
                         </div>
                         <div>
                           <h4 className="text-base font-black text-slate-900 leading-none">{selectedTrayElement.name}</h4>
@@ -4812,7 +5032,8 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 {/* Header */}
                 <div className="flex items-center gap-3 pb-4 border-b">
-                  <div className={`w-12 h-12 rounded-xl border-2 flex flex-col items-center justify-center font-black ${getCategoryColor(comboElement.category)}`}>
+                  <div className={`w-12 h-12 rounded-lg border-2 flex flex-col items-center justify-center font-black shadow-md relative overflow-hidden ${getCategoryColor(comboElement.category)}`}>
+                    <div className="absolute inset-[2px] rounded border border-white/10 pointer-events-none" />
                     <span className="text-[8px] leading-none opacity-85">#{comboElement.number}</span>
                     <span className="text-lg leading-none">{comboElement.symbol}</span>
                   </div>
@@ -5122,7 +5343,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     const isSelected = getProfileDisplayedBadges().includes(badgeId);
 
                     return (
-                      <div 
+                      <div
                         key={badgeId}
                         onClick={() => {
                           if (isUnlocked) {
@@ -5131,30 +5352,42 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                             triggerToast(`This badge is locked! Earn level rewards or gain XP to unlock.`);
                           }
                         }}
-                        className={`p-4 border-2 rounded-2xl flex items-center justify-between gap-4 transition-all relative ${
-                          isUnlocked 
-                            ? (isSelected ? 'border-indigo-500 bg-indigo-50/20' : 'border-slate-100 hover:border-slate-200 bg-slate-50/50 cursor-pointer')
-                            : 'border-slate-50/50 bg-slate-50/30 opacity-60'
+                        className={`relative p-4 border-2 rounded-2xl flex items-center justify-between gap-4 transition-all overflow-hidden ${
+                          isUnlocked
+                            ? (isSelected ? 'border-indigo-500 bg-indigo-50/30' : 'border-slate-200 hover:border-slate-300 bg-white cursor-pointer')
+                            : 'border-slate-100 bg-slate-50/50 opacity-50 grayscale'
                         }`}
                       >
-                        <div className="flex items-center gap-3">
-                          <span className={`text-3xl p-1 rounded-xl bg-white shadow-xs leading-none border ${isUnlocked ? 'grayscale-0' : 'grayscale'}`}>{bInfo.emoji}</span>
+                        {/* Card gradient background strip */}
+                        {isUnlocked && (
+                          <div className={`absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b ${bInfo.gradient}`} />
+                        )}
+
+                        <div className="flex items-center gap-3 pl-2">
+                          {/* Badge icon as card face */}
+                          <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${isUnlocked ? bInfo.gradient : 'from-slate-200 to-slate-300'} shadow-md flex items-center justify-center overflow-hidden`}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-transparent" />
+                            <span className="text-xl relative z-10 drop-shadow-sm">{bInfo.emoji}</span>
+                          </div>
                           <div>
                             <h4 className="text-xs font-black text-slate-800 leading-none">{bInfo.name}</h4>
                             <p className="text-[10px] text-slate-500 mt-1 leading-snug">{bInfo.desc}</p>
+                            {isUnlocked && (
+                              <p className="text-[9px] text-indigo-500 mt-0.5 font-bold">{bInfo.unlockDesc}</p>
+                            )}
                           </div>
                         </div>
 
                         <div className="shrink-0">
                           {isUnlocked ? (
-                            <button className={`p-1 px-2.5 rounded text-[9px] font-black uppercase cursor-pointer ${
-                              isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'
+                            <button className={`p-1.5 px-3 rounded-lg text-[9px] font-black uppercase cursor-pointer transition-all ${
+                              isSelected ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
                             }`}>
                               {isSelected ? 'DISPLAYED' : 'SELECT'}
                             </button>
                           ) : (
                             <span className="text-[9px] font-extrabold text-rose-500 flex items-center gap-1">
-                              <Lock className="w-2.5 h-2.5" /> LOCK
+                              <Lock className="w-2.5 h-2.5" /> LOCKED
                             </span>
                           )}
                         </div>
@@ -5345,13 +5578,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 <div className="text-center space-y-4">
                   <div className="w-24 h-24 bg-slate-950 rounded-2.5xl flex items-center justify-center mx-auto border-4 border-slate-850 shadow-lg overflow-hidden">
-                    <PixelCharacter 
-                      skin={activeInspectedFriend.activeSkin || activeInspectedFriend.skin || 'spectral_cyan'} 
-                      clothing={activeInspectedFriend.pixelChar?.clothing || 'lab_coat'} 
-                      accessory={activeInspectedFriend.pixelChar?.accessory || 'safety_goggles'} 
-                      hair={activeInspectedFriend.pixelChar?.hair || 'wild_scientist'} 
-                      skinColor={activeInspectedFriend.pixelChar?.skinColor || '#FFD1A9'} 
-                      size="lg" 
+                    <PixelCharacter
+                      skin={activeInspectedFriend.activeSkin || activeInspectedFriend.skin || 'spectral_cyan'}
+                      clothing={activeInspectedFriend.pixelChar?.clothing || 'lab_coat'}
+                      accessory={activeInspectedFriend.pixelChar?.accessory || 'safety_goggles'}
+                      hair={activeInspectedFriend.pixelChar?.hair || 'wild_scientist'}
+                      facial={activeInspectedFriend.pixelChar?.facial || 'none'}
+                      skinColor={activeInspectedFriend.pixelChar?.skinColor || '#FFD1A9'}
+                      size="lg"
                     />
                   </div>
 

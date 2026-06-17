@@ -22,7 +22,7 @@ export interface RoomPlayer {
   team: TeamColor;
   is_ready: boolean;
   joined_at: string;
-  profile?: { email: string; stars: number; xp: number } | null;
+  profile?: { email: string; tokens: number; xp: number } | null;
 }
 
 export interface ChatMessage {

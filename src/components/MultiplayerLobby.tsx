@@ -79,7 +79,7 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
         // Fetch email for the new player
         const { data: profile } = await supabase
           .from('profiles')
-          .select('stars, xp')
+          .select('tokens, xp')
           .eq('id', player.user_id)
           .single();
         setPlayers(prev => [...prev.filter(p => p.user_id !== player.user_id), { ...player, profile }]);
@@ -116,7 +116,7 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
         const enriched = await Promise.all(ps.map(async (p) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('stars, xp')
+            .select('tokens, xp')
             .eq('id', p.user_id)
             .single();
           return { ...p, profile };

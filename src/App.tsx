@@ -4,7 +4,7 @@ import { TurnedTables } from './components/TurnedTables';
 import { LoginScreen } from './components/LoginScreen';
 
 export default function App() {
-  const [stars, setStars] = useState<number>(0);
+  const [tokens, setTokens] = useState<number>(0);
   const [xp, setXp] = useState<number>(0);
 
   const [user, setUser] = useState<any>(null);
@@ -32,7 +32,7 @@ export default function App() {
   }, []);
 
   // -----------------------------
-  // LOAD PROGRESS (STARS + XP)
+  // LOAD PROGRESS (TOKENS + XP)
   // -----------------------------
   useEffect(() => {
     const loadUserProgress = async () => {
@@ -40,23 +40,23 @@ export default function App() {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('stars, xp')
+        .select('tokens, xp')
         .eq('id', user.id)
         .single();
 
       if (error || !data) {
         await supabase.from('profiles').upsert({
           id: user.id,
-          stars: 0,
+          tokens: 0,
           xp: 0,
         });
 
-        setStars(0);
+        setTokens(0);
         setXp(0);
         return;
       }
 
-      setStars(data.stars ?? 0);
+      setTokens(data.tokens ?? 0);
       setXp(data.xp ?? 0);
     };
 
@@ -66,13 +66,13 @@ export default function App() {
   // -----------------------------
   // UPDATE SUPABASE
   // -----------------------------
-  const updateProgress = async (newStars: number, newXp: number) => {
+  const updateProgress = async (newTokens: number, newXp: number) => {
     if (!user) return;
 
     await supabase
       .from('profiles')
       .update({
-        stars: newStars,
+        tokens: newTokens,
         xp: newXp,
       })
       .eq('id', user.id);
@@ -81,8 +81,8 @@ export default function App() {
   // -----------------------------
   // GAME ACTIONS
   // -----------------------------
-  const handleAddStars = async (amount: number) => {
-    setStars((prev) => {
+  const handleAddTokens = async (amount: number) => {
+    setTokens((prev) => {
       const next = prev + amount;
       updateProgress(next, xp);
       return next;
@@ -92,7 +92,7 @@ export default function App() {
   const handleAddXP = async (amount: number) => {
     setXp((prev) => {
       const next = prev + amount;
-      updateProgress(stars, next);
+      updateProgress(tokens, next);
       return next;
     });
   };
@@ -126,8 +126,8 @@ export default function App() {
   return (
     <TurnedTables
       onBack={() => {}}
-      onAddStars={handleAddStars}
-      stars={stars}
+      onAddStars={handleAddTokens}
+      stars={tokens}
       level={level}
       userId={user.id}
     />

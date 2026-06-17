@@ -22,7 +22,7 @@ export interface EarlyBirdProblem {
 }
 
 export interface UserStats {
-  stars: number;
+  tokens: number;
   soupWordsSpelled: string[];
   tracedItems: string[];
   birdProblemsSolved: number;
