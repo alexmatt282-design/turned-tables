@@ -5,7 +5,7 @@ Sparkles,
 Trophy,
 BookOpen,
 Shield,
-Send
+Send,
 } from 'lucide-react';
 
 export function LoginScreen() {
@@ -43,41 +43,43 @@ return (
 
 
 
-  {/* Background Glow Effects */}
+  {/* Background Effects */}
   <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
   <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
   <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 
   <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
 
-    {/* Logo */}
+    {/* Header */}
     <div className="text-center mb-12">
+
       <div className="flex justify-center mb-6">
         <div className="animate-pulse rounded-full bg-cyan-500/10 p-8 border border-cyan-400/20 shadow-[0_0_60px_rgba(34,211,238,0.35)]">
           <Sparkles className="w-12 h-12 text-cyan-400" />
         </div>
       </div>
 
-      <h1 className="text-6xl md:text-7xl font-black tracking-[0.25em]">
-        TURNED TABLES TEST BUILD 12345
+      <h1 className="text-5xl md:text-7xl font-black tracking-[0.2em] text-white">
+        TURNED TABLES
       </h1>
 
       <p className="text-cyan-300 text-xl mt-4">
         Explorer Academy Portal
       </p>
 
-      <p className="text-cyan-400 uppercase tracking-[0.3em] text-sm mt-2">
+      <p className="text-cyan-500 uppercase tracking-[0.3em] text-xs mt-2">
         Strategic Elemental Combat
       </p>
 
       <p className="text-slate-400 mt-6 max-w-2xl mx-auto">
         Continue your scientific journey, earn XP,
-        unlock badges, collect skins, and rise through
-        the ranks of the Explorer Academy.
+        unlock badges, collect skins, and rise
+        through the ranks of the Explorer Academy.
       </p>
+
     </div>
 
-    {/* Info Cards */}
+    {/* Information Cards */}
     <div className="grid md:grid-cols-3 gap-6 mb-10">
 
       <div className="bg-slate-900/70 border border-yellow-500/20 rounded-2xl p-5">
@@ -105,10 +107,10 @@ return (
           </h2>
         </div>
 
-        <ul className="text-slate-300 text-sm space-y-2">
+        <ul className="space-y-2 text-sm text-slate-300">
           <li>• Explorer Accounts are online.</li>
-          <li>• XP synchronization is underway.</li>
-          <li>• New cosmetics arriving soon.</li>
+          <li>• XP tracking coming soon.</li>
+          <li>• New cosmetics under development.</li>
         </ul>
       </div>
 
@@ -120,7 +122,7 @@ return (
           </h2>
         </div>
 
-        <ul className="text-slate-300 text-sm space-y-2">
+        <ul className="space-y-2 text-sm text-slate-300">
           <li>✓ Earn XP</li>
           <li>✓ Unlock Badges</li>
           <li>✓ Collect Skins</li>
@@ -130,7 +132,7 @@ return (
 
     </div>
 
-    {/* Login Card */}
+    {/* Login Box */}
     <div className="max-w-lg mx-auto bg-slate-900/80 border border-cyan-900 rounded-2xl p-6 shadow-xl">
 
       <form onSubmit={handleLogin}>
@@ -168,6 +170,7 @@ return (
       <div className="mt-6 text-center text-xs text-slate-500">
         Secure Academy Authentication System
       </div>
+
     </div>
 
   </div>
