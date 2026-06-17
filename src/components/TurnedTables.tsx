@@ -864,6 +864,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const [showMultiplayerLobby, setShowMultiplayerLobby] = useState(false);
   const [multiplayerRoomId, setMultiplayerRoomId] = useState<string | null>(null);
   const [multiplayerMode, setMultiplayerMode] = useState<RoomMode>('1v1');
+  const [setupScreen, setSetupScreen] = useState<'menu' | 'wardrobe'>('menu');
 
   const [quests, setQuests] = useState<Array<{ id: string; title: string; current: number; target: number; xpReward: number; isWeekly: boolean; completed: boolean }>>([
     { id: 'q_draft_noble', title: 'Collect a Noble Gas element card', current: 0, target: 1, xpReward: 100, isWeekly: false, completed: false },
@@ -2893,22 +2894,22 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
             onBack={() => setShowMultiplayerLobby(false)}
           />
         )}
-        {playMode === 'setup' && !showMultiplayerLobby && (
+        {playMode === 'setup' && !showMultiplayerLobby && setupScreen === 'menu' && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6 max-w-5xl mx-auto"
-            id="setup-profile-panel"
+            id="setup-menu-panel"
           >
-            {/* 1. NEW COMPACT HIGHLIGHT PROFILE HEADER & SIDE BAR SHORTCUTS */}
-            <div className={`p-6 sm:p-8 rounded-3xl border-2 shadow-md relative overflow-hidden text-white ${SKINS_INFO[activeSkin]?.bgClass || 'bg-slate-900'} ${SKINS_INFO[activeSkin]?.borderClass || 'border-slate-800'}`}>
-              <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                <Sparkles className="w-40 h-40" />
-              </div>
-              
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                <div className="flex items-center gap-4.5">
-                  <div className="w-20 h-20 bg-slate-950/70 border-2 border-white/20 backdrop-blur-md rounded-2.5xl flex items-center justify-center shadow-lg overflow-hidden shrink-0">
+            {/* COMPACT PROFILE STRIP */}
+            <div className={`p-4 sm:p-5 rounded-2xl border-2 shadow-md relative overflow-hidden text-white ${SKINS_INFO[activeSkin]?.bgClass || 'bg-slate-900'} ${SKINS_INFO[activeSkin]?.borderClass || 'border-slate-800'}`}>
+              <div className="flex items-center justify-between gap-4 relative z-10">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => { audio.playPop(); setSetupScreen('wardrobe'); }}
+                    className="w-12 h-12 bg-slate-950/60 border-2 border-white/20 backdrop-blur-md rounded-xl flex items-center justify-center shadow-lg overflow-hidden cursor-pointer hover:border-cyan-400/50 transition-all"
+                    title="Open Wardrobe"
+                  >
                     <PixelCharacter
                       skin={activeSkin}
                       clothing={charClothing}
@@ -2916,367 +2917,271 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       hair={charHair}
                       facial={charFacial}
                       skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
-                      size="md"
+                      size="sm"
                     />
-                  </div>
+                  </button>
                   <div className="text-left">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-2xl font-black text-white tracking-tight">{p1ConfigName}</h2>
-                      <span className="px-2 py-0.5 bg-cyan-400 text-cyan-950 text-[9px] font-black rounded uppercase tracking-wider">
-                        {SKINS_INFO[activeSkin]?.label || 'Standard Suit'}
-                      </span>
-                    </div>
-                    <p className="text-xs font-semibold text-cyan-200 uppercase tracking-widest mt-0.5">
-                      Explorer Level {Math.floor(userXP / 350) + 1} • {userXP % 350}/350 XP
+                    <h2 className="text-lg font-black text-white tracking-tight">{p1ConfigName}</h2>
+                    <p className="text-[10px] font-semibold text-cyan-200 uppercase tracking-widest">
+                      Lvl {Math.floor(userXP / 350) + 1} • {userXP} XP
                     </p>
-                    
-                    {/* XP Progress Bar */}
-                    <div className="w-56 sm:w-68 h-2 bg-white/20 rounded-full mt-2 overflow-hidden border border-white/5">
-                      <div 
-                        className="bg-gradient-to-r from-cyan-400 via-sky-400 to-emerald-400 h-full rounded-full transition-all duration-500 animate-pulse" 
-                        style={{ width: `${Math.min(100, ((userXP % 350) / 350) * 100)}%` }}
-                      ></div>
-                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-2 text-right">
-                  <span className="text-[10px] text-cyan-300 font-extrabold uppercase tracking-widest">Active Profile Badges (max 5)</span>
-                  <div className="flex flex-wrap gap-2 justify-end">
-                    {getProfileDisplayedBadges().map(badgeId => {
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap gap-1 justify-end">
+                    {getProfileDisplayedBadges().slice(0, 3).map(badgeId => {
                       const bInfo = ALL_GAME_BADGES[badgeId];
                       if (!bInfo) return null;
                       return (
-                        <div
-                          key={badgeId}
-                          className="group relative"
-                          title={bInfo.desc}
-                        >
-                          <div className={`relative px-3 py-2 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-xl shadow-lg overflow-hidden cursor-help transition-transform hover:scale-105`}>
-                            {/* Shine overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
-                            {/* Foil texture dots */}
-                            <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '6px 6px' }} />
-                            <div className="relative flex items-center gap-1.5">
-                              <span className="text-base drop-shadow-sm">{bInfo.emoji}</span>
-                              <span className={`text-[9px] font-black uppercase tracking-wide ${bInfo.text}`}>{bInfo.name}</span>
-                            </div>
-                            {/* Bottom edge accent */}
-                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20" />
-                          </div>
+                        <div key={badgeId} className={`px-2 py-1 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-lg text-[8px] font-black flex items-center gap-1 ${bInfo.text} shadow-sm uppercase tracking-wide cursor-help`} title={bInfo.desc}>
+                          <span className="text-xs drop-shadow-sm">{bInfo.emoji}</span>
                         </div>
                       );
                     })}
-                    {getProfileDisplayedBadges().length === 0 && (
-                      <span className="text-xs text-slate-400 font-bold italic">No badges selected to display</span>
-                    )}
+                  </div>
+                  <button
+                    onClick={() => { audio.playPop(); setSetupScreen('wardrobe'); }}
+                    className="px-3 py-2 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Crown className="w-3.5 h-3.5 text-amber-400" />
+                    Wardrobe
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* NEWS BULLETIN BOARD */}
+            <div className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              {/* Bulletin Header */}
+              <div className="bg-slate-900 text-white px-5 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-cyan-400" />
+                  <h3 className="text-sm font-black uppercase tracking-wider">Academy Bulletin</h3>
+                </div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              </div>
+
+              <div className="p-5 space-y-5">
+                {/* Featured Story - Monthly Challenge */}
+                <div className={`rounded-xl p-4 border-2 ${monthlyChallengeDefeated ? 'bg-emerald-50 border-emerald-200' : 'bg-gradient-to-r from-amber-50 to-rose-50 border-amber-200'}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest block mb-1">Featured Challenge</span>
+                      <h4 className="text-sm font-black text-slate-900">Dr. Quark Monthly Boss</h4>
+                      <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                        The notorious Dr. Quark has deployed a new quantum strategy. Challenge him at Gamma difficulty to earn +300 XP and a permanent trophy.
+                      </p>
+                      <div className="flex items-center gap-2 mt-3">
+                        <button
+                          onClick={() => {
+                            audio.playPop();
+                            setIsMonthlyChallenge(true);
+                            setPlayer2({
+                              id: 2,
+                              name: 'Dr. Quark (Monthly Bot)',
+                              hp: 500,
+                              shield: 40,
+                              deck: [],
+                              compounds: [],
+                              score: 0,
+                              isBot: true
+                            });
+                            setDifficulty('gamma');
+                            startNewGame(true);
+                            setBattleLog([
+                              "DR. QUARK MONTHLY BOSS CHALLENGE INITIATED!",
+                              "Difficulty forced to Gamma level. Dr. Quark gains passive +40 shielding!",
+                              "Defeat Dr. Quark to secure +300 bonus XP."
+                            ]);
+                            triggerToast("Monthly challenge initiated against Dr. Quark!");
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase cursor-pointer transition-all ${
+                            monthlyChallengeDefeated ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-amber-600 text-white hover:bg-amber-500'
+                          }`}
+                        >
+                          {monthlyChallengeDefeated ? 'Replay' : 'Challenge'}
+                        </button>
+                        {monthlyChallengeDefeated && (
+                          <span className="px-2 py-0.5 bg-green-100 border border-green-300 text-green-700 text-[9px] font-black rounded uppercase">Defeated</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <span className="text-xs font-black text-indigo-600">+300 XP</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quests as bulletin items */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Award className="w-4 h-4 text-indigo-500" />
+                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider">Active Assignments</span>
+                    <span className="text-[8px] font-black bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-200">Weekly Reset</span>
+                  </div>
+                  <div className="space-y-2.5">
+                    {quests.map(q => (
+                      <div key={q.id} className={`p-3 rounded-xl border text-left flex items-center justify-between gap-3 ${q.completed ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[8px] font-black uppercase tracking-wider ${q.isWeekly ? 'text-amber-500' : 'text-slate-400'}`}>
+                              {q.isWeekly ? 'WEEKLY' : 'DAILY'}
+                            </span>
+                            {q.completed && (
+                              <span className="text-[8px] font-black text-green-600 bg-green-100 border border-green-300 px-1.5 py-0.5 rounded">DONE</span>
+                            )}
+                          </div>
+                          <h4 className="text-[11px] font-black text-slate-800 leading-tight mt-0.5 truncate">{q.title}</h4>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden max-w-[120px]">
+                              <div
+                                className={`h-full rounded-full transition-all duration-300 ${q.completed ? 'bg-green-500' : 'bg-indigo-500'}`}
+                                style={{ width: `${(q.current / q.target) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-[9px] font-bold text-slate-500">{q.current}/{q.target}</span>
+                          </div>
+                        </div>
+                        <span className="shrink-0 text-[10px] font-black text-indigo-600">+{q.xpReward}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick News Tickers */}
+                <div className="border-t border-slate-200 pt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                      <span className="text-[8px] font-black text-cyan-600 uppercase tracking-widest">Announcement</span>
+                      <p className="text-[10px] text-slate-600 mt-1 leading-snug">Real-time PvP matchmaking is now live. Challenge explorers worldwide.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                      <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest">Update</span>
+                      <p className="text-[10px] text-slate-600 mt-1 leading-snug">3v3 Team Co-op mode launched. Coordinate with allies via team chat.</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                      <span className="text-[8px] font-black text-amber-600 uppercase tracking-widest">Coming Soon</span>
+                      <p className="text-[10px] text-slate-600 mt-1 leading-snug">New cosmetics and badge tiers arriving next season.</p>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* NAVIGATION HUB DRAWER SHORTCUTS */}
-              <div className="mt-6 pt-5 border-t border-white/10 flex flex-wrap gap-2.5 relative z-10">
+            {/* GAME ENTRY CARD */}
+            <div className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-slate-900 text-white px-5 py-3 flex items-center gap-2">
+                <Play className="w-4 h-4 text-cyan-400" />
+                <h3 className="text-sm font-black uppercase tracking-wider">Enter the Arena</h3>
+              </div>
+              <div className="p-4 space-y-2.5">
                 <button
-                  onClick={() => { audio.playPop(); setShowBadgesMenu(true); }}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-95 border border-white/20 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer"
+                  onClick={() => { audio.playPop(); setShowPracticeParamsModal(true); }}
+                  className="w-full p-3.5 bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100/60 border-2 border-cyan-200 rounded-xl cursor-pointer text-left flex items-center justify-between transition-all group"
                 >
-                  🏅 Profile Badges Manager
+                  <div>
+                    <span className="font-extrabold text-cyan-900 text-sm block">Lab Practice</span>
+                    <span className="text-[9px] font-black text-cyan-600 uppercase tracking-widest">Solo vs AI • Select Difficulty</span>
+                  </div>
+                  <span className="p-1 px-3 bg-cyan-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">Setup</span>
                 </button>
+
                 <button
-                  onClick={() => { audio.playPop(); setShowCompoundsMenu(true); }}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-95 border border-white/20 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer"
+                  onClick={() => { audio.playPop(); startNewGame(false); }}
+                  className="w-full p-3.5 bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100/50 border-2 border-purple-200 rounded-xl cursor-pointer text-left flex items-center justify-between transition-all group"
                 >
-                  🧪 Synthesis Journal ({createdCompounds.length})
+                  <div>
+                    <span className="font-extrabold text-purple-900 text-sm block">Local Duel</span>
+                    <span className="text-[9px] font-black text-purple-600 uppercase tracking-widest">1v1 Shared Screen</span>
+                  </div>
+                  <span className="p-1 px-3 bg-purple-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">Launch</span>
                 </button>
+
                 <button
-                  onClick={() => { audio.playPop(); setShowGalleryMenu(true); }}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-95 border border-white/20 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer"
+                  onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
+                  className="w-full p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100/50 border-2 border-emerald-200 rounded-xl cursor-pointer text-left flex items-center justify-between transition-all group"
                 >
-                  🏆 Lineups Gallery ({winningGallery.length})
+                  <div>
+                    <span className="font-extrabold text-emerald-900 text-sm block">Online PvP</span>
+                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Real-time Multiplayer 1v1</span>
+                  </div>
+                  <span className="p-1 px-3 bg-emerald-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">Play</span>
+                </button>
+
+                <button
+                  onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
+                  className="w-full p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100/50 border-2 border-amber-200 rounded-xl cursor-pointer text-left flex items-center justify-between transition-all group"
+                >
+                  <div>
+                    <span className="font-extrabold text-amber-900 text-sm block">3v3 Team Battle</span>
+                    <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest">Co-op Team Lobby with Chat</span>
+                  </div>
+                  <span className="p-1 px-3 bg-amber-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">Queue</span>
                 </button>
               </div>
             </div>
 
-            {/* 2. MATCHMAKING QUEUE SIMULATOR & CO-OP TEAM LOBBY */}
-            {matchmakingMode !== 'none' && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-slate-950 border-2 border-indigo-500/50 rounded-3xl p-6 text-white space-y-6 shadow-xl relative"
+            {/* Drawer shortcuts (kept from original) */}
+            <div className="flex flex-wrap gap-2.5 justify-center">
+              <button
+                onClick={() => { audio.playPop(); setShowBadgesMenu(true); }}
+                className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
               >
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                  <button 
-                    onClick={() => setMatchmakingMode('none')}
-                    className="p-1 px-3 bg-red-500/20 hover:bg-red-500/45 text-red-300 text-xs font-black rounded-lg border border-red-500/40 cursor-pointer"
-                  >
-                    Cancel Match
-                  </button>
-                </div>
+                🏅 Badges
+              </button>
+              <button
+                onClick={() => { audio.playPop(); setShowCompoundsMenu(true); }}
+                className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
+              >
+                🧪 Journal ({createdCompounds.length})
+              </button>
+              <button
+                onClick={() => { audio.playPop(); setShowGalleryMenu(true); }}
+                className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
+              >
+                🏆 Gallery ({winningGallery.length})
+              </button>
+            </div>
+          </motion.div>
+        )}
 
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Lobby player lineup (Left) */}
-                  <div className="flex-1 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-indigo-400" />
-                      <span className="font-extrabold text-sm uppercase tracking-widest text-indigo-300">
-                        {matchmakingMode === '3v3' ? 'Simulated Team Lobby (6-Player Server)' : 'Connecting 1v1 PvP Server...'}
-                      </span>
-                    </div>
+        {/* ========================================= WARDROBE SCREEN ========================================= */}
+        {playMode === 'setup' && !showMultiplayerLobby && setupScreen === 'wardrobe' && (
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="max-w-4xl mx-auto"
+            id="setup-wardrobe-panel"
+          >
+            {/* Back button */}
+            <button
+              onClick={() => { audio.playPop(); setSetupScreen('menu'); }}
+              className="mb-4 flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 border-2 border-slate-200 rounded-xl text-xs font-black uppercase tracking-wide text-slate-600 transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Menu
+            </button>
 
-                    <div className="grid grid-cols-2 gap-3 text-left">
-                      {matchmakingMode === '3v3' ? (
-                        <>
-                          <div className="col-span-2 text-xs font-black text-cyan-400 tracking-wider">TEAM CYAN (CO-OP)</div>
-                          {lobbyPlayers.filter(p => p.team === 'cyan').map((p) => (
-                            <div key={`cyan-${p.name}`} className="flex items-center gap-3 p-3 bg-cyan-950/40 border border-cyan-800/40 rounded-2xl">
-                              <span className="text-2xl">{p.avatar}</span>
-                              <div>
-                                <span className="text-xs font-bold text-cyan-200 block truncate">{p.name} {p.isUser && '(You)'}</span>
-                                <span className="text-[9px] text-green-400 font-extrabold uppercase">✓ READY</span>
-                              </div>
-                            </div>
-                          ))}
-                          {Array.from({ length: 3 - lobbyPlayers.filter(p => p.team === 'cyan').length }).map((_, i) => (
-                            <div key={`cyan-empty-${i}`} className="flex items-center justify-center p-3 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl text-xs text-slate-500 font-bold animate-pulse">
-                              Searching partner...
-                            </div>
-                          ))}
-
-                          <div className="col-span-2 text-xs font-black text-amber-400 tracking-wider mt-2">TEAM AMBER (OPPONENTS)</div>
-                          {lobbyPlayers.filter(p => p.team === 'amber').map((p) => (
-                            <div key={`amber-${p.name}`} className="flex items-center gap-3 p-3 bg-amber-950/40 border border-amber-800/40 rounded-2xl">
-                              <span className="text-2xl">{p.avatar}</span>
-                              <div>
-                                <span className="text-xs font-bold text-amber-200 block truncate">{p.name}</span>
-                                <span className="text-[9px] text-green-400 font-extrabold uppercase">✓ READY</span>
-                              </div>
-                            </div>
-                          ))}
-                          {Array.from({ length: 3 - lobbyPlayers.filter(p => p.team === 'amber').length }).map((_, i) => (
-                            <div key={`amber-empty-${i}`} className="flex items-center justify-center p-3 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl text-xs text-slate-500 font-bold animate-pulse">
-                              Searching opponent...
-                            </div>
-                          ))}
-                        </>
-                      ) : (
-                        <div className="col-span-2 flex flex-col items-center justify-center py-8 gap-3">
-                          <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-                          <p className="text-xs text-slate-400 font-semibold">Pinging atomic websocket server. Searching for chemistry challenger...</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Chat Box Panel (Right - 3v3 only) */}
-                  {matchmakingMode === '3v3' && (
-                    <div className="w-full md:w-80 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[280px]">
-                      <div className="p-3 border-b border-slate-800 flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                        <div className="flex items-center gap-1.5">
-                          <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
-                          <span>TEAM CHAT ROOM</span>
-                        </div>
-                        <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
-                      </div>
-
-                      {/* Chat Messages */}
-                      <div className="flex-1 p-3 overflow-y-auto space-y-2 max-h-[190px] text-left">
-                        {lobbyChat.map((msg, idx) => (
-                          <div key={idx} className="text-xs text-slate-300">
-                            <span className="font-extrabold text-cyan-400">{msg.avatar} {msg.sender}:</span>{' '}
-                            <span className="font-medium text-slate-200">{msg.text}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Input panel */}
-                      <div className="p-2 border-t border-slate-800 flex gap-1.5">
-                        <input 
-                          type="text" 
-                          value={chatMessageInput}
-                          onChange={e => setChatMessageInput(e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              sendChatMessage();
-                            }
-                          }}
-                          placeholder="Type team tactics..."
-                          className="flex-1 bg-slate-950 border border-slate-800 text-xs px-2.5 py-1.5 rounded-xl text-white font-medium focus:outline-hidden focus:border-indigo-500"
-                        />
-                        <button 
-                          onClick={sendChatMessage}
-                          className="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl cursor-pointer"
-                        >
-                          Send
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="bg-slate-900 p-4 border border-slate-800/60 rounded-2xl flex items-center justify-between">
-                  <div className="text-left">
-                    <span className="text-xs text-slate-400 font-bold block">Match status:</span>
-                    <span className="text-sm font-black text-indigo-400 uppercase tracking-wide">
-                      {matchmakingStep === 'connecting' && 'Establishing network handshake...'}
-                      {matchmakingStep === 'finding_players' && 'Matchmaking queue matching atomic elements...'}
-                      {matchmakingStep === 'ready' && '🚀 SERVER READY! MATCH WILL LAUNCH IN SECONDS.'}
-                    </span>
-                  </div>
-                  <span className="text-white text-2xl font-black font-mono px-3 py-1 bg-indigo-950/80 border border-indigo-800 rounded-xl animate-pulse">
-                    READY
-                  </span>
-                </div>
-              </motion.div>
-            )}
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* LEFT COLUMN: VISUAL WEAR CUSTOMIZER & SOCIAL FRIENDS (7 cols) */}
-              <div className="lg:col-span-7 space-y-6 text-left">
-                
-                {/* A. PERSONAL SOCIAL FRIENDS DECK */}
-                <div className="bg-white border-2 border-slate-100 rounded-3xl p-6 sm:p-7 shadow-xs space-y-6">
-                  <div className="flex items-center justify-between border-b pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <Users className="w-5 h-5 text-indigo-500 animate-pulse" />
-                      <div>
-                        <h3 className="text-base font-black text-slate-900 leading-none">CHEMISTRY SOCIAL CLUB</h3>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Challenge friends, inspect wardrobes, or accept requests</p>
-                      </div>
-                    </div>
-                    <span className="px-2.5 py-0.5 bg-slate-100 text-slate-800 rounded-lg text-[10px] font-black">
-                      {friendsList.length} Active Friends
-                    </span>
-                  </div>
-
-                  {/* Add Friend Row */}
-                  <div className="flex gap-2">
-                    <input 
-                      type="text"
-                      placeholder="Add scientist friend by raw name..."
-                      value={newFriendInput}
-                      onChange={e => setNewFriendInput(e.target.value)}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter' && newFriendInput.trim()) {
-                          // Trigger add
-                          const name = newFriendInput.trim();
-                          if (friendsList.some(f => f.name.toLowerCase() === name.toLowerCase())) {
-                            triggerToast("Scientific partner already in friends directory!");
-                            return;
-                          }
-                          const generatedFriend: Friend = {
-                            id: Math.random().toString(),
-                            name,
-                            avatar: '🔬',
-                            skin: 'radiant_radium',
-                            level: Math.floor(Math.random() * 8) + 1,
-                            activeSkin: 'radiant_radium',
-                            badges: ['proton_pioneer', 'molecular_marvel'],
-                            pixelChar: {
-                              clothing: 'cyber_suit',
-                              accessory: 'cyberspace_visor',
-                              hair: 'neon_spikes',
-                              skinColor: '#CFD8DC'
-                            }
-                          };
-                          setFriendsList(prev => [...prev, generatedFriend]);
-                          setNewFriendInput('');
-                          triggerToast(`🤝 Added "${name}"! Click on their name inspect their digital wear & honors.`);
-                        }
-                      }}
-                      className="flex-1 bg-slate-50 border-2 border-slate-150 px-3.5 py-2 rounded-xl text-xs font-black text-slate-850 focus:outline-hidden focus:border-cyan-400"
-                    />
-                    <button
-                      onClick={() => {
-                        if (!newFriendInput.trim()) return;
-                        const name = newFriendInput.trim();
-                        const generatedFriend: Friend = {
-                          id: Math.random().toString(),
-                          name,
-                          avatar: '🔬',
-                          skin: 'radiant_radium',
-                          level: Math.floor(Math.random() * 8) + 1,
-                          activeSkin: 'radiant_radium',
-                          badges: ['proton_pioneer', 'molecular_marvel'],
-                          pixelChar: {
-                            clothing: 'cyber_suit',
-                            accessory: 'cyberspace_visor',
-                            hair: 'neon_spikes',
-                            skinColor: '#CFD8DC'
-                          }
-                        };
-                        setFriendsList(prev => [...prev, generatedFriend]);
-                        setNewFriendInput('');
-                        triggerToast(`🤝 Added "${name}"! Click on their name inspect their digital wear & honors.`);
-                      }}
-                      className="px-4 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black text-xs uppercase rounded-xl transition-all cursor-pointer"
-                    >
-                      Add Partner
-                    </button>
-                  </div>
-
-                  {/* Friends List Scrolldeck */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {friendsList.map(friend => (
-                      <div 
-                        key={friend.id} 
-                        onClick={() => {
-                          audio.playPop();
-                          setActiveInspectedFriend(friend);
-                          setShowFriendInspectModal(true);
-                        }}
-                        className="p-3.5 bg-slate-50 border-2 border-slate-100 hover:border-indigo-200 rounded-2xl flex items-center justify-between cursor-pointer transition-all hover:shadow-xs relative group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-slate-200 border rounded-xl overflow-hidden flex items-center justify-center">
-                            <PixelCharacter
-                              skin={friend.activeSkin || friend.skin || 'spectral_cyan'}
-                              clothing={friend.pixelChar?.clothing || 'lab_coat'}
-                              accessory={friend.pixelChar?.accessory || 'safety_goggles'}
-                              hair={friend.pixelChar?.hair || 'wild_scientist'}
-                              facial={friend.pixelChar?.facial || 'none'}
-                              skinColor={friend.pixelChar?.skinColor || '#FFD1A9'}
-                              size="sm" 
-                            />
-                          </div>
-                          <div>
-                            <span className="text-xs font-black text-slate-800 block leading-tight">{friend.name}</span>
-                            <span className="text-[9px] text-slate-400 font-extrabold uppercase block mt-0.5">LVL {friend.level} PARTNER</span>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <span className={`inline-block w-2 h-2 rounded-full ${friend.status === 'In Battle' ? 'bg-amber-500 animate-ping' : 'bg-green-500'}`}></span>
-                          <span className="text-[9px] font-black text-slate-500 block uppercase mt-0.5">{friend.status}</span>
-                        </div>
-                        
-                        <div className="absolute inset-0 bg-indigo-50/10 opacity-0 group-hover:opacity-100 rounded-2xl pointer-events-none transition-all border border-indigo-200/50" />
-                      </div>
-                    ))}
-                    {friendsList.length === 0 && (
-                      <p className="text-xs text-slate-400 italic text-center py-4 col-span-2">No scientific partners connected yet. Type a name above to search!</p>
-                    )}
+            <div className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              {/* Wardrobe Header */}
+              <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <Crown className="w-5 h-5 text-amber-400" />
+                  <div>
+                    <h3 className="text-base font-black uppercase tracking-wider">Explorer Wardrobe</h3>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Customize your look, name, and style</p>
                   </div>
                 </div>
+              </div>
 
-                {/* B. CHARACTERS WARDROBE & 8-BIT SUITS CLOSET */}
-                <div className="bg-white border-2 border-slate-100 rounded-3xl p-6 sm:p-7 shadow-xs space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
-                    <div className="flex items-center gap-2.5">
-                      <Crown className="w-5 h-5 text-yellow-500" />
-                      <div>
-                        <h3 className="text-base font-black text-slate-900 leading-none">RETRO PIXEL SUIT LAB</h3>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Design character clothing, hair, colors, and unlock rare skins</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Character customizing control center */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                    
-                    {/* Real-time 8-bit visual rendering display box (4/12 cols) */}
-                    <div className="md:col-span-4 bg-slate-950 rounded-2.5xl p-4 flex flex-col items-center justify-center border-4 border-slate-800 shadow-inner relative group min-h-[170px]">
-                      <div className="absolute top-2 left-2 bg-slate-900 border border-slate-850 text-slate-300 text-[8px] font-black px-1.5 rounded uppercase tracking-widest">
-                        Preview
+              <div className="p-5 sm:p-6">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  {/* Left: Large Character Preview */}
+                  <div className="md:col-span-4 flex flex-col items-center">
+                    <div className="w-full bg-slate-950 rounded-2xl p-5 flex flex-col items-center justify-center border-4 border-slate-800 shadow-inner relative min-h-[220px]">
+                      <div className="absolute top-2 left-2 bg-slate-900 border border-slate-700 text-slate-400 text-[8px] font-black px-2 rounded uppercase tracking-widest">
+                        Live Preview
                       </div>
                       <PixelCharacter
                         skin={activeSkin}
@@ -3288,328 +3193,183 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         size="lg"
                       />
                       <div className="mt-3 text-center">
-                        <span className="text-[10px] font-black text-cyan-400 block uppercase tracking-wide">
-                          {SKINS_INFO[activeSkin]?.label || 'Active Skin'}
-                        </span>
-                        <span className="text-[8px] text-slate-500 font-extrabold uppercase mt-0.5 block">
-                          Level Req: {SKINS_INFO[activeSkin]?.levelReq}
+                        <span className="text-sm font-black text-cyan-400 block">{p1ConfigName}</span>
+                        <span className="text-[9px] text-slate-500 font-extrabold uppercase mt-0.5 block">
+                          {SKINS_INFO[activeSkin]?.label || 'Active Skin'} • Lvl {SKINS_INFO[activeSkin]?.levelReq} Req
                         </span>
                       </div>
                     </div>
 
-                    {/* Clothing and item parameters grid (8/12 cols) */}
-                    <div className="md:col-span-8 space-y-4">
-                      
-                      {/* 1. Name Editor and suit theme selector */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-[9px] font-black text-slate-400 block uppercase tracking-wide mb-1">Explorer Code Name</label>
-                          <div className="flex gap-2">
-                            <input 
-                              type="text" 
-                              value={p1ConfigName}
-                              onChange={e => setP1ConfigName(e.target.value)}
-                              className="flex-1 bg-slate-50 border-2 border-slate-150 px-3 py-1.5 rounded-xl text-xs font-black text-slate-850 focus:outline-hidden focus:border-cyan-400 min-w-0"
-                            />
-                            <button
-                              onClick={randomizeP1Name}
-                              className="px-2.5 bg-cyan-55 hover:bg-cyan-100 border-2 border-cyan-200 hover:border-cyan-300 text-cyan-650 rounded-xl text-xs font-black uppercase transition-colors shrink-0 cursor-pointer shadow-xs flex items-center justify-center"
-                              title="Generate Random Themed Name"
-                            >
-                              🎲
-                            </button>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-[9px] font-black text-slate-400 block uppercase tracking-wide mb-1">Suit Skin Theme</label>
-                          <select 
-                            value={activeSkin}
-                            onChange={e => {
-                              const skinVal = e.target.value;
-                              if (userSkins.includes(skinVal)) {
-                                setActiveSkin(skinVal);
-                                audio.playSuccess();
-                              } else {
-                                triggerToast(`This Suit Skin is locked! Reach Lev. ${SKINS_INFO[skinVal].levelReq} to customize.`);
-                              }
-                            }}
-                            className="w-full bg-slate-50 border-2 border-slate-150 p-1.5 rounded-xl text-xs font-black text-slate-850 focus:outline-hidden"
-                          >
-                            {Object.keys(SKINS_INFO).map(skinKey => {
-                              const isUn = userSkins.includes(skinKey);
-                              return (
-                                <option key={skinKey} value={skinKey}>{!isUn ? '🔒 ' : ''}{SKINS_INFO[skinKey].label}</option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* 2. Wardrobe Item custom sliders */}
-                      <div className="space-y-2.5">
-                        {/* A. Clothing Selection */}
-                        <div>
-                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Clothing Costume</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {WARDROBE_CLOTHING.map(c => (
-                              <button
-                                key={c.id}
-                                onClick={() => { audio.playPop(); setCharClothing(c.id); }}
-                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
-                                  charClothing === c.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
-                                }`}
-                              >
-                                {c.name}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* B. Accessory selection */}
-                        <div>
-                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Face Accessory</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {WARDROBE_ACCESSORIES.map(acc => (
-                              <button
-                                key={acc.id}
-                                onClick={() => { audio.playPop(); setCharAccessory(acc.id); }}
-                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
-                                  charAccessory === acc.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
-                                }`}
-                              >
-                                {acc.name}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* C. Hair styling */}
-                        <div>
-                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Intellect Haircut</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {WARDROBE_HAIR.map(h => (
-                              <button
-                                key={h.id}
-                                onClick={() => { audio.playPop(); setCharHair(h.id); }}
-                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
-                                  charHair === h.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
-                                }`}
-                              >
-                                {h.name}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* D. Skin tone coloring */}
-                        <div>
-                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Sub-atomic Skin Tone</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {WARDROBE_SKIN_COLORS.map(tone => (
-                              <button
-                                key={tone.id}
-                                onClick={() => { audio.playPop(); setCharSkinColor(tone.id); }}
-                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all flex items-center gap-1.5 ${
-                                  charSkinColor === tone.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
-                                }`}
-                              >
-                                <span className="w-2.5 h-2.5 rounded-full border border-slate-400" style={{ backgroundColor: tone.value }} />
-                                {tone.name}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* E. Facial Features */}
-                        <div>
-                          <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Facial Feature</span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {WARDROBE_FACIAL.map(f => (
-                              <button
-                                key={f.id}
-                                onClick={() => { audio.playPop(); setCharFacial(f.id); }}
-                                className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
-                                  charFacial === f.id ? 'bg-indigo-50 border-indigo-550 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-100 hover:bg-slate-100 text-slate-700'
-                                }`}
-                              >
-                                {f.name}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
-
-              {/* RIGHT COLUMN: QUEUE BUTTON PANEL & QUESTS ENGINE (5 cols) */}
-              <div className="lg:col-span-5 space-y-6 text-left">
-                {/* Gameplay launcher board */}
-                <div className="bg-white border-2 border-slate-100 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-                  <div className="flex items-center gap-3 border-b pb-4">
-                    <Play className="w-5 h-5 text-emerald-500" />
-                    <h3 className="text-lg font-black text-slate-900">LAUNCH BATTLE STATION</h3>
-                  </div>
-
-                  <p className="text-slate-500 text-xs leading-relaxed font-semibold">
-                    Simulate battles on real-time physics rules. Complete quests or defeat monthly champions to claim high stakes rewards!
-                  </p>
-
-                  <div className="space-y-3 pt-2">
-                    
-                    {/* 1. Bot practice - Triggers Parameters Popup */}
-                    <button
-                      onClick={() => { audio.playPop(); setShowPracticeParamsModal(true); }}
-                      id="launch-practic-ai"
-                      className="w-full p-4 hover:shadow-md bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100/50 border-2 border-cyan-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
-                    >
-                      <div>
-                        <span className="font-extrabold text-cyan-900 text-sm block">LAB PRACTICE MODE</span>
-                        <span className="text-[10px] font-black text-cyan-600 uppercase tracking-widest mt-0.5">SELECT DIFFICULTY PARAMETERS</span>
-                      </div>
-                      <span className="p-1 px-3 bg-cyan-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Setup
-                      </span>
-                    </button>
-
-                    {/* 2. Monthly Quark Boss Challenge */}
-                    <button
-                      onClick={() => {
-                        audio.playPop();
-                        setIsMonthlyChallenge(true);
-                        // Doctor Quark custom preset setup
-                        setPlayer2({
-                          id: 2,
-                          name: 'Dr. Quark (Monthly Bot)',
-                          hp: 500,
-                          shield: 40,
-                          deck: [],
-                          compounds: [],
-                          score: 0,
-                          isBot: true
-                        });
-                        setDifficulty('gamma'); // Forced tough level
-                        startNewGame(true); // Launch bot game directly
-                        setBattleLog([
-                          "🚨 DR. QUARK MONTHLY BOSS CHALLENGE INITIATED!",
-                          "Difficulty forced to Gamma level. Dr. Quark gains passive +40 shielding!",
-                          "Defeat Dr. Quark to secure +300 bonus XP."
-                        ]);
-                        triggerToast("🚨 Monthly challenge initiated against Dr. Quark!");
-                      }}
-                      className={`w-full p-4 hover:shadow-md border-2 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group ${
-                        monthlyChallengeDefeated 
-                          ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-250' 
-                          : 'bg-gradient-to-r from-amber-50 to-rose-50 border-amber-250 animate-pulse'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-slate-900 text-sm block">MONTHLY BOT CHALLENGE</span>
-                          {monthlyChallengeDefeated && (
-                            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[8px] font-black rounded uppercase">DEFEATED</span>
-                          )}
-                        </div>
-                        <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest mt-0.5">VS DR. QUARK BOSS (+300 XP)</span>
-                      </div>
-                      <span className={`p-1 px-3 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform ${
-                        monthlyChallengeDefeated ? 'bg-emerald-600' : 'bg-amber-600'
-                      }`}>
-                        {monthlyChallengeDefeated ? 'REPLAY' : 'CHALLENGE'}
-                      </span>
-                    </button>
-
-                    {/* 3. Split Screen duel */}
-                    <button
-                      onClick={() => { audio.playPop(); startNewGame(false); }}
-                      id="launch-local-split"
-                      className="w-full p-4 hover:shadow-md bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100/50 border-2 border-purple-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
-                    >
-                      <div>
-                        <span className="font-extrabold text-purple-900 text-sm block">SHARED SCREEN DUEL</span>
-                        <span className="text-[10px] font-black text-purple-600 uppercase tracking-widest mt-0.5">1V1 LOCAL DECK SPELLS</span>
-                      </div>
-                      <span className="p-1 px-3 bg-purple-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Launch
-                      </span>
-                    </button>
-
-                    {/* 4. Online PvP - Real multiplayer */}
-                    <button
-                      onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
-                      id="matchmake-1v1-btn"
-                      className="w-full p-4 hover:shadow-md bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100/50 border-2 border-emerald-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
-                    >
-                      <div>
-                        <span className="font-extrabold text-emerald-950 text-sm block">ONLINE PVP DUEL</span>
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-0.5">REAL-TIME MULTIPLAYER 1V1</span>
-                      </div>
-                      <span className="p-1 px-3 bg-emerald-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Play Online
-                      </span>
-                    </button>
-
-                    {/* 5. Team 3v3 mode - Real multiplayer */}
-                    <button
-                      onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
-                      id="matchmake-3v3-btn"
-                      className="w-full p-4 hover:shadow-md bg-gradient-to-r from-indigo-50 to-pink-50 hover:from-pink-100/50 border-2 border-pink-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
-                    >
-                      <div>
-                        <span className="font-extrabold text-indigo-950 text-sm block">3V3 TEAM CO-OP BATTLE</span>
-                        <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest mt-0.5">REAL-TIME TEAM LOBBY WITH CHAT</span>
-                      </div>
-                      <span className="p-1 px-3 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Play 3V3
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* DAILY AND WEEKLY QUESTS ENGINE */}
-                <div className="bg-white border-2 border-slate-100 rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-                  <div className="flex items-center gap-3 border-b pb-4 justify-between">
-                    <div className="flex items-center gap-2">
-                      <Award className="w-5 h-5 text-indigo-500" />
-                      <h3 className="text-lg font-black text-slate-900 leading-none">DAILY / WEEKLY QUESTS</h3>
-                    </div>
-                    <span className="text-[9px] font-black bg-indigo-50 text-indigo-700 px-2.5 py-1 border border-indigo-200 rounded-full">
-                      RELOADS WEEKLY
-                    </span>
-                  </div>
-
-                  <div className="space-y-4.5 pr-1 max-h-[320px] overflow-y-auto">
-                    {quests.map(q => (
-                      <div key={q.id} className="space-y-1.5 p-3 rounded-2xl bg-slate-50 border border-slate-150 relative overflow-hidden text-left">
-                        {q.completed && (
-                          <div className="absolute top-2 right-2 bg-green-100 border border-green-300 text-green-700 px-1.5 py-0.5 rounded-md text-[8px] font-black flex items-center gap-0.5">
-                            <Check className="w-2.5 h-2.5" /> DONE
-                          </div>
+                    {/* Badges preview */}
+                    <div className="mt-4 w-full">
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1.5">Equipped Badges</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {getProfileDisplayedBadges().map(badgeId => {
+                          const bInfo = ALL_GAME_BADGES[badgeId];
+                          if (!bInfo) return null;
+                          return (
+                            <div key={badgeId} className={`px-2 py-1 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-lg text-[8px] font-black flex items-center gap-1 ${bInfo.text} shadow-sm uppercase tracking-wide cursor-help`} title={bInfo.desc}>
+                              <span className="text-xs drop-shadow-sm">{bInfo.emoji}</span>
+                              <span>{bInfo.name}</span>
+                            </div>
+                          );
+                        })}
+                        {getProfileDisplayedBadges().length === 0 && (
+                          <span className="text-[10px] text-slate-400 italic">No badges equipped</span>
                         )}
-                        <span className="text-[9px] block font-extrabold text-slate-400 tracking-wider">
-                          {q.isWeekly ? "WEEKLY CHALLENGE" : "DAILY CHALLENGE"}
-                        </span>
-                        <h4 className="text-xs font-black text-slate-800 leading-tight pr-12">{q.title}</h4>
-                        
-                        {/* Progress status */}
-                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 pt-1">
-                          <span>Progress: {q.current}/{q.target}</span>
-                          <span className="text-indigo-600 font-extrabold">+{q.xpReward} XP</span>
-                        </div>
-                        
-                        <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-1">
-                          <div 
-                            className="bg-indigo-500 h-full rounded-full transition-all duration-300"
-                            style={{ width: `${(q.current / q.target) * 100}%` }}
-                          ></div>
-                        </div>
                       </div>
-                    ))}
+                      <button
+                        onClick={() => { audio.playPop(); setShowBadgesMenu(true); }}
+                        className="mt-2 text-[9px] font-black text-indigo-600 hover:text-indigo-800 uppercase tracking-wider cursor-pointer"
+                      >
+                        Manage Badges →
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right: Customization Controls */}
+                  <div className="md:col-span-8 space-y-4">
+                    {/* Explorer Name */}
+                    <div>
+                      <label className="text-[9px] font-black text-slate-400 block uppercase tracking-wide mb-1">Explorer Code Name</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={p1ConfigName}
+                          onChange={e => setP1ConfigName(e.target.value)}
+                          className="flex-1 bg-slate-50 border-2 border-slate-200 px-3 py-2 rounded-xl text-sm font-black text-slate-800 focus:outline-none focus:border-cyan-400 min-w-0"
+                        />
+                        <button
+                          onClick={randomizeP1Name}
+                          className="px-3 py-2 bg-cyan-50 hover:bg-cyan-100 border-2 border-cyan-200 text-cyan-700 rounded-xl text-xs font-black uppercase transition-colors shrink-0 cursor-pointer"
+                          title="Generate Random Themed Name"
+                        >
+                          🎲
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Suit Skin */}
+                    <div>
+                      <label className="text-[9px] font-black text-slate-400 block uppercase tracking-wide mb-1">Suit Skin Theme</label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {Object.keys(SKINS_INFO).map(skinKey => {
+                          const isUnlocked = userSkins.includes(skinKey);
+                          const isActive = activeSkin === skinKey;
+                          return (
+                            <button
+                              key={skinKey}
+                              onClick={() => {
+                                if (isUnlocked) {
+                                  setActiveSkin(skinKey);
+                                  audio.playSuccess();
+                                } else {
+                                  triggerToast(`This Suit Skin is locked! Reach Lvl ${SKINS_INFO[skinKey].levelReq} to unlock.`);
+                                }
+                              }}
+                              className={`px-2.5 py-1.5 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                                isActive ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' :
+                                isUnlocked ? 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600 cursor-pointer' :
+                                'bg-slate-50 border-slate-100 text-slate-300 opacity-50 cursor-not-allowed'
+                              }`}
+                            >
+                              {!isUnlocked ? '🔒 ' : ''}{SKINS_INFO[skinKey].label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Clothing */}
+                    <div>
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Clothing Costume</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {WARDROBE_CLOTHING.map(c => (
+                          <button
+                            key={c.id}
+                            onClick={() => { audio.playPop(); setCharClothing(c.id); }}
+                            className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                              charClothing === c.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
+                            }`}
+                          >
+                            {c.emoji} {c.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Accessories */}
+                    <div>
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Face Accessory</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {WARDROBE_ACCESSORIES.map(acc => (
+                          <button
+                            key={acc.id}
+                            onClick={() => { audio.playPop(); setCharAccessory(acc.id); }}
+                            className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                              charAccessory === acc.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
+                            }`}
+                          >
+                            {acc.emoji} {acc.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Hair */}
+                    <div>
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Intellect Haircut</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {WARDROBE_HAIR.map(h => (
+                          <button
+                            key={h.id}
+                            onClick={() => { audio.playPop(); setCharHair(h.id); }}
+                            className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                              charHair === h.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
+                            }`}
+                          >
+                            {h.emoji} {h.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Facial Features */}
+                    <div>
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Facial Feature</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {WARDROBE_FACIAL.map(f => (
+                          <button
+                            key={f.id}
+                            onClick={() => { audio.playPop(); setCharFacial(f.id); }}
+                            className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
+                              charFacial === f.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
+                            }`}
+                          >
+                            {f.emoji} {f.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Skin Tone */}
+                    <div>
+                      <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider mb-1">Sub-atomic Skin Tone</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {WARDROBE_SKIN_COLORS.map(tone => (
+                          <button
+                            key={tone.id}
+                            onClick={() => { audio.playPop(); setCharSkinColor(tone.id); }}
+                            className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all flex items-center gap-1.5 ${
+                              charSkinColor === tone.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
+                            }`}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full border border-slate-300" style={{ backgroundColor: tone.value }} />
+                            {tone.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
