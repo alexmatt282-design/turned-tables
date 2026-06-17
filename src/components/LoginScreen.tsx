@@ -62,12 +62,24 @@ export function LoginScreen() {
     </p>
   </div>
 
-  <div className="grid md:grid-cols-3 gap-6">
-    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Trophy className="w-5 h-5 text-yellow-400" />
-        <h2 className="font-semibold">Monthly Challenge</h2>
-      </div>
+  <p className="text-slate-300 text-sm">
+  Dr. Quark has developed a new quantum strategy.
+</p>
+
+<div className="mt-3 text-yellow-300 font-semibold">
+  Reward: +300 XP
+</div>
+<ul className="space-y-2 text-sm text-slate-300">
+  <li>• Explorer Accounts are online.</li>
+  <li>• Progress syncing is in development.</li>
+  <li>• New cosmetics arriving soon.</li>
+</ul>
+<ul className="space-y-2 text-sm text-slate-300">
+  <li>✓ Earn XP</li>
+  <li>✓ Unlock Badges</li>
+  <li>✓ Collect Skins</li>
+  <li>✓ Track Progress</li>
+</ul>
 
       <p className="text-slate-300 text-sm">
         Dr. Quark has developed a new strategy.
