@@ -1,45 +1,48 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
-import {
-  Sparkles,
-  Trophy,
-  BookOpen,
-  Shield,
-  Send,
-  Atom,
-  FlaskConical,
-  Zap,
-  Users,
-} from 'lucide-react';
+import { Sparkles, Send, Atom, FlaskConical, Zap, Users, LogIn, UserPlus, Eye, EyeOff, CircleAlert as AlertCircle } from 'lucide-react';
 
 const FLOATING_ELEMENTS = ['H', 'Fe', 'O', 'Na', 'C', 'Au', 'K', 'Li', 'Ca', 'N', 'Ag', 'Cu'];
 
 export function LoginScreen() {
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
+    setIsError(false);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: 'https://turned-tables.vercel.app',
-        },
-      });
-
-      if (error) {
-        setMessage(error.message);
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          setIsError(true);
+          setMessage(error.message.includes('already registered')
+            ? 'This email is already registered. Try signing in instead.'
+            : error.message);
+        } else {
+          setMessage('Account created! You are now signed in.');
+        }
       } else {
-        setMessage('Check your email for your Academy access link.');
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setIsError(true);
+          setMessage(error.message.includes('Invalid login')
+            ? 'Incorrect email or password. Please try again.'
+            : error.message);
+        }
       }
     } catch (err: any) {
+      setIsError(true);
       setMessage(err.message || 'Something went wrong.');
     }
 
@@ -51,7 +54,6 @@ export function LoginScreen() {
       icon: <Zap className="w-5 h-5" />,
       title: 'Real-Time PvP',
       desc: 'Challenge chemists worldwide in live atomic battles',
-      color: 'cyan',
       border: 'border-cyan-500/30',
       bg: 'from-cyan-950/60 to-cyan-900/20',
       iconBg: 'bg-cyan-500/15',
@@ -62,7 +64,6 @@ export function LoginScreen() {
       icon: <Users className="w-5 h-5" />,
       title: '3v3 Team Co-op',
       desc: 'Combine forces with allies in strategic team wars',
-      color: 'amber',
       border: 'border-amber-500/30',
       bg: 'from-amber-950/60 to-amber-900/20',
       iconBg: 'bg-amber-500/15',
@@ -73,7 +74,6 @@ export function LoginScreen() {
       icon: <FlaskConical className="w-5 h-5" />,
       title: 'Compound Crafting',
       desc: 'Synthesize real chemical compounds for devastating power-ups',
-      color: 'emerald',
       border: 'border-emerald-500/30',
       bg: 'from-emerald-950/60 to-emerald-900/20',
       iconBg: 'bg-emerald-500/15',
@@ -145,7 +145,6 @@ export function LoginScreen() {
               <div className="w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center shadow-[0_0_80px_rgba(34,211,238,0.2)]">
                 <Atom className="w-10 h-10 text-cyan-400" />
               </div>
-              {/* Orbiting dots */}
               <motion.div
                 className="absolute w-2 h-2 bg-cyan-400 rounded-full"
                 animate={{ rotate: 360 }}
@@ -197,7 +196,6 @@ export function LoginScreen() {
               <h3 className="font-bold text-white text-sm mb-1">{f.title}</h3>
               <p className="text-slate-400 text-xs leading-relaxed">{f.desc}</p>
 
-              {/* Hover glow effect */}
               <motion.div
                 className="absolute inset-0 bg-white/[0.02] rounded-2xl"
                 initial={{ opacity: 0 }}
@@ -208,7 +206,7 @@ export function LoginScreen() {
           ))}
         </motion.div>
 
-        {/* Login Card */}
+        {/* Auth Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -219,13 +217,19 @@ export function LoginScreen() {
             <div className="text-center mb-5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-3">
                 <Sparkles className="w-3 h-3 text-cyan-400" />
-                <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest">Secure Access</span>
+                <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest">
+                  {mode === 'login' ? 'Sign In' : 'Create Account'}
+                </span>
               </div>
-              <h2 className="text-lg font-bold text-white">Enter the Academy</h2>
-              <p className="text-slate-400 text-xs mt-1">Sign in with your email to begin</p>
+              <h2 className="text-lg font-bold text-white">
+                {mode === 'login' ? 'Welcome Back, Explorer' : 'Join the Academy'}
+              </h2>
+              <p className="text-slate-400 text-xs mt-1">
+                {mode === 'login' ? 'Enter your credentials to continue' : 'Create an account to save your progress'}
+              </p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5 font-medium">
                   Researcher Email
@@ -240,13 +244,42 @@ export function LoginScreen() {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="w-full px-4 py-3 pr-12 rounded-xl bg-slate-800/80 border border-slate-600/50 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {mode === 'signup' && (
+                  <p className="text-[10px] text-slate-500 mt-1">Minimum 6 characters</p>
+                )}
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 disabled:cursor-not-allowed transition-all rounded-xl py-3 font-semibold text-white text-sm shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30"
               >
-                <Send className="w-4 h-4" />
-                {loading ? 'Sending Academy Link...' : 'Enter Explorer Academy'}
+                {mode === 'login' ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                {loading
+                  ? (mode === 'login' ? 'Signing In...' : 'Creating Account...')
+                  : (mode === 'login' ? 'Sign In' : 'Create Account')}
               </button>
             </form>
 
@@ -254,16 +287,27 @@ export function LoginScreen() {
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 text-center text-cyan-300 text-xs bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-2.5"
+                className={`mt-4 text-center text-xs rounded-lg p-2.5 flex items-center justify-center gap-2 ${
+                  isError
+                    ? 'text-red-300 bg-red-500/10 border border-red-500/20'
+                    : 'text-cyan-300 bg-cyan-500/10 border border-cyan-500/20'
+                }`}
               >
+                {isError && <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
                 {message}
               </motion.div>
             )}
 
             <div className="mt-5 pt-4 border-t border-slate-700/50 text-center">
-              <p className="text-[10px] text-slate-500 tracking-wider uppercase">
-                Academy Authentication System
+              <p className="text-slate-400 text-xs">
+                {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
               </p>
+              <button
+                onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setMessage(''); setIsError(false); }}
+                className="text-cyan-400 hover:text-cyan-300 text-xs font-semibold mt-1 cursor-pointer transition-colors"
+              >
+                {mode === 'login' ? 'Create one now' : 'Sign in instead'}
+              </button>
             </div>
           </div>
         </motion.div>

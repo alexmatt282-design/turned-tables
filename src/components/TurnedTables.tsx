@@ -1,11 +1,12 @@
 import { supabase } from '../lib/supabase';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, TriangleAlert as AlertTriangle, RefreshCw, Check, X, Circle as HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play, MessageSquare, Award, User, Crown, Send, Dices, Lock } from 'lucide-react';
+import { ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, TriangleAlert as AlertTriangle, RefreshCw, Check, X, Circle as HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play, MessageSquare, Award, User, Crown, Send, Dices, Lock, Atom, FlaskConical, TestTube, Microscope, Beaker, Radiation, Eye, Gem, CircleDot, Snowflake, Battery, CircleAlert as AlertCircle, Dice5, Siren, Flag, Heart, Wrench, PenTool, Palette, Wind as WindIcon, Hand, Skull, Bug } from 'lucide-react';
 import audio from '../utils/audio';
 import { generateAllCompounds } from '../data/compoundsData';
 import { MultiplayerLobby } from './MultiplayerLobby';
 import type { RoomMode, RoomPlayer } from '../lib/multiplayer';
+import type { UserProfile } from '../App';
 
 interface TurnedTablesProps {
   onBack: () => void;
@@ -13,6 +14,8 @@ interface TurnedTablesProps {
   stars: number;
   level: number;
   userId?: string;
+  profile?: UserProfile;
+  onSaveProfile?: (updates: Partial<UserProfile>) => void;
 }
 
 // Full-featured Type Definitions
@@ -261,24 +264,15 @@ const generateRandomThemedName = () => {
   return `${p} ${s}`;
 };
 
-<button
-  onClick={async () => {
-    await supabase.auth.signOut();
-  }}
-  className="px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white"
->
-  Logout
-</button>
-
 const GAME_AVATARS = [
-  { emoji: '🧪', name: 'Alchemist', color: 'from-cyan-500 to-blue-500 bg-cyan-100 hover:bg-cyan-200 text-cyan-600' },
-  { emoji: '⚡', name: 'Plasma', color: 'from-amber-400 to-orange-500 bg-amber-100 hover:bg-amber-200 text-amber-600' },
-  { emoji: '⚛️', name: 'Nucleus', color: 'from-purple-500 to-indigo-600 bg-purple-100 hover:bg-purple-200 text-purple-600' },
-  { emoji: '🧬', name: 'Helix', color: 'from-emerald-400 to-teal-600 bg-emerald-100 hover:bg-emerald-200 text-emerald-600' },
-  { emoji: '🔥', name: 'Catalyst', color: 'from-red-500 to-pink-500 bg-red-100 hover:bg-red-200 text-red-600' },
-  { emoji: '🪐', name: 'Cosmos', color: 'from-slate-700 to-slate-900 bg-slate-150 hover:bg-slate-200 text-slate-700' },
-  { emoji: '🔮', name: 'Ether', color: 'from-violet-500 to-fuchsia-600 bg-violet-100 hover:bg-violet-200 text-violet-600' },
-  { emoji: '🛡️', name: 'Isotope', color: 'from-sky-400 to-cyan-600 bg-sky-100 hover:bg-sky-200 text-sky-600' }
+  { icon: 'flask', name: 'Alchemist', color: 'from-cyan-500 to-blue-500 bg-cyan-100 hover:bg-cyan-200 text-cyan-600' },
+  { icon: 'zap', name: 'Plasma', color: 'from-amber-400 to-orange-500 bg-amber-100 hover:bg-amber-200 text-amber-600' },
+  { icon: 'atom', name: 'Nucleus', color: 'from-emerald-500 to-teal-600 bg-emerald-100 hover:bg-emerald-200 text-emerald-600' },
+  { icon: 'beaker', name: 'Helix', color: 'from-emerald-400 to-teal-600 bg-emerald-100 hover:bg-emerald-200 text-emerald-600' },
+  { icon: 'flame', name: 'Catalyst', color: 'from-red-500 to-pink-500 bg-red-100 hover:bg-red-200 text-red-600' },
+  { icon: 'sparkles', name: 'Cosmos', color: 'from-slate-700 to-slate-900 bg-slate-150 hover:bg-slate-200 text-slate-700' },
+  { icon: 'gem', name: 'Ether', color: 'from-violet-500 to-fuchsia-600 bg-violet-100 hover:bg-violet-200 text-violet-600' },
+  { icon: 'shield', name: 'Isotope', color: 'from-sky-400 to-cyan-600 bg-sky-100 hover:bg-sky-200 text-sky-600' }
 ];
 
 const SKINS_INFO: Record<string, { label: string; bgClass: string; borderClass: string; textClass: string; levelReq: number; desc: string; rarity: 'Common' | 'Rare' | 'Legendary' }> = {
@@ -295,7 +289,7 @@ interface GameBadge {
   id: string;
   name: string;
   desc: string;
-  emoji: string;
+  icon: string;
   gradient: string;
   border: string;
   text: string;
@@ -307,7 +301,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'proton_pioneer',
     name: 'Proton Pioneer',
     desc: 'Explorer taking first steps in atomic molecular chambers.',
-    emoji: '⚛️',
+    icon: 'atom',
     gradient: 'from-blue-600 via-indigo-700 to-slate-900',
     border: 'border-blue-400/60 shadow-blue-500/30',
     text: 'text-blue-100',
@@ -317,7 +311,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'elemental_overlord',
     name: 'Elemental Overlord',
     desc: 'Mastered element acquisitions and atomic collection.',
-    emoji: '🔮',
+    icon: 'gem',
     gradient: 'from-cyan-500 via-sky-600 to-blue-800',
     border: 'border-cyan-400/60 shadow-cyan-500/35',
     text: 'text-cyan-50',
@@ -327,7 +321,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'molecular_marvel',
     name: 'Molecular Marvel',
     desc: 'Successfully synthesized molecules inside the synthesis room.',
-    emoji: '🧪',
+    icon: 'flask',
     gradient: 'from-emerald-500 via-teal-600 to-emerald-900',
     border: 'border-emerald-400/60 shadow-emerald-500/30',
     text: 'text-emerald-50',
@@ -337,7 +331,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'noble_knighthood',
     name: 'Noble Knighthood',
     desc: 'Harnessed inert valencies to establish atomic shields.',
-    emoji: '🎈',
+    icon: 'shield',
     gradient: 'from-amber-500 via-orange-600 to-red-800',
     border: 'border-amber-400/60 shadow-amber-500/30',
     text: 'text-amber-50',
@@ -347,7 +341,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'valency_vanguard',
     name: 'Valency Vanguard',
     desc: 'Maintained advanced electronic shells defense coverage.',
-    emoji: '🛡️',
+    icon: 'shield',
     gradient: 'from-rose-500 via-pink-600 to-rose-900',
     border: 'border-rose-400/60 shadow-rose-500/30',
     text: 'text-rose-100',
@@ -357,7 +351,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'halogen_hero',
     name: 'Halogen Hero',
     desc: 'Unleased high electronegativity salt-forming attacks.',
-    emoji: '🔥',
+    icon: 'flame',
     gradient: 'from-red-500 via-orange-600 to-amber-800',
     border: 'border-orange-400/60 shadow-orange-500/35',
     text: 'text-orange-100',
@@ -367,7 +361,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'doc_conqueror',
     name: 'Doctor Conqueror',
     desc: 'Defeated AI Doc Proton on expert high-hazard difficulties.',
-    emoji: '👑',
+    icon: 'crown',
     gradient: 'from-yellow-400 via-amber-500 to-yellow-800',
     border: 'border-yellow-400/70 shadow-yellow-500/40',
     text: 'text-yellow-50',
@@ -377,7 +371,7 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     id: 'monthly_slayer',
     name: 'Monthly Slayer',
     desc: 'Eradicated the Chrono-Fusion Monthly Boss Challenger.',
-    emoji: '👾',
+    icon: 'siren',
     gradient: 'from-fuchsia-600 via-fuchsia-800 to-slate-900',
     border: 'border-fuchsia-400/60 shadow-fuchsia-500/30',
     text: 'text-fuchsia-50',
@@ -387,53 +381,91 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
 
 // --- PRESETS FOR RENDERER ---
 const WARDROBE_CLOTHING = [
-  { id: 'lab_coat', name: 'Chemist Lab Coat', emoji: '🥼', fill: '#F1F5F9' },
-  { id: 'cyber_suit', name: 'Cosmic Jumpsuit', emoji: '🧑‍🚀', fill: '#6366F1' },
-  { id: 'mystic_robe', name: 'Alchemist Cloak', emoji: '🥋', fill: '#312E81' },
-  { id: 'hazmat', name: 'Radioactive Hazmat', emoji: '☢️', fill: '#EAB308' },
-  { id: 'battle_armor', name: 'Titanium Battle Armor', emoji: '🛡️', fill: '#475569' },
-  { id: 'plasma_suit', name: 'Plasma Exosuit', emoji: '⚡', fill: '#06B6D4' },
-  { id: 'fire_fighter', name: 'Furnace Fireproof', emoji: '🔥', fill: '#DC2626' },
-  { id: 'solar_robe', name: 'Solar Photon Cloak', emoji: '☀️', fill: '#F59E0B' },
+  { id: 'lab_coat', name: 'Chemist Lab Coat', icon: 'flask', fill: '#F1F5F9' },
+  { id: 'cyber_suit', name: 'Cosmic Jumpsuit', icon: 'sparkles', fill: '#6366F1' },
+  { id: 'mystic_robe', name: 'Alchemist Cloak', icon: 'flask', fill: '#312E81' },
+  { id: 'hazmat', name: 'Radioactive Hazmat', icon: 'radiation', fill: '#EAB308' },
+  { id: 'battle_armor', name: 'Titanium Battle Armor', icon: 'shield', fill: '#475569' },
+  { id: 'plasma_suit', name: 'Plasma Exosuit', icon: 'zap', fill: '#06B6D4' },
+  { id: 'fire_fighter', name: 'Furnace Fireproof', icon: 'flame', fill: '#DC2626' },
+  { id: 'solar_robe', name: 'Solar Photon Cloak', icon: 'sparkles', fill: '#F59E0B' },
 ];
 
 const WARDROBE_ACCESSORIES = [
-  { id: 'safety_goggles', name: 'Safety Goggles', emoji: '🥽' },
-  { id: 'cyberspace_visor', name: 'Cyber Laser Visor', emoji: '🕶️' },
-  { id: 'alchemist_crown', name: 'Elemental Crown', emoji: '👑' },
-  { id: 'reactor_core', name: 'Reactor Core Necklace', emoji: '💎' },
-  { id: 'quantum_band', name: 'Quantum Headband', emoji: '🌀' },
-  { id: 'none', name: 'No Accessory', emoji: '❌' }
+  { id: 'safety_goggles', name: 'Safety Goggles', icon: 'eye' },
+  { id: 'cyberspace_visor', name: 'Cyber Laser Visor', icon: 'eye' },
+  { id: 'alchemist_crown', name: 'Elemental Crown', icon: 'crown' },
+  { id: 'reactor_core', name: 'Reactor Core Necklace', icon: 'gem' },
+  { id: 'quantum_band', name: 'Quantum Headband', icon: 'circle-dot' },
+  { id: 'none', name: 'No Accessory', icon: 'x' }
 ];
 
 const WARDROBE_HAIR = [
-  { id: 'wild_scientist', name: 'Crazy Dev Hair', emoji: '🦁' },
-  { id: 'neon_spikes', name: 'Cyber Spikes', emoji: '⚡' },
-  { id: 'slick_bob', name: 'Smooth Helmet', emoji: '💇' },
-  { id: 'plasma_mohawk', name: 'Plasma Mohawk', emoji: '🔥' },
-  { id: 'frost_tips', name: 'Cryo Frost Tips', emoji: '❄️' },
-  { id: 'golden_wave', name: 'Golden Wave', emoji: '✨' },
-  { id: 'none', name: 'Sleek/Bald', emoji: '🥚' }
+  { id: 'wild_scientist', name: 'Crazy Dev Hair', icon: 'zap' },
+  { id: 'neon_spikes', name: 'Cyber Spikes', icon: 'zap' },
+  { id: 'slick_bob', name: 'Smooth Helmet', icon: 'user' },
+  { id: 'plasma_mohawk', name: 'Plasma Mohawk', icon: 'flame' },
+  { id: 'frost_tips', name: 'Cryo Frost Tips', icon: 'snowflake' },
+  { id: 'golden_wave', name: 'Golden Wave', icon: 'sparkles' },
+  { id: 'none', name: 'Sleek/Bald', icon: 'user' }
 ];
 
 const WARDROBE_FACIAL = [
-  { id: 'none', name: 'Clean Shaven', emoji: '😊' },
-  { id: 'goatee', name: 'Quantum Goatee', emoji: '🧔' },
-  { id: 'mask', name: 'Half Respirator', emoji: '😷' },
-  { id: 'scar', name: 'Battle Scar', emoji: '⚔️' },
-  { id: 'war_paint', name: 'Tribal War Paint', emoji: '🎨' },
+  { id: 'none', name: 'Clean Shaven', icon: 'user' },
+  { id: 'goatee', name: 'Quantum Goatee', icon: 'user' },
+  { id: 'mask', name: 'Half Respirator', icon: 'shield' },
+  { id: 'scar', name: 'Battle Scar', icon: 'sword' },
+  { id: 'war_paint', name: 'Tribal War Paint', icon: 'palette' },
 ];
 
 const WARDROBE_SKIN_COLORS = [
+  { id: 'warm_peach', name: 'Warm Peach', value: '#FFD1A9' },
   { id: 'peach', name: 'Biosphere Peach', value: '#FFD1A9' },
   { id: 'bronze', name: 'Quantum Bronze', value: '#E29C68' },
   { id: 'deep_brown', name: 'Organic Umber', value: '#8A5229' },
+  { id: 'olive', name: 'Chemist Olive', value: '#C68642' },
   { id: 'neon_glow', name: 'Bioluminescent Neon', value: '#87EE2A' },
   { id: 'spectral_blue', name: 'Plasma Blue', value: '#2AE7EE' },
   { id: 'crimson_haze', name: 'Crimson Haze', value: '#FF6B6B' },
   { id: 'violet_shift', name: 'Violet Phase Shift', value: '#C084FC' },
   { id: 'gold_fusion', name: 'Gold Fusion', value: '#FBBF24' },
 ];
+
+// --- LUCIDE ICON BY NAME HELPER ---
+const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
+  flask: FlaskConical,
+  zap: Zap,
+  atom: Atom,
+  beaker: Beaker,
+  flame: Flame,
+  sparkles: Sparkles,
+  gem: Gem,
+  shield: Shield,
+  crown: Crown,
+  eye: Eye,
+  'circle-dot': CircleDot,
+  snowflake: Snowflake,
+  radiation: Radiation,
+  siren: Siren,
+  sword: Sword,
+  palette: Palette,
+  trophy: Trophy,
+  user: User,
+  microsope: Microscope,
+  testtube: TestTube,
+  x: X,
+  award: Award,
+  lock: Lock,
+  flag: Flag,
+  heart: Heart,
+  bug: Bug,
+};
+
+const IconByName: React.FC<{ name: string; className?: string }> = ({ name, className = 'w-4 h-4' }) => {
+  const Comp = ICON_MAP[name];
+  if (!Comp) return <Sparkles className={className} />;
+  return <Comp className={className} />;
+};
 
 // --- RETRO 8-BIT CHARACTER VECTOR RENDERER ---
 const PixelCharacter: React.FC<{
@@ -729,66 +761,51 @@ interface Friend {
   };
 }
 
-export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars, userId }) => {
-  // Profile, Quests, Badges & Skins States (Local Storage Persistent)
-  const [userXP, setUserXP] = useState<number>(() => {
-    const saved = localStorage.getItem('tt_user_xp');
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [userSkins, setUserSkins] = useState<string[]>(() => {
-    const saved = localStorage.getItem('tt_user_skins');
-    return saved ? JSON.parse(saved) : ['spectral_cyan', 'solid_slate'];
-  });
-  const [activeSkin, setActiveSkin] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_active_skin');
-    return saved || 'spectral_cyan';
-  });
-  const [userBadges, setUserBadges] = useState<string[]>(() => {
-    const saved = localStorage.getItem('tt_user_badges');
-    return saved ? JSON.parse(saved) : ['proton_pioneer'];
-  });
+export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars, level, userId, profile, onSaveProfile }) => {
+  // Derive initial state from server profile (falls back to defaults)
+  const p = profile;
+
+  // Profile, Quests, Badges & Skins States (server-persisted)
+  const [userXP, setUserXP] = useState<number>(p?.xp ?? 0);
+  const [userSkins, setUserSkins] = useState<string[]>(p?.unlocked_skins ?? ['spectral_cyan', 'solid_slate']);
+  const [activeSkin, setActiveSkin] = useState<string>(p?.active_skin ?? 'spectral_cyan');
+  const [userBadges, setUserBadges] = useState<string[]>(p?.equipped_badges ?? ['proton_pioneer']);
 
   // --- CUSTOM WARDROBE & CLOSET PERSISTENT STATE ---
-  const [charClothing, setCharClothing] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_char_clothing');
-    return saved || 'lab_coat';
-  });
-  const [charAccessory, setCharAccessory] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_char_accessory');
-    return saved || 'safety_goggles';
-  });
-  const [charHair, setCharHair] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_char_hair');
-    return saved || 'wild_scientist';
-  });
-  const [charSkinColor, setCharSkinColor] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_char_skin_color');
-    return saved || 'peach';
-  });
-  const [charFacial, setCharFacial] = useState<string>(() => {
-    const saved = localStorage.getItem('tt_char_facial');
-    return saved || 'none';
-  });
+  const [charClothing, setCharClothing] = useState<string>(p?.clothing ?? 'lab_coat');
+  const [charAccessory, setCharAccessory] = useState<string>(p?.accessory ?? 'safety_goggles');
+  const [charHair, setCharHair] = useState<string>(p?.hair ?? 'wild_scientist');
+  const [charSkinColor, setCharSkinColor] = useState<string>(p?.skin_color ?? 'warm_peach');
+  const [charFacial, setCharFacial] = useState<string>(p?.facial ?? 'none');
 
-  const [customDisplayedBadges, setCustomDisplayedBadges] = useState<string[]>(() => {
-    const saved = localStorage.getItem('tt_custom_displayed_badges');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [customDisplayedBadges, setCustomDisplayedBadges] = useState<string[]>(p?.equipped_badges ?? []);
+
+  // Sync wardrobe changes to server profile
+  const syncToProfile = useCallback((updates: Partial<UserProfile>) => {
+    onSaveProfile?.(updates);
+  }, [onSaveProfile]);
+
+  const handleSetCharClothing = useCallback((v: string) => { setCharClothing(v); syncToProfile({ clothing: v }); }, [syncToProfile]);
+  const handleSetCharAccessory = useCallback((v: string) => { setCharAccessory(v); syncToProfile({ accessory: v }); }, [syncToProfile]);
+  const handleSetCharHair = useCallback((v: string) => { setCharHair(v); syncToProfile({ hair: v }); }, [syncToProfile]);
+  const handleSetCharSkinColor = useCallback((v: string) => { setCharSkinColor(v); syncToProfile({ skin_color: v }); }, [syncToProfile]);
+  const handleSetCharFacial = useCallback((v: string) => { setCharFacial(v); syncToProfile({ facial: v }); }, [syncToProfile]);
+  const handleSetActiveSkin = useCallback((v: string) => { setActiveSkin(v); syncToProfile({ active_skin: v }); }, [syncToProfile]);
 
   // --- SOCIAL FRIENDS DATABASE STATE ---
   const [friendsList, setFriendsList] = useState<Friend[]>(() => {
     const saved = localStorage.getItem('tt_friends_list');
     if (saved) return JSON.parse(saved);
     return [
-      { id: 'f-1', name: 'ValenceVixen 🧪', avatar: '👩‍🔬', skin: 'neon_cyber', level: 12, badges: ['valency_vanguard', 'molecular_marvel', 'proton_pioneer'] },
-      { id: 'f-2', name: 'HeliumHype ⚡', avatar: '🏃', skin: 'radiant_radium', level: 8, badges: ['molecular_marvel', 'proton_pioneer'] },
-      { id: 'f-3', name: 'AlchemistPro 🏆', avatar: '🧙', skin: 'gold_alchemist', level: 25, badges: ['doc_conqueror', 'valency_vanguard', 'molecular_marvel', 'proton_pioneer'] }
+      { id: 'f-1', name: 'ValenceVixen', avatar: 'flask', skin: 'neon_cyber', level: 12, badges: ['valency_vanguard', 'molecular_marvel', 'proton_pioneer'] },
+      { id: 'f-2', name: 'HeliumHype', avatar: 'zap', skin: 'radiant_radium', level: 8, badges: ['molecular_marvel', 'proton_pioneer'] },
+      { id: 'f-3', name: 'AlchemistPro', avatar: 'crown', skin: 'gold_alchemist', level: 25, badges: ['doc_conqueror', 'valency_vanguard', 'molecular_marvel', 'proton_pioneer'] }
     ];
   });
 
   const [sentRequests, setSentRequests] = useState<string[]>(() => {
     const saved = localStorage.getItem('tt_sent_requests');
-    return saved ? JSON.parse(saved) : ['NobleNeutron 🎈', 'IsotopeIzzy 📡'];
+    return saved ? JSON.parse(saved) : ['NobleNeutron', 'IsotopeIzzy'];
   });
 
   const [newFriendInput, setNewFriendInput] = useState<string>('');
@@ -807,10 +824,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     return [
       {
         id: 'g-1',
-        playerName: 'ValenceVixen 🧪',
+        playerName: 'ValenceVixen',
         date: 'Jun 12, 2026',
         skin: 'neon_cyber',
-        avatar: '👩‍🔬',
+        avatar: 'flask',
         elements: [
           { number: 3, symbol: 'Li', name: 'Lithium', period: 2, group: 1, category: 'alkali', powerup: { name: 'battery charge', desc: 'deals 40 damage', effect: 'damage', value: 40 }, clue: 'battery metal' },
           { number: 9, symbol: 'F', name: 'Fluorine', period: 2, group: 17, category: 'halogen', powerup: { name: 'superacid', desc: 'deals 50 damage', effect: 'damage', value: 50 }, clue: 'reactive gas' },
@@ -820,10 +837,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
       },
       {
         id: 'g-2',
-        playerName: 'AlchemistPro 🏆',
+        playerName: 'AlchemistPro',
         date: 'Jun 14, 2026',
         skin: 'gold_alchemist',
-        avatar: '🧙',
+        avatar: 'crown',
         elements: [
           { number: 1, symbol: 'H', name: 'Hydrogen', period: 1, group: 1, category: 'nonmetal', powerup: { name: 'fusion spark', desc: 'deals 30 damage', effect: 'damage', value: 30 }, clue: 'star fuel' },
           { number: 8, symbol: 'O', name: 'Oxygen', period: 2, group: 16, category: 'nonmetal', powerup: { name: 'vital oxygen', desc: 'heals 30 HP', effect: 'heal', value: 30 }, clue: 'respiratory life' }
@@ -847,10 +864,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const [showFriendInspectModal, setShowFriendInspectModal] = useState<boolean>(false);
 
   // Setup Player Names & Avatars Configuration
-  const [p1ConfigName, setP1ConfigName] = useState<string>('Cyan Force');
-  const [p1ConfigAvatar, setP1ConfigAvatar] = useState<string>('🧪');
+  const [p1ConfigName, setP1ConfigName] = useState<string>(p?.display_name || 'Cyan Force');
+  const [p1ConfigAvatar, setP1ConfigAvatar] = useState<string>('flask');
   const [p2ConfigName, setP2ConfigName] = useState<string>('Amber Glow');
-  const [p2ConfigAvatar, setP2ConfigAvatar] = useState<string>('⚡');
+  const [p2ConfigAvatar, setP2ConfigAvatar] = useState<string>('zap');
 
   // Multi-player simulated matchmaking arrays & logs
   const [matchmakingMode, setMatchmakingMode] = useState<'none' | '1v1' | '3v3'>('none');
@@ -1058,32 +1075,32 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
       if (userXP >= 100 && !tempBadges.includes('elemental_overlord')) {
         tempBadges.push('elemental_overlord');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Elemental Overlord!");
+        triggerToast("Milestone Badge Unlocked: Elemental Overlord!");
       }
       if (userXP >= 300 && !tempBadges.includes('molecular_marvel')) {
         tempBadges.push('molecular_marvel');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Molecular Marvel!");
+        triggerToast("Milestone Badge Unlocked: Molecular Marvel!");
       }
       if (userXP >= 500 && !tempBadges.includes('noble_knighthood')) {
         tempBadges.push('noble_knighthood');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Noble Knighthood!");
+        triggerToast("Milestone Badge Unlocked: Noble Knighthood!");
       }
       if (userXP >= 800 && !tempBadges.includes('valency_vanguard')) {
         tempBadges.push('valency_vanguard');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Valency Vanguard!");
+        triggerToast("Milestone Badge Unlocked: Valency Vanguard!");
       }
       if (userXP >= 1100 && !tempBadges.includes('halogen_hero')) {
         tempBadges.push('halogen_hero');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Halogen Hero!");
+        triggerToast("Milestone Badge Unlocked: Halogen Hero!");
       }
       if (userXP >= 1500 && !tempBadges.includes('doc_conqueror')) {
         tempBadges.push('doc_conqueror');
         changed = true;
-        triggerToast("🏅 Milestone Badge Unlocked: Doctor Conqueror!");
+        triggerToast("Milestone Badge Unlocked: Doctor Conqueror!");
       }
 
       if (changed) {
@@ -1102,7 +1119,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         if (currentLvl >= info.levelReq && !tempSkins.includes(skinKey)) {
           tempSkins.push(skinKey);
           changed = true;
-          triggerToast(`✨ Skin Unlocked! "${info.label}" (${info.rarity}) is now in your Wardrobe.`);
+          triggerToast(`Skin Unlocked! "${info.label}" (${info.rarity}) is now in your Wardrobe.`);
         }
       });
       if (changed) {
@@ -1249,7 +1266,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
     setTimeout(() => {
       const chemQuotes = [
-        "Are you reading my valence shell or something? ⚛️",
+        "Are you reading my valence shell or something?",
         "Let's combine carbon and oxygen to form instant shielding!",
         "Double bond carbon strings are highly reactive. Let's draft them first!",
         "Watch out for their transition metal catalysts, we need inert defenses!",
@@ -1258,7 +1275,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
       ];
       setLobbyChat(prev => [...prev, {
         sender: "Carbon Carla",
-        avatar: "🧬",
+        avatar: "beaker",
         text: chemQuotes[Math.floor(Math.random() * chemQuotes.length)],
         time: 'Now'
       }]);
@@ -1888,7 +1905,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
           setMonthlyChallengeDefeated(true);
           localStorage.setItem('tt_monthly_defeated', 'true');
           setUserXP(prev => prev + 300);
-          triggerToast("🏆 MONTHLY BOT DEFEATED! You successfully outperformed Dr. Quark and capitalized on 300 XP!");
+          triggerToast("MONTHLY BOT DEFEATED! You successfully outperformed Dr. Quark and capitalized on 300 XP!");
         } else {
           triggerToast("Dr. Quark won this battle. Combine elements smartly and challenge him again!");
         }
@@ -1899,24 +1916,24 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
           const isTeam = player2.name.includes('Team');
           const xpGain = isTeam ? 250 : 150;
           setUserXP(prev => prev + xpGain);
-          triggerToast(`👑 PvP VICTORY! Earned +${xpGain} XP!`);
+          triggerToast(`PvP VICTORY! Earned +${xpGain} XP!`);
           if (isTeam) {
             progressQuest('q_win_team_weekly', 1);
           }
         } else {
           // Standard offline practice against Doc Proton
           setUserXP(prev => prev + 30);
-          triggerToast(`🧪 Practice Completed! Earned +30 XP.`);
+          triggerToast(`Practice Completed! Earned +30 XP.`);
         }
       } else {
         const isLobbyDuel = player2.name.includes('PVP') || player2.name.includes('Team');
         if (isLobbyDuel) {
           const xpGain = player2.name.includes('Team') ? 100 : 50;
           setUserXP(prev => prev + xpGain);
-          triggerToast(`🛡️ Defeat. Valiant effort! Earned +${xpGain} XP.`);
+          triggerToast(`Defeat. Valiant effort! Earned +${xpGain} XP.`);
         } else {
           setUserXP(prev => prev + 10);
-          triggerToast(`🧪 Practice Completed! Earned +10 XP.`);
+          triggerToast(`Practice Completed! Earned +10 XP.`);
         }
       }
     } else {
@@ -2701,7 +2718,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 className="space-y-4"
               >
                 <p className="text-xs font-black uppercase tracking-widest text-cyan-400 font-mono animate-pulse">
-                  ⚡ {activeStrikeEffect.sourceName} CASTS
+                  {activeStrikeEffect.sourceName} CASTS
                 </p>
 
                 {/* Atomic circular core chamber */}
@@ -2728,7 +2745,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     {activeStrikeEffect.cardName}
                   </h2>
                   <p className="text-cyan-300 font-mono text-sm uppercase font-extrabold tracking-wide mt-1">
-                    ⚔️ {activeStrikeEffect.powerupName} ⚔️
+                    {activeStrikeEffect.powerupName}
                   </p>
                 </div>
 
@@ -2828,7 +2845,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   className="px-3.5 py-2 bg-emerald-50 border-2 border-emerald-300 text-emerald-700 hover:bg-emerald-100 font-extrabold text-xs uppercase rounded-xl shadow-xs cursor-pointer transition-all flex items-center gap-1.5 animate-pulse"
                 >
                   <Sparkles className="w-4 h-4 text-emerald-600" />
-                  <span>🧪 Synthesis Station</span>
+                  <span className="flex items-center gap-1.5"><FlaskConical className="w-4 h-4" /> Synthesis Station</span>
                 </button>
 
                 {vsBot && (
@@ -2836,7 +2853,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     onClick={() => setShowQuitConfirm(true)}
                     className="px-3.5 py-2 bg-rose-50 border-2 border-rose-200 text-rose-750 hover:bg-rose-100 font-extrabold text-xs uppercase rounded-xl shadow-xs cursor-pointer transition-all flex items-center gap-1.5"
                   >
-                    🏳️ Quit Practice
+                    Quit Practice
                   </button>
                 )}
               </div>
@@ -2863,11 +2880,11 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-black uppercase text-indigo-300">Scoreboard:</span>
                 <span className="text-sm font-black text-white">
-                  🏆 {player1.name}: <span className="text-cyan-400 text-base">{p1RoundWins}</span> wins
+                  {player1.name}: <span className="text-cyan-400 text-base">{p1RoundWins}</span> wins
                 </span>
                 <span className="text-xs text-indigo-450 font-black mx-1">vs</span>
                 <span className="text-sm font-black text-white">
-                  🏆 {player2.name}: <span className="text-amber-400 text-base">{p2RoundWins}</span> wins
+                  {player2.name}: <span className="text-amber-400 text-base">{p2RoundWins}</span> wins
                 </span>
               </div>
             </div>
@@ -2923,7 +2940,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   <div className="text-left">
                     <h2 className="text-lg font-black text-white tracking-tight">{p1ConfigName}</h2>
                     <p className="text-[10px] font-semibold text-cyan-200 uppercase tracking-widest">
-                      Lvl {Math.floor(userXP / 350) + 1} • {userXP} XP
+                      Lvl {level} • {userXP} XP
                     </p>
                   </div>
                 </div>
@@ -2935,7 +2952,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       if (!bInfo) return null;
                       return (
                         <div key={badgeId} className={`px-2 py-1 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-lg text-[8px] font-black flex items-center gap-1 ${bInfo.text} shadow-sm uppercase tracking-wide cursor-help`} title={bInfo.desc}>
-                          <span className="text-xs drop-shadow-sm">{bInfo.emoji}</span>
+                          <span className="text-xs drop-shadow-sm"><IconByName name={bInfo.icon} className="w-3.5 h-3.5" /></span>
                         </div>
                       );
                     })}
@@ -2946,6 +2963,13 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   >
                     <Crown className="w-3.5 h-3.5 text-amber-400" />
                     Wardrobe
+                  </button>
+                  <button
+                    onClick={async () => { await supabase.auth.signOut(); }}
+                    className="px-3 py-2 bg-white/5 hover:bg-red-500/20 active:scale-95 border border-white/10 hover:border-red-400/30 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-red-300"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Sign Out
                   </button>
                 </div>
               </div>
@@ -3128,19 +3152,19 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 onClick={() => { audio.playPop(); setShowBadgesMenu(true); }}
                 className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
               >
-                🏅 Badges
+                Badges
               </button>
               <button
                 onClick={() => { audio.playPop(); setShowCompoundsMenu(true); }}
                 className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
               >
-                🧪 Journal ({createdCompounds.length})
+                Journal ({createdCompounds.length})
               </button>
               <button
                 onClick={() => { audio.playPop(); setShowGalleryMenu(true); }}
                 className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-2 transition-all cursor-pointer text-slate-600"
               >
-                🏆 Gallery ({winningGallery.length})
+                Gallery ({winningGallery.length})
               </button>
             </div>
           </motion.div>
@@ -3209,7 +3233,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                           if (!bInfo) return null;
                           return (
                             <div key={badgeId} className={`px-2 py-1 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-lg text-[8px] font-black flex items-center gap-1 ${bInfo.text} shadow-sm uppercase tracking-wide cursor-help`} title={bInfo.desc}>
-                              <span className="text-xs drop-shadow-sm">{bInfo.emoji}</span>
+                              <span className="text-xs drop-shadow-sm"><IconByName name={bInfo.icon} className="w-3.5 h-3.5" /></span>
                               <span>{bInfo.name}</span>
                             </div>
                           );
@@ -3236,7 +3260,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         <input
                           type="text"
                           value={p1ConfigName}
-                          onChange={e => setP1ConfigName(e.target.value)}
+                          onChange={e => { setP1ConfigName(e.target.value); syncToProfile({ display_name: e.target.value }); }}
                           className="flex-1 bg-slate-50 border-2 border-slate-200 px-3 py-2 rounded-xl text-sm font-black text-slate-800 focus:outline-none focus:border-cyan-400 min-w-0"
                         />
                         <button
@@ -3244,7 +3268,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                           className="px-3 py-2 bg-cyan-50 hover:bg-cyan-100 border-2 border-cyan-200 text-cyan-700 rounded-xl text-xs font-black uppercase transition-colors shrink-0 cursor-pointer"
                           title="Generate Random Themed Name"
                         >
-                          🎲
+                          <Dices className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -3261,7 +3285,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                               key={skinKey}
                               onClick={() => {
                                 if (isUnlocked) {
-                                  setActiveSkin(skinKey);
+                                  handleSetActiveSkin(skinKey);
                                   audio.playSuccess();
                                 } else {
                                   triggerToast(`This Suit Skin is locked! Reach Lvl ${SKINS_INFO[skinKey].levelReq} to unlock.`);
@@ -3273,7 +3297,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                                 'bg-slate-50 border-slate-100 text-slate-300 opacity-50 cursor-not-allowed'
                               }`}
                             >
-                              {!isUnlocked ? '🔒 ' : ''}{SKINS_INFO[skinKey].label}
+                              {!isUnlocked ? <Lock className="w-3 h-3 inline" /> : ''}{SKINS_INFO[skinKey].label}
                             </button>
                           );
                         })}
@@ -3287,12 +3311,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         {WARDROBE_CLOTHING.map(c => (
                           <button
                             key={c.id}
-                            onClick={() => { audio.playPop(); setCharClothing(c.id); }}
+                            onClick={() => { audio.playPop(); handleSetCharClothing(c.id); }}
                             className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
                               charClothing === c.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
                             }`}
                           >
-                            {c.emoji} {c.name}
+                            {c.name}
                           </button>
                         ))}
                       </div>
@@ -3305,12 +3329,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         {WARDROBE_ACCESSORIES.map(acc => (
                           <button
                             key={acc.id}
-                            onClick={() => { audio.playPop(); setCharAccessory(acc.id); }}
+                            onClick={() => { audio.playPop(); handleSetCharAccessory(acc.id); }}
                             className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
                               charAccessory === acc.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
                             }`}
                           >
-                            {acc.emoji} {acc.name}
+                            {acc.name}
                           </button>
                         ))}
                       </div>
@@ -3323,12 +3347,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         {WARDROBE_HAIR.map(h => (
                           <button
                             key={h.id}
-                            onClick={() => { audio.playPop(); setCharHair(h.id); }}
+                            onClick={() => { audio.playPop(); handleSetCharHair(h.id); }}
                             className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
                               charHair === h.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
                             }`}
                           >
-                            {h.emoji} {h.name}
+                            {h.name}
                           </button>
                         ))}
                       </div>
@@ -3341,12 +3365,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         {WARDROBE_FACIAL.map(f => (
                           <button
                             key={f.id}
-                            onClick={() => { audio.playPop(); setCharFacial(f.id); }}
+                            onClick={() => { audio.playPop(); handleSetCharFacial(f.id); }}
                             className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all ${
                               charFacial === f.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
                             }`}
                           >
-                            {f.emoji} {f.name}
+                            {f.name}
                           </button>
                         ))}
                       </div>
@@ -3359,7 +3383,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         {WARDROBE_SKIN_COLORS.map(tone => (
                           <button
                             key={tone.id}
-                            onClick={() => { audio.playPop(); setCharSkinColor(tone.id); }}
+                            onClick={() => { audio.playPop(); handleSetCharSkinColor(tone.id); }}
                             className={`px-2.5 py-1 text-[10px] font-black rounded-lg border-2 uppercase transition-all flex items-center gap-1.5 ${
                               charSkinColor === tone.id ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-600'
                             }`}
@@ -3448,7 +3472,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                             className="h-10 flex items-center justify-center font-black text-[10px] tracking-widest text-cyan-700 gap-4 select-none bg-cyan-50/50 rounded-2xl border-2 border-dashed border-cyan-200 my-3 py-1.5"
                             key="rare-earth-separator"
                           >
-                            <span>🔬 LANTHANIDE & ACTINIDE RARE-EARTH ACADEMY REGIONS 🔬</span>
+                            <span>LANTHANIDE & ACTINIDE RARE-EARTH ACADEMY REGIONS</span>
                           </div>
                         )}
                         {Array.from({ length: 18 }).map((_, cIdx) => {
@@ -3758,7 +3782,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
             {/* Title description */}
             <div className="bg-white border-2 border-cyan-150 p-5 rounded-3xl shadow-xs text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight">🧪 THE ELEMENTAL SYNTHESIS LAB</h2>
+                <h2 className="text-xl font-black text-slate-900 font-display uppercase tracking-tight">THE ELEMENTAL SYNTHESIS LAB</h2>
                 <p className="text-slate-500 text-xs mt-1">
                   Combine separate single atom element cards to build high-intensity compound spells before entering the Atomic Arena.
                 </p>
@@ -3770,10 +3794,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 </span>
                 <div className="flex gap-3 text-xs font-extrabold pb-1">
                   <div className={`px-2.5 py-1 rounded-full border ${p1SynthesizedThisRound ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>
-                    P1: {p1SynthesizedThisRound ? 'Formed 🧪' : 'Pending 🔬'}
+                    P1: {p1SynthesizedThisRound ? 'Formed' : 'Pending'}
                   </div>
                   <div className={`px-2.5 py-1 rounded-full border ${p2SynthesizedThisRound ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>
-                    {player2.name}: {p2SynthesizedThisRound ? 'Formed 🧪' : 'Pending 🔬'}
+                    {player2.name}: {p2SynthesizedThisRound ? 'Formed' : 'Pending'}
                   </div>
                 </div>
                 {p1SynthesizedThisRound && p2SynthesizedThisRound ? (
@@ -3791,7 +3815,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   </button>
                 ) : (
                   <div className="text-[11px] font-bold text-rose-500 bg-rose-50 border border-rose-100 rounded-xl px-4 py-2 max-w-[280px] text-right">
-                    ⚠️ Each player must craft exactly one compound to unlock the Battle Arena!
+                    Each player must craft exactly one compound to unlock the Battle Arena!
                   </div>
                 )}
               </div>
@@ -3823,7 +3847,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     <div className="pt-1.5 flex flex-wrap gap-1.5">
                       {player1.compounds.map((c, i) => (
                         <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black rounded-lg">
-                          🧪 {c}
+                          {c}
                         </span>
                       ))}
                     </div>
@@ -3849,7 +3873,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     <div className="pt-1.5 flex flex-wrap gap-1.5">
                       {player2.compounds.map((c, i) => (
                         <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black rounded-lg">
-                          🧪 {c}
+                          {c}
                         </span>
                       ))}
                     </div>
@@ -3996,7 +4020,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     </div>
                     <div>
                       <h3 className="text-sm font-black text-slate-800">{player1.name}</h3>
-                      <p className="text-xs text-slate-400 font-bold uppercase">{p1IsStunned ? '❄️ Frozen' : '🔋 Active'}</p>
+                      <p className="text-xs text-slate-400 font-bold uppercase">{p1IsStunned ? 'Frozen' : 'Active'}</p>
                     </div>
                   </div>
 
@@ -4039,7 +4063,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                     </div>
                     <div>
                       <h3 className="text-sm font-black text-slate-800">{player2.name}</h3>
-                      <p className="text-xs text-slate-400 font-bold uppercase">{p2IsStunned ? '❄️ Frozen' : '🔋 Active'}</p>
+                      <p className="text-xs text-slate-400 font-bold uppercase">{p2IsStunned ? 'Frozen' : 'Active'}</p>
                     </div>
                   </div>
 
@@ -4090,7 +4114,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         onClick={triggerRecharge}
                         className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-[10px] rounded-lg shadow-xs cursor-pointer transition-all"
                       >
-                        ⚡ Ionic Recharge (+30 Shield)
+                        Ionic Recharge (+30 Shield)
                       </button>
                     </div>
                   )}
@@ -4242,7 +4266,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   onClick={() => setPlayMode('synthesis')}
                   className="w-full py-2 bg-slate-100 hover:bg-slate-200 border text-slate-700 font-extrabold text-xs rounded-xl cursor-pointer transition-colors"
                 >
-                  🧪 OPEN SYNTHESIS PROTOCOL
+                  OPEN SYNTHESIS PROTOCOL
                 </button>
               </div>
 
@@ -4414,7 +4438,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       {/* Combinations info */}
                       <div className="space-y-2.5">
                         <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                          🧪 Possible Synthesis Combinations
+                          Possible Synthesis Combinations
                         </h4>
                         
                         <div className="space-y-2">
@@ -4447,7 +4471,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                                      <span className="text-xs font-black text-indigo-700 font-mono ml-2">({recipe.formula})</span>
                                    </div>
                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${hasPartners ? 'bg-emerald-50 text-emerald-700 border border-emerald-350 animate-pulse' : 'bg-slate-100 text-slate-400 border border-slate-200'}`}>
-                                     {hasPartners ? 'Affordable ✅' : 'Missing Parts'}
+                                     {hasPartners ? 'Affordable' : 'Missing Parts'}
                                    </span>
                                  </div>
                                  <div className="flex flex-wrap items-center gap-2">
@@ -4464,7 +4488,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                                      }}
                                      className="w-full mt-2 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase rounded-xl transition-all shadow-xs cursor-pointer text-center"
                                    >
-                                     🧪 SYNTHESIZE THIS COMPOUND!
+                                     SYNTHESIZE THIS COMPOUND!
                                    </button>
                                  )}
                                </div>
@@ -4584,7 +4608,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 {/* Footer */}
                 <div className="p-4 border-t bg-amber-50/30 text-center text-[9px] font-black text-amber-600 uppercase tracking-widest">
-                  🏆 Turned Tables Arena Champion Records
+                  Turned Tables Arena Champion Records
                 </div>
               </motion.div>
             </div>
@@ -4619,7 +4643,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 font-display">🏛️ COURTSIDE RECLAIM CHALLENGE</h3>
+                    <h3 className="text-xl font-black text-slate-900 font-display">COURTSIDE RECLAIM CHALLENGE</h3>
                     <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mt-0.5">
                       FUSE PRE-OWNED ATOMS WITH STRAY: {activeCourtsideCard?.symbol}
                     </p>
@@ -4707,7 +4731,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                             recipe.required.some(req => req.symbol === activeCourtsideCard?.symbol)
                           ).map(recipe => (
                             <div key={recipe.id} className="pb-1 text-[11px] font-semibold text-slate-600">
-                              🧬 <span className="font-black text-indigo-700">{recipe.name} ({recipe.formula})</span> — needs: {recipe.required.map(req => `${req.qty}x ${req.symbol}`).join(' + ')}
+                              <span className="font-black text-indigo-700">{recipe.name} ({recipe.formula})</span> — needs: {recipe.required.map(req => `${req.qty}x ${req.symbol}`).join(' + ')}
                             </div>
                           ))}
                         </div>
@@ -4861,7 +4885,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                                 <span className="text-xs font-black text-indigo-700 font-mono ml-2">({recipe.formula})</span>
                               </div>
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 border rounded-lg ${hasAfford ? 'bg-emerald-50 text-emerald-700 border-emerald-300 animate-pulse' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
-                                {hasAfford ? 'Affordable ✅' : 'Locked'}
+                                {hasAfford ? 'Affordable' : 'Locked'}
                               </span>
                             </div>
 
@@ -4923,7 +4947,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500" />
                 
                 <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-100">
-                  <span className="text-3xl">🏳️</span>
+                  <Flag className="w-8 h-8 text-slate-400" />
                 </div>
 
                 <h3 className="text-xl font-black text-slate-900">ABANDON PRACTICE DUEL?</h3>
@@ -4975,7 +4999,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                 <div className="text-center space-y-2 mb-6">
                   <div className="w-12 h-12 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto border-2 border-cyan-150 text-cyan-650 font-bold text-xl leading-none">
-                    🧪
+                    
                   </div>
                   <h3 className="text-xl font-black text-slate-900">PRACTICE PARAMETERS CONFIGURATOR</h3>
                   <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Configure Doc Proton AI capabilities before launch</p>
@@ -5048,7 +5072,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       }}
                       className="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-black text-sm uppercase rounded-xl cursor-pointer shadow-md shadow-cyan-200 transition-all text-center flex items-center justify-center gap-2"
                     >
-                      <span>🔥 LAUNCH LAB PRACTICE ROUND</span>
+                      <span>LAUNCH LAB PRACTICE ROUND</span>
                     </button>
                   </div>
                 </div>
@@ -5127,7 +5151,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                           {/* Badge icon as card face */}
                           <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${isUnlocked ? bInfo.gradient : 'from-slate-200 to-slate-300'} shadow-md flex items-center justify-center overflow-hidden`}>
                             <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-transparent" />
-                            <span className="text-xl relative z-10 drop-shadow-sm">{bInfo.emoji}</span>
+                            <span className="text-xl relative z-10 drop-shadow-sm"><IconByName name={bInfo.icon} className="w-5 h-5" /></span>
                           </div>
                           <div>
                             <h4 className="text-xs font-black text-slate-800 leading-none">{bInfo.name}</h4>
@@ -5188,7 +5212,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 </div>
 
                 <div className="p-4 bg-cyan-50/50 border border-cyan-150 rounded-2xl my-4 text-left shrink-0 text-xs text-cyan-950 font-semibold leading-relaxed">
-                  🔬 You have successfully spelling-crafted <strong className="text-cyan-700">{createdCompounds.length} molecules</strong> across active sessions! Unlocking all formulas marks you as a true Valence Master.
+                  You have successfully spelling-crafted <strong className="text-cyan-700">{createdCompounds.length} molecules</strong> across active sessions! Unlocking all formulas marks you as a true Valence Master.
                 </div>
 
                 {/* Scrollable Journal List */}
@@ -5263,7 +5287,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 <div className="flex-grow overflow-y-auto space-y-4 pr-1 mt-4 text-left">
                   {winningGallery.length === 0 ? (
                     <div className="text-center py-12 space-y-2">
-                      <span className="text-4xl block leading-none">🏆</span>
+                      <Trophy className="w-10 h-10 text-amber-500" />
                       <p className="text-xs text-slate-400 italic font-semibold max-w-xs mx-auto">Championship gallery is currently empty. Win active battles across 5 detailed rounds to capture your triumphant element decks here!</p>
                     </div>
                   ) : (
@@ -5271,7 +5295,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       <div key={index} className="border-2 border-slate-100 rounded-2.5xl p-4.5 bg-slate-50/50 space-y-3.5 relative">
                         <div className="flex items-center justify-between border-b pb-2.5">
                           <div className="flex items-center gap-2">
-                            <span className="text-base">🏆</span>
+                            <Trophy className="w-4 h-4 text-amber-500" />
                             <span className="text-xs font-black text-slate-800">{lineup.playerName}</span>
                           </div>
                           <span className="text-[8px] font-black bg-emerald-50 text-emerald-700 px-2.5 py-0.5 border border-emerald-250 rounded-full uppercase">VICTORIOUS DECK</span>
@@ -5351,7 +5375,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
                   <div>
                     <h3 className="text-xl font-black text-slate-900 font-display">{activeInspectedFriend.name}</h3>
-                    <p className="text-xs text-indigo-650 font-black uppercase tracking-wider mt-0.5">🧪 LEVEL {activeInspectedFriend.level} PARTNER</p>
+                    <p className="text-xs text-indigo-650 font-black uppercase tracking-wider mt-0.5">LEVEL {activeInspectedFriend.level} PARTNER</p>
                   </div>
 
                   {/* Badges list */}
@@ -5366,7 +5390,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                             key={badgeId} 
                             className={`px-3 py-1.5 bg-gradient-to-br ${bInfo.gradient} border ${bInfo.border} rounded-xl text-[10px] font-black flex items-center gap-1.5 ${bInfo.text} shadow-sm uppercase tracking-wide`}
                           >
-                            <span>{bInfo.emoji}</span>
+                            <IconByName name={bInfo.icon} className="w-3.5 h-3.5" />
                             <span>{bInfo.name}</span>
                           </div>
                         );
@@ -5378,10 +5402,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   <div className="space-y-2 pt-3 border-t text-left">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Active Wardrobe Configuration</span>
                     <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500">
-                      <div className="p-2 bg-slate-50 rounded-xl border">🧥 Coat: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.clothing || 'lab_coat').replace('_', ' ')}</strong></div>
-                      <div className="p-2 bg-slate-50 rounded-xl border">👓 Visor: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.accessory || 'safety_goggles').replace('_', ' ')}</strong></div>
-                      <div className="p-2 bg-slate-50 rounded-xl border">💇 Hair: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.hair || 'wild_scientist').replace('_', ' ')}</strong></div>
-                      <div className="p-2 bg-slate-50 rounded-xl border">👕 Suit Theme: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.activeSkin || activeInspectedFriend.skin || 'spectral_cyan').replace('_', ' ')}</strong></div>
+                      <div className="p-2 bg-slate-50 rounded-xl border">Coat: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.clothing || 'lab_coat').replace('_', ' ')}</strong></div>
+                      <div className="p-2 bg-slate-50 rounded-xl border">Visor: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.accessory || 'safety_goggles').replace('_', ' ')}</strong></div>
+                      <div className="p-2 bg-slate-50 rounded-xl border">Hair: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.pixelChar?.hair || 'wild_scientist').replace('_', ' ')}</strong></div>
+                      <div className="p-2 bg-slate-50 rounded-xl border">Suit Theme: <strong className="text-slate-800 uppercase text-[9px]">{(activeInspectedFriend.activeSkin || activeInspectedFriend.skin || 'spectral_cyan').replace('_', ' ')}</strong></div>
                     </div>
                   </div>
 

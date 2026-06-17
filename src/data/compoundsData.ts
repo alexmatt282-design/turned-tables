@@ -31,43 +31,43 @@ export interface CompoundRecipe {
 const FAMOUS_RECIPES: CompoundRecipe[] = [
   {
     id: 'H2O',
-    name: 'Pure Water',
+    name: 'Water',
     formula: 'H₂O',
     required: [
       { symbol: 'H', qty: 2 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Tidal Splash', desc: 'A soothing jet of pure water. Heals 120 HP and provides 30 Shield.', effect: 'heal', value: 120 }
+    powerup: { name: 'Tidal Splash', desc: 'A jet of pure water, the universal solvent essential to all life. Heals 120 HP and provides 30 Shield.', effect: 'heal', value: 120 }
   },
   {
     id: 'CO2',
-    name: 'Carbon Dioxide Gas',
+    name: 'Carbon Dioxide',
     formula: 'CO₂',
     required: [
       { symbol: 'C', qty: 1 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Extinguisher Stun', desc: 'Puffs dry ice fog. Stuns the target and blocks 80 incoming damage.', effect: 'stun', value: 80 }
+    powerup: { name: 'Extinguisher Stun', desc: 'CO₂ is used in fire extinguishers because it displaces oxygen. Stuns the target and blocks 80 incoming damage.', effect: 'stun', value: 80 }
   },
   {
     id: 'NaCl',
-    name: 'Table Salt',
+    name: 'Sodium Chloride (Table Salt)',
     formula: 'NaCl',
     required: [
       { symbol: 'Na', qty: 1 },
       { symbol: 'Cl', qty: 1 }
     ],
-    powerup: { name: 'Brine Cannon', desc: 'Corrosive salt spray. Shatters opponent shielding and deals 95 damage.', effect: 'damage', value: 95 }
+    powerup: { name: 'Brine Cannon', desc: 'An ionic compound: Na⁺ transfers its electron to Cl⁻, forming a stable crystal lattice. Deals 95 damage.', effect: 'damage', value: 95 }
   },
   {
     id: 'CH4',
-    name: 'Methane Gas',
+    name: 'Methane',
     formula: 'CH₄',
     required: [
       { symbol: 'C', qty: 1 },
       { symbol: 'H', qty: 4 }
     ],
-    powerup: { name: 'Methane Explosion', desc: 'Ignites natural blue flames. Deals a devastating 150 fire damage.', effect: 'damage', value: 150 }
+    powerup: { name: 'Combustion Burst', desc: 'Methane combusts with O₂ releasing CO₂ + H₂O. CH₄ + 2O₂ → CO₂ + 2H₂O. Deals 150 fire damage.', effect: 'damage', value: 150 }
   },
   {
     id: 'HCl',
@@ -77,90 +77,90 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'H', qty: 1 },
       { symbol: 'Cl', qty: 1 }
     ],
-    powerup: { name: 'Acid Corrosive', desc: 'Strong stomach acid wash. Pierces all shields to deal 110 direct damage.', effect: 'damage', value: 110 }
+    powerup: { name: 'Acid Corrosive', desc: 'A strong acid that fully dissociates H⁺ + Cl⁻ in water. Found in stomach acid (gastric juice). Pierces shields for 110 damage.', effect: 'damage', value: 110 }
   },
   {
     id: 'NaOH',
-    name: 'Sodium Hydroxide (Lye)',
+    name: 'Sodium Hydroxide',
     formula: 'NaOH',
     required: [
       { symbol: 'Na', qty: 1 },
       { symbol: 'O', qty: 1 },
       { symbol: 'H', qty: 1 }
     ],
-    powerup: { name: 'Lye Purge', desc: 'Caustic laboratory chemical bath. Deals 130 damage.', effect: 'damage', value: 130 }
+    powerup: { name: 'Base Purge', desc: 'A strong base that dissociates Na⁺ + OH⁻. Neutralizes acids in exothermic reactions. Deals 130 damage.', effect: 'damage', value: 130 }
   },
   {
     id: 'C6H12O6',
-    name: 'Glucose Syrup',
+    name: 'Glucose',
     formula: 'C₆H₁₂O₆',
     required: [
-      { symbol: 'C', qty: 2 }, // Reduced requirement slightly for practical battle drafting (2, 2, 2 instead of 6,12,6)
+      { symbol: 'C', qty: 2 },
       { symbol: 'H', qty: 2 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Metabolic Surge', desc: 'Instant bio-cellular fuel. Heals 150 HP and clears stun.', effect: 'heal', value: 150 }
+    powerup: { name: 'Metabolic Surge', desc: 'The primary energy source for cellular respiration: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP. Heals 150 HP and clears stun.', effect: 'heal', value: 150 }
   },
   {
     id: 'NH3',
-    name: 'Household Ammonia',
+    name: 'Ammonia',
     formula: 'NH₃',
     required: [
       { symbol: 'N', qty: 1 },
       { symbol: 'H', qty: 3 }
     ],
-    powerup: { name: 'Pungent Ammonia Spray', desc: 'Powerful chemical vapor. Deals 90 damage and stuns the opponent.', effect: 'stun', value: 90 }
+    powerup: { name: 'Ammonia Spray', desc: 'A pungent weak base (accepts H⁺ to form NH₄⁺). Used in the Haber process to make fertilizer. Deals 90 damage and stuns.', effect: 'stun', value: 90 }
   },
   {
     id: 'SiO2',
-    name: 'Quartz Sand',
+    name: 'Silicon Dioxide (Quartz)',
     formula: 'SiO₂',
     required: [
       { symbol: 'Si', qty: 1 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Crystalline Barrier', desc: 'Fused solid quartz shield. Grants 140 Shield.', effect: 'shield', value: 140 }
+    powerup: { name: 'Crystalline Barrier', desc: 'A giant covalent structure. Each Si bonds to 4 O atoms in a rigid 3D lattice, making glass and quartz. Grants 140 Shield.', effect: 'shield', value: 140 }
   },
   {
     id: 'Fe2O3',
-    name: 'Ferric Rust',
+    name: 'Iron(III) Oxide (Rust)',
     formula: 'Fe₂O₃',
     required: [
       { symbol: 'Fe', qty: 2 },
-      { symbol: 'O', qty: 1 } // Simplified for drafting
+      { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Oxide Decay', desc: 'Deals 100 oxidation damage and corrodes 40 opponent shield.', effect: 'damage', value: 100 }
+    powerup: { name: 'Oxidation Decay', desc: 'Formed when iron reacts with oxygen and water: 4Fe + 3O₂ → 2Fe₂O₃. This is corrosion (rusting). Deals 100 damage.', effect: 'damage', value: 100 }
   },
   {
     id: 'CuSO4',
-    name: 'Copper Sulfate crystals',
+    name: 'Copper(II) Sulfate',
     formula: 'CuSO₄',
     required: [
       { symbol: 'Cu', qty: 1 },
-      { symbol: 'O', qty: 2 } // Simplified
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Vitriol Splash', desc: 'Chalcocyanite vapor acid. Deals 115 damage.', effect: 'damage', value: 115 }
+    powerup: { name: 'Blue Vitriol Splash', desc: 'Forms bright blue crystals when hydrated (CuSO₄·5H₂O). Used in electroplating and as a fungicide. Deals 115 damage.', effect: 'damage', value: 115 }
   },
   {
     id: 'LiCoO2',
-    name: 'Lithium Cobalt Battery Core',
+    name: 'Lithium Cobalt Oxide',
     formula: 'LiCoO₂',
     required: [
       { symbol: 'Li', qty: 1 },
       { symbol: 'Co', qty: 1 },
-      { symbol: 'O', qty: 1 } // Simplified
+      { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Cathode Discharge', desc: 'High-energy electrical short-circuit. Deals 140 electric damage.', effect: 'damage', value: 140 }
+    powerup: { name: 'Cathode Discharge', desc: 'The cathode material in lithium-ion batteries. Li⁺ ions shuttle between electrodes during charge/discharge. Deals 140 electric damage.', effect: 'damage', value: 140 }
   },
   {
     id: 'N2O',
-    name: 'Dinitrogen Monoxide (Laughing Gas)',
+    name: 'Nitrous Oxide (Laughing Gas)',
     formula: 'N₂O',
     required: [
       { symbol: 'N', qty: 2 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Euphoric Stun', desc: 'Inhaling laughing gas dazes the opponent. Stuns the target and heals 50 HP.', effect: 'stun', value: 50 }
+    powerup: { name: 'Euphoric Stun', desc: 'Used as an anesthetic in dentistry. Nitrogen has oxidation state +1 here. Stuns the target and heals 50 HP.', effect: 'stun', value: 50 }
   },
   {
     id: 'H2SO4',
@@ -169,9 +169,9 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'H', qty: 2 },
       { symbol: 'S', qty: 1 },
-      { symbol: 'O', qty: 2 } // Simplified for draft availability
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Vitriolic Deluge', desc: 'Extremely concentrated acid torrent. Bypasses shielding to deal 145 devastating damage.', effect: 'damage', value: 145 }
+    powerup: { name: 'Vitriolic Deluge', desc: 'A strong diprotic acid (donates 2 H⁺). The most widely used industrial chemical. Bypasses shields for 145 damage.', effect: 'damage', value: 145 }
   },
   {
     id: 'CaCO3',
@@ -180,9 +180,9 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'Ca', qty: 1 },
       { symbol: 'C', qty: 1 },
-      { symbol: 'O', qty: 2 } // Simplified
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Calcified Castle', desc: 'A thick, solid chalk-lime barrier. Grants 160 solid Shield points.', effect: 'shield', value: 160 }
+    powerup: { name: 'Calcified Castle', desc: 'Found in limestone, chalk, and marble. Fizzes with acid: CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂. Grants 160 Shield.', effect: 'shield', value: 160 }
   },
   {
     id: 'NaHCO3',
@@ -194,7 +194,7 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'C', qty: 1 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Effervescent fizz', desc: 'Soothing alkaline carbonated surge. Heals 130 HP and provides +40 Shield.', effect: 'heal', value: 135 }
+    powerup: { name: 'Effervescent Fizz', desc: 'Releases CO₂ when heated or mixed with acid, making baked goods rise: NaHCO₃ + HCl → NaCl + H₂O + CO₂↑. Heals 130 HP + 40 Shield.', effect: 'heal', value: 135 }
   },
   {
     id: 'KNO3',
@@ -205,18 +205,18 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'N', qty: 1 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Gunpowder Volley', desc: 'Detonates potassium gunpowder sparklets. Deals 155 explosive kinetic damage.', effect: 'damage', value: 155 }
+    powerup: { name: 'Gunpowder Volley', desc: 'A key ingredient in gunpowder (KNO₃ + C + S). The KNO₃ provides oxygen for rapid combustion. Deals 155 explosive damage.', effect: 'damage', value: 155 }
   },
   {
     id: 'C2H6O',
-    name: 'Ethanol (Ethyl Alcohol)',
-    formula: 'C₂H₆O',
+    name: 'Ethanol',
+    formula: 'C₂H₅OH',
     required: [
       { symbol: 'C', qty: 2 },
-      { symbol: 'H', qty: 2 }, // simplified
+      { symbol: 'H', qty: 2 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Antiseptic Cleansing', desc: 'Pure chemical solvent sterilization. Heals 140 HP and clears stun.', effect: 'heal', value: 140 }
+    powerup: { name: 'Antiseptic Cleansing', desc: 'Produced by fermentation: C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂. Used as a disinfectant (denatures proteins). Heals 140 HP and clears stun.', effect: 'heal', value: 140 }
   },
   {
     id: 'KI',
@@ -226,7 +226,7 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'K', qty: 1 },
       { symbol: 'I', qty: 1 }
     ],
-    powerup: { name: 'Elephant Toothpaste Foam', desc: 'Extremely fast peroxide foam explosion that blinds the opponent. Stuns and deals 80 damage.', effect: 'stun', value: 80 }
+    powerup: { name: 'Iodine Cloud', desc: 'An ionic salt used in radiation protection (blocks radioactive iodine uptake by the thyroid). Stuns and deals 80 damage.', effect: 'stun', value: 80 }
   },
   {
     id: 'MgSO4',
@@ -235,9 +235,9 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'Mg', qty: 1 },
       { symbol: 'S', qty: 1 },
-      { symbol: 'O', qty: 2 } // simplified
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Therapeutic Soak', desc: 'Muscle relaxing alchemical mineral bath. Heals 150 HP.', effect: 'heal', value: 150 }
+    powerup: { name: 'Therapeutic Soak', desc: 'Epsom salt dissolves to release Mg²⁺ and SO₄²⁻ ions. Mg is essential for enzyme function in the body. Heals 150 HP.', effect: 'heal', value: 150 }
   },
   {
     id: 'KMnO4',
@@ -246,19 +246,19 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'K', qty: 1 },
       { symbol: 'Mn', qty: 1 },
-      { symbol: 'O', qty: 1 } // simplified
+      { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Deep Purple Oxidation', desc: 'Vibrant violet flash that decays organic material. Deals 135 damage.', effect: 'damage', value: 135 }
+    powerup: { name: 'Deep Purple Oxidation', desc: 'A powerful oxidizer. Mn has oxidation state +7, making it a strong electron acceptor. Used to treat water. Deals 135 damage.', effect: 'damage', value: 135 }
   },
   {
     id: 'H2O2',
-    name: 'Hydrogen Peroxide (Sterilizer)',
+    name: 'Hydrogen Peroxide',
     formula: 'H₂O₂',
     required: [
       { symbol: 'H', qty: 2 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Foaming Disinfection', desc: 'Active bubbling oxygen. Heals 145 HP and provides 25 Shield.', effect: 'heal', value: 145 }
+    powerup: { name: 'Foaming Disinfection', desc: 'Decomposes into water and oxygen: 2H₂O₂ → 2H₂O + O₂. The bubbling action cleans wounds. Heals 145 HP + 25 Shield.', effect: 'heal', value: 145 }
   },
   {
     id: 'HF',
@@ -268,7 +268,7 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'H', qty: 1 },
       { symbol: 'F', qty: 1 }
     ],
-    powerup: { name: 'Glass Etchant', desc: 'Highly corrosive, non-metal piercing fluoride stream. Deals 130 direct damage and stuns the opponent.', effect: 'stun', value: 130 }
+    powerup: { name: 'Glass Etchant', desc: 'The only acid that dissolves glass (SiO₂). A weak acid but extremely dangerous—penetrates tissue. Deals 130 damage and stuns.', effect: 'stun', value: 130 }
   },
   {
     id: 'H2CO3',
@@ -277,9 +277,9 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'H', qty: 1 },
       { symbol: 'C', qty: 1 },
-      { symbol: 'O', qty: 1 } // simplified
+      { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Carbonated Splash', desc: 'Sparks carbonated soda fizz. Deals 95 damage and regenerates 40 health.', effect: 'heal', value: 95 }
+    powerup: { name: 'Carbonated Splash', desc: 'Forms when CO₂ dissolves in water: CO₂ + H₂O ⇌ H₂CO₃. Gives soda its fizz. A weak acid. Deals 95 damage and heals 40 HP.', effect: 'heal', value: 95 }
   },
   {
     id: 'CaO',
@@ -289,7 +289,7 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'Ca', qty: 1 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Exothermic Lime Slurry', desc: 'Violently boils upon water contact. Deals 110 thermal damage.', effect: 'damage', value: 110 }
+    powerup: { name: 'Exothermic Slaking', desc: 'Reacting with water (slaking) is highly exothermic: CaO + H₂O → Ca(OH)₂ + heat. Used in limelight. Deals 110 thermal damage.', effect: 'damage', value: 110 }
   },
   {
     id: 'NaClO',
@@ -300,7 +300,7 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
       { symbol: 'Cl', qty: 1 },
       { symbol: 'O', qty: 1 }
     ],
-    powerup: { name: 'Chlorine Disinfectant', desc: 'Pungent chlorine wash that clears all buffs and inflicts 120 damage.', effect: 'damage', value: 120 }
+    powerup: { name: 'Chlorine Disinfectant', desc: 'The active ingredient in bleach. Cl has oxidation state +1, making it a strong oxidizer that kills bacteria. Deals 120 damage.', effect: 'damage', value: 120 }
   },
   {
     id: 'H3PO4',
@@ -308,19 +308,19 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     formula: 'H₃PO₄',
     required: [
       { symbol: 'P', qty: 1 },
-      { symbol: 'O', qty: 2 } // simplified
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Acidic Rust Remover', desc: 'Concentrated phosphor acid jet. Corrodes 60 Shield and deals 100 damage.', effect: 'damage', value: 100 }
+    powerup: { name: 'Acidic Rust Remover', desc: 'A weak triprotic acid (donates 3 H⁺). Used in cola drinks and as a rust remover. Corrodes 60 Shield and deals 100 damage.', effect: 'damage', value: 100 }
   },
   {
     id: 'SO2',
-    name: 'Sulfur Dioxide Gas',
+    name: 'Sulfur Dioxide',
     formula: 'SO₂',
     required: [
       { symbol: 'S', qty: 1 },
       { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Volcanic Smog', desc: 'Suffocating dense volcanic smog. Deals 115 damage and stuns for 1 turn.', effect: 'stun', value: 115 }
+    powerup: { name: 'Volcanic Smog', desc: 'Produced by burning sulfur or volcanic activity. Dissolves in water to form sulfurous acid (H₂SO₃). Deals 115 damage and stuns.', effect: 'stun', value: 115 }
   },
   {
     id: 'HNO3',
@@ -329,29 +329,29 @@ const FAMOUS_RECIPES: CompoundRecipe[] = [
     required: [
       { symbol: 'H', qty: 1 },
       { symbol: 'N', qty: 1 },
-      { symbol: 'O', qty: 2 } // simplified
+      { symbol: 'O', qty: 2 }
     ],
-    powerup: { name: 'Gold Dissolving Aqua', desc: 'Corrosive laboratory oxidizer that bypasses shields to deal 135 raw damage.', effect: 'damage', value: 135 }
+    powerup: { name: 'Aqua Regia Dissolve', desc: 'A strong oxidizing acid. Mixed with HCl it forms aqua regia, one of the few solutions that dissolves gold. Bypasses shields for 135 damage.', effect: 'damage', value: 135 }
   },
   {
     id: 'FeS2',
-    name: 'Iron Pyrite (Fools Gold)',
+    name: 'Iron Pyrite (Fool\'s Gold)',
     formula: 'FeS₂',
     required: [
       { symbol: 'Fe', qty: 1 },
       { symbol: 'S', qty: 2 }
     ],
-    powerup: { name: 'Sparking Pyrite Slag', desc: 'Glistening brass-yellow crystal strike. Deals 100 damage and shields 50 HP.', effect: 'shield', value: 100 }
+    powerup: { name: 'Pyrite Spark', desc: 'Often mistaken for gold due to its brass-yellow metallic luster. Contains S₂²⁻ disulfide anions. Deals 100 damage + 50 Shield.', effect: 'shield', value: 100 }
   },
   {
     id: 'AuCl3',
-    name: 'Gold Trichloride',
+    name: 'Gold(III) Chloride',
     formula: 'AuCl₃',
     required: [
       { symbol: 'Au', qty: 1 },
-      { symbol: 'Cl', qty: 2 } // simplified
+      { symbol: 'Cl', qty: 2 }
     ],
-    powerup: { name: 'Aurum Auric Strike', desc: 'Precious heavy metal catalyst. Deals 145 devastating impact damage.', effect: 'damage', value: 145 }
+    powerup: { name: 'Auric Strike', desc: 'Gold in the +3 oxidation state. Used in catalysis and gold plating. Au is so unreactive it needs strong oxidizers to form compounds. Deals 145 damage.', effect: 'damage', value: 145 }
   }
 ];
 
@@ -448,119 +448,118 @@ export const generateAllCompounds = (allElements: ElementCard[]): CompoundRecipe
         powerupValue = 150;
       }
     } else if (cat === 'alkali') {
-      // Alkali metals: highly reactive, violently combustible with water or acidic halogens!
-      // Forms salts and metal hydroxides
+      // Alkali metals: Group 1, have 1 valence electron, violently reactive with water
       if (num % 2 === 0) {
         name = `${el.name} Hydroxide`;
         formula = `${sym}OH`;
         required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 }, { symbol: 'H', qty: 1 });
-        powerupName = `${sym}-Base Corrosion`;
-        powerupDesc = `Strong caustic alkali base solution. Dissolves organic armor dealing 115 damage.`;
+        powerupName = `${sym}-Base Reaction`;
+        powerupDesc = `Group 1 alkali metal + water → ${sym}OH + H₂↑. Strong base that dissociates ${sym}⁺ + OH⁻. Deals 115 damage.`;
         powerupValue = 115;
       } else {
         name = `${el.name} Chloride`;
         formula = `${sym}Cl`;
         required.push({ symbol: sym, qty: 1 }, { symbol: 'Cl', qty: 1 });
-        powerupName = `${sym}-Ionic Blast`;
-        powerupDesc = `Unstable alkali metal halide. Crushes defense, dealing 110 burst damage and healing 20 HP.`;
+        powerupName = `${sym}-Ionic Salt`;
+        powerupDesc = `Alkali metal transfers 1 electron to chlorine: ${sym} → ${sym}⁺ + e⁻, Cl + e⁻ → Cl⁻. Ionic bond forms stable salt. Deals 110 damage.`;
         powerupValue = 110;
         powerupEffect = 'damage';
       }
     } else if (cat === 'alkaline') {
-      // Alkaline earth metals: forms brilliant oxide shields and halide salts!
+      // Alkaline earth metals: Group 2, have 2 valence electrons
       if (num % 2 === 0) {
         name = `${el.name} Oxide`;
         formula = `${sym}O`;
         required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 });
-        powerupName = `${sym}-Thermal Flare`;
-        powerupDesc = `Extremely thermal magnesium-style oxide flash. Grants 110 Shield and deals 40 damage.`;
+        powerupName = `${sym}-Oxide Shield`;
+        powerupDesc = `Group 2 metal burns in oxygen: 2${sym} + O₂ → 2${sym}O. Forms basic oxides. Grants 110 Shield.`;
         powerupEffect = 'shield';
         powerupValue = 110;
       } else {
         name = `${el.name} Chloride`;
         formula = `${sym}Cl₂`;
         required.push({ symbol: sym, qty: 1 }, { symbol: 'Cl', qty: 2 });
-        powerupName = `${sym}-Saline Wave`;
-        powerupDesc = `Bouncy alkaline salt splash. Deals 110 splash damage.`;
+        powerupName = `${sym}-Salt Wave`;
+        powerupDesc = `Group 2 metal loses 2 electrons to form ${sym}²⁺. Ionic salt dissolves in water. Deals 110 damage.`;
         powerupValue = 110;
       }
     } else if (cat === 'halogen') {
-      // Halogens: super reactive, forms volatile haloacids and salts!
+      // Halogens: Group 17, have 7 valence electrons, need 1 more for full shell
       name = `Hydrogen ${el.name === 'Astatine' ? 'Astatide' : el.name === 'Tennessine' ? 'Tennesside' : el.name.replace(/ine$/, 'ide')}`;
       formula = `H${sym}`;
       required.push({ symbol: 'H', qty: 1 }, { symbol: sym, qty: 1 });
-      powerupName = `${sym}-Halogen Acid`;
-      powerupDesc = `Volatile haloacid spray. Deals 120 caustic damage and corrodes shielding.`;
+      powerupName = `${sym}-Hydrohalic Acid`;
+      powerupDesc = `Group 17 halogen gains 1 electron from H to complete its outer shell. Forms hydrohalic acid (H⁺ + ${sym}⁻). Deals 120 damage.`;
       powerupValue = 120;
     } else if (cat === 'metalloid') {
-      // Metalloid: forms covalent oxide glass shields
+      // Metalloids: elements with properties between metals and nonmetals
       name = `${el.name} Dioxide`;
       formula = `${sym}O₂`;
       required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 2 });
-      powerupName = `${sym}-Glass Barrier`;
-      powerupDesc = `High-durability semi-conductive metalloid glass. Generates 130 Shield.`;
+      powerupName = `${sym}-Semiconductor Barrier`;
+      powerupDesc = `Metalloids form covalent networks with oxygen. Semi-conductive properties make them useful in electronics. Grants 130 Shield.`;
       powerupEffect = 'shield';
       powerupValue = 130;
     } else if (cat === 'nonmetal') {
-      // Nonmetals: forms oxides or hydrides
-      if (num === 7) { // Nitrogen already covered in NH3, or let's make diatomic Nitrogen N2!
-        name = 'Diatomic Nitrogen Gas';
+      // Nonmetals: form covalent molecules by sharing electrons
+      if (num === 7) {
+        name = 'Diatomic Nitrogen';
         formula = 'N₂';
         required.push({ symbol: 'N', qty: 2 });
         powerupName = 'Cryogenic Deep Freeze';
-        powerupDesc = 'Pours liquid nitrogen spray. Stuns the target for 1 turn.';
+        powerupDesc = 'N₂ forms a triple bond (N≡N), one of the strongest bonds. Liquid N₂ boils at -196°C. Stuns for 1 turn.';
         powerupEffect = 'stun';
         powerupValue = 1;
       } else {
         name = `${el.name} Hydride`;
         formula = `${sym}H₄`;
-        required.push({ symbol: sym, qty: 1 }, { symbol: 'H', qty: 2 }); // Simplified
+        required.push({ symbol: sym, qty: 1 }, { symbol: 'H', qty: 2 });
         powerupName = `${sym}-Covalent Burst`;
-        powerupDesc = `Volatile organic hydride combusts, dealing 110 damage.`;
+        powerupDesc = `Nonmetals share electrons covalently with hydrogen. ${sym}-H bonds release energy when combusted. Deals 110 damage.`;
         powerupValue = 110;
       }
     } else {
-      // Transition metals, Lanthanides, and Actinides: Forms versatile metallic salts & oxides!
+      // Transition metals, Lanthanides, and Actinides
       if (num >= 89 && num <= 103) {
-        // Actinides: highly radioactive!
-        name = `${el.name} Oxide Catalyst`;
+        // Actinides: radioactive elements with unstable nuclei
+        name = `${el.name} Oxide`;
         formula = `${sym}O₂`;
         required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 2 });
-        powerupName = `${sym}-Rad Fission`;
-        powerupDesc = `Heavy radioactive actinide disintegration. Deals 145 raw cosmic fission damage.`;
+        powerupName = `${sym}-Fission`;
+        powerupDesc = `Actinides have unstable nuclei that undergo radioactive decay. Their oxides are used in nuclear fuel. Deals 145 damage.`;
         powerupValue = 145;
       } else if (num >= 57 && num <= 71) {
-        // Lanthanides: rare earths!
-        name = `${el.name} Oxide glass`;
+        // Lanthanides: rare earth elements with similar properties
+        name = `${el.name} Oxide`;
         formula = `${sym}₂O₃`;
-        required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 }); // Simplified
+        required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 });
         powerupName = `${sym}-Phosphor Shield`;
-        powerupDesc = `Luminescent rare earth oxide barrier. Repairs cells to heal 100 HP and adds 40 Shield.`;
+        powerupDesc = `Lanthanide oxides produce vivid colors in LEDs and phosphors. Their 4f electrons absorb and emit light. Heals 100 HP + 40 Shield.`;
         powerupEffect = 'heal';
         powerupValue = 100;
       } else {
-        // General Transition metals (Fe, Cu, Zn, Ag, Au, Pt, Ti, etc.)
+        // Transition metals: variable oxidation states, form colored compounds
         if (num % 3 === 0) {
-          name = `${el.name} Chloride compound`;
+          name = `${el.name} Chloride`;
           formula = `${sym}Cl₂`;
-          required.push({ symbol: sym, qty: 1 }, { symbol: 'Cl', qty: 1 }); // Simplified
-          powerupName = `${sym}-Spark Sparks`;
-          powerupDesc = `Metal halide salt sparks. Deals 110 impact damage.`;
+          required.push({ symbol: sym, qty: 1 }, { symbol: 'Cl', qty: 1 });
+          powerupName = `${sym}-Halide Strike`;
+          powerupDesc = `Transition metals form colored ionic compounds with variable oxidation states. ${sym} chloride is a common salt. Deals 110 damage.`;
           powerupValue = 110;
         } else if (num % 3 === 1) {
-          name = `${el.name} Oxide film`;
+          name = `${el.name} Oxide`;
           formula = `${sym}O`;
           required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 });
           powerupName = `${sym}-Passivation Shield`;
-          powerupDesc = `Oxidized metallic passivation crust. Grants a dense 120 HP shield.`;
+          powerupDesc = `Many transition metals form a protective oxide layer (passivation) that prevents further corrosion. Grants 120 Shield.`;
           powerupEffect = 'shield';
           powerupValue = 120;
         } else {
-          name = `${el.name} Sulfate crystal`;
+          name = `${el.name} Sulfate`;
           formula = `${sym}SO₄`;
-          required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 }); // Simplified with Oxygen for draft feasibility
-          powerupName = `${sym}-Catalytic Flash`;
-          powerupDesc = `Sulfate metallic catalyst enhances cells. Heals 120 HP.`;
+          required.push({ symbol: sym, qty: 1 }, { symbol: 'O', qty: 1 });
+          powerupName = `${sym}-Catalytic Heal`;
+          powerupDesc = `Transition metal sulfates often act as catalysts. Their d-electrons facilitate electron transfer reactions. Heals 120 HP.`;
           powerupEffect = 'heal';
           powerupValue = 120;
         }
@@ -589,67 +588,68 @@ export const generateAllCompounds = (allElements: ElementCard[]): CompoundRecipe
     const cat = el.category;
     const num = el.number;
     
-    let name = `Pure Elemental ${el.name}`;
+    let name = `Pure ${el.name}`;
     let formula = sym;
-    let powerupName = `${sym}-Atomic Overdrive`;
-    let powerupDesc = `Gorgeously aligned dense molecular crystal of ${el.name}. Fires a coherent energy wave for ${80 + (num % 30)} damage.`;
+    let powerupName = `${sym}-Atomic Strike`;
+    let powerupDesc = `Pure ${el.name} (atomic number ${num}) in its elemental form. Deals ${80 + (num % 30)} damage.`;
     let effect: 'damage' | 'heal' | 'shield' | 'stun' | 'evade' = 'damage';
     let value = 80 + (num % 30);
 
     if (cat === 'noble') {
-      name = `Monatomic ${el.name} Gas`;
+      name = `Monatomic ${el.name}`;
       formula = sym;
-      powerupName = `${el.name} Auroral Flash`;
-      powerupDesc = `High-energy excited plasma of noble ${el.name}. Discharges solar photons, curing stuns and healing 100 HP.`;
+      powerupName = `${el.name} Plasma Flash`;
+      powerupDesc = `Noble gases have full outer electron shells, making them unreactive. When electrically excited, they glow (neon signs). Heals 100 HP.`;
       effect = 'heal';
       value = 100;
     } else if (['H', 'N', 'O', 'F', 'Cl', 'Br', 'I'].includes(sym)) {
-      name = `Diatomic ${el.name} Gas`;
+      name = `Diatomic ${el.name}`;
       formula = `${sym}₂`;
-      powerupName = `${el.name} Halogen Blast`;
-      powerupDesc = `High-affinity diatomic ${el.name} covalent molecules release energy. Deals ${90 + (num % 15)} damage.`;
+      powerupName = `${el.name}₂ Covalent Bond`;
+      powerupDesc = `Many nonmetals exist as diatomic molecules (${sym}₂) sharing electrons in covalent bonds. Deals ${90 + (num % 15)} damage.`;
     } else if (sym === 'C') {
-      name = `Allotropic Carbon Crystal`;
+      name = `Carbon (Diamond)`;
       formula = `C`;
       powerupName = `Diamond Lattice Strike`;
-      powerupDesc = `Indestructible covalent carbon diamond armor. Deals 110 damage and adds 40 Shield.`;
+      powerupDesc = `Each C atom bonds to 4 others in a tetrahedral giant covalent structure. Diamond is the hardest natural substance. Deals 110 damage.`;
       value = 110;
     } else if (sym === 'S') {
-      name = `Octasulfur Ring`;
+      name = `Sulfur (S₈ Ring)`;
       formula = `S₈`;
-      powerupName = `Chalcogen Volatility`;
-      powerupDesc = `Fused yellow octasulfur rings combust rapidly. Deals 120 corrosive fire damage.`;
+      powerupName = `S₈ Crown Combustion`;
+      powerupDesc = `Sulfur atoms form S₈ ring molecules (crown-shaped). Burns with a blue flame: S + O₂ → SO₂. Deals 120 damage.`;
       value = 120;
     } else if (sym === 'P') {
-      name = `Tetraphosphorus Molecule`;
+      name = `White Phosphorus (P₄)`;
       formula = `P₄`;
-      powerupName = `Allotropic Flame`;
-      powerupDesc = `Highly reactive white phosphorus tetramers ignite on air. Stuns target and deals 80 damage.`;
+      powerupName = `P₄ Ignition`;
+      powerupDesc = `White phosphorus is so reactive it ignites spontaneously in air. P₄ molecules form tetrahedra. Stuns and deals 80 damage.`;
       effect = 'stun';
       value = 80;
     } else if (cat === 'metalloid') {
-      name = `Crystalline ${el.name} Metalloid`;
+      name = `Crystalline ${el.name}`;
       formula = sym;
       powerupName = `${sym}-Semiconductor Wave`;
-      powerupDesc = `Tuned metalloid crystal regulates energy. Grants a solid 110 HP shield.`;
+      powerupDesc = `Metalloids have intermediate conductivity—insulators at low temperature, conductors when doped. Used in transistors. Grants 110 Shield.`;
       effect = 'shield';
       value = 110;
     } else if (cat === 'alkali') {
-      name = `Solid ${el.name} Metallic Core`;
+      name = `Solid ${el.name}`;
       formula = sym;
-      powerupName = `${sym}-Exothermic Fission`;
-      powerupDesc = `Soft alkali metal lattice reacts with atmospheric moisture. Deals 110 explosive damage.`;
+      powerupName = `${sym}-Water Reaction`;
+      powerupDesc = `Group 1 alkali metals react violently with water: 2${sym} + 2H₂O → 2${sym}OH + H₂↑ + heat. Soft enough to cut with a knife. Deals 110 damage.`;
     } else if (cat === 'alkaline') {
-      name = `Solid ${el.name} Metal Shield`;
+      name = `Solid ${el.name}`;
       formula = sym;
-      powerupName = `${sym}-Alkaline Defense`;
-      powerupDesc = `Light alkaline earth metal passivation layer. Grants 120 Shield.`;
+      powerupName = `${sym}-Oxide Layer`;
+      powerupDesc = `Group 2 metals are less reactive than Group 1 but still form oxides readily. Burn with characteristic flame colors. Grants 120 Shield.`;
       effect = 'shield';
       value = 120;
     } else {
-      name = `Solid ${el.name} Metallic Lattice`;
+      name = `Solid ${el.name}`;
       formula = sym;
-      powerupName = `${sym}-Alloy Impact`;
+      powerupName = `${sym}-Metallic Strike`;
+      powerupDesc = `Transition metals have delocalized d-electrons, giving them high melting points, conductivity, and variable oxidation states.`;
     }
 
     list.push({
