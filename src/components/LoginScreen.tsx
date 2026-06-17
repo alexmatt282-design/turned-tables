@@ -39,20 +39,25 @@ export function LoginScreen() {
 
   return (
 
-<div className="relative w-full max-w-5xl">
+<div className="relative min-h-screen ...">
+  <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
+<div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+<div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
   <div className="text-center mb-10">
     <div className="flex justify-center mb-4">
-      <div className="animate-pulse rounded-full bg-cyan-500/20 p-6">
+      <div className="animate-pulse rounded-full bg-cyan-500/10 p-8 border border-cyan-400/20 shadow-[0_0_60px_rgba(34,211,238,0.35)]">
         <Sparkles className="w-12 h-12 text-cyan-400" />
       </div>
     </div>
 
-    <h1 className="text-5xl font-bold tracking-wide">
+   <h1 className="text-6xl md:text-7xl font-black tracking-[0.25em] text-white drop-shadow-lg">
       TURNED TABLES
     </h1>
 
     <p className="text-cyan-300 text-xl mt-2">
       Explorer Academy Portal
+      <p className="text-cyan-400 uppercase tracking-[0.3em] text-sm mt-3">
+        Strategic Elemental Combat
     </p>
 
     <p className="text-slate-400 mt-4 max-w-xl mx-auto">
