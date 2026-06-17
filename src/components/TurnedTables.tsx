@@ -1,19 +1,18 @@
 import { supabase } from '../lib/supabase';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, AlertTriangle, 
-  RefreshCw, Check, X, HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play,
-  MessageSquare, Award, User, Crown, Send, Dices, Lock
-} from 'lucide-react';
+import { ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, TriangleAlert as AlertTriangle, RefreshCw, Check, X, Circle as HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play, MessageSquare, Award, User, Crown, Send, Dices, Lock } from 'lucide-react';
 import audio from '../utils/audio';
 import { generateAllCompounds } from '../data/compoundsData';
+import { MultiplayerLobby } from './MultiplayerLobby';
+import type { RoomMode, RoomPlayer } from '../lib/multiplayer';
 
 interface TurnedTablesProps {
   onBack: () => void;
   onAddStars: (amount: number) => void;
   stars: number;
   level: number;
+  userId?: string;
 }
 
 // Full-featured Type Definitions
@@ -609,7 +608,7 @@ interface Friend {
   };
 }
 
-export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars }) => {
+export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars, userId }) => {
   // Profile, Quests, Badges & Skins States (Local Storage Persistent)
   const [userXP, setUserXP] = useState<number>(() => {
     const saved = localStorage.getItem('tt_user_xp');
@@ -735,6 +734,11 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const [lobbyChat, setLobbyChat] = useState<Array<{ sender: string; avatar: string; text: string; time: string; isUser?: boolean }>>([]);
   const [chatMessageInput, setChatMessageInput] = useState<string>('');
   const [matchmakingTimer, setMatchmakingTimer] = useState<number>(8);
+
+  // Real multiplayer lobby
+  const [showMultiplayerLobby, setShowMultiplayerLobby] = useState(false);
+  const [multiplayerRoomId, setMultiplayerRoomId] = useState<string | null>(null);
+  const [multiplayerMode, setMultiplayerMode] = useState<RoomMode>('1v1');
 
   const [quests, setQuests] = useState<Array<{ id: string; title: string; current: number; target: number; xpReward: number; isWeekly: boolean; completed: boolean }>>([
     { id: 'q_draft_noble', title: 'Collect a Noble Gas element card', current: 0, target: 1, xpReward: 100, isWeekly: false, completed: false },
@@ -1160,6 +1164,62 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     setP1IsStunned(false);
     setP2IsStunned(false);
     setBattleLog(['Periodic Table open. Choose an element card to claim!']);
+  };
+
+  // Handle starting a multiplayer game from the lobby
+  const handleMultiplayerStart = (roomId: string, mode: RoomMode, roomPlayers: RoomPlayer[]) => {
+    audio.playGrandCheer();
+    setMultiplayerRoomId(roomId);
+    setMultiplayerMode(mode);
+    setShowMultiplayerLobby(false);
+    setVsBot(false);
+
+    const userPlayer = roomPlayers.find(p => p.user_id === userId);
+    const opponent = roomPlayers.find(p => p.user_id !== userId);
+    const userTeam = userPlayer?.team || 'cyan';
+    const oppTeam = userTeam === 'cyan' ? 'amber' : 'cyan';
+
+    setPlayer1({
+      id: 1,
+      name: userPlayer ? `Explorer ${userPlayer.user_id.slice(0, 4)}` : 'Cyan Force',
+      hp: 500,
+      shield: 0,
+      deck: [],
+      compounds: [],
+      score: 0,
+    });
+    setPlayer2({
+      id: 2,
+      name: opponent ? `Explorer ${opponent.user_id.slice(0, 4)}` : 'Amber Glow',
+      hp: 500,
+      shield: 0,
+      deck: [],
+      compounds: [],
+      score: 0,
+    });
+
+    isRoundTransitioningRef.current = false;
+    setP1RoundWins(0);
+    setP2RoundWins(0);
+    setCurrentRound(1);
+    setP1SynthesizedThisRound(false);
+    setP2SynthesizedThisRound(false);
+    setUsedElementNumbers([]);
+    setSynthStage(1);
+    setP1Cooldowns({});
+    setP2Cooldowns({});
+    setLastWinnerLineup(null);
+    setShowWinnerLineupMenu(false);
+    setUnclaimedElements(ELEMENTS_DB);
+    setSideDeck([]);
+    setClaimedBy({});
+    setCurrentTurn(1);
+    setPlayMode('draft');
+    setBattleWinner(null);
+    setP1IsStunned(false);
+    setP2IsStunned(false);
+    setBattleLog([`Multiplayer ${mode} battle! Periodic Table open. Choose an element card to claim!`]);
+    progressQuest('q_play_online', 1);
   };
 
   // Handle Element Slot Clicks during Draft Stage
@@ -2687,7 +2747,14 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         )}
 
         {/* ========================================= SETUP PAGE ========================================= */}
-        {playMode === 'setup' && (
+        {playMode === 'setup' && showMultiplayerLobby && userId && (
+          <MultiplayerLobby
+            userId={userId}
+            onGameStart={handleMultiplayerStart}
+            onBack={() => setShowMultiplayerLobby(false)}
+          />
+        )}
+        {playMode === 'setup' && !showMultiplayerLobby && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -3302,33 +3369,33 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       </span>
                     </button>
 
-                    {/* 4. Simulated online lobby */}
+                    {/* 4. Online PvP - Real multiplayer */}
                     <button
-                      onClick={() => { audio.playPop(); setMatchmakingMode('1v1'); }}
+                      onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
                       id="matchmake-1v1-btn"
                       className="w-full p-4 hover:shadow-md bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100/50 border-2 border-emerald-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
                     >
                       <div>
-                        <span className="font-extrabold text-emerald-950 text-sm block">ONLINE QUICK DUEL PVP</span>
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-0.5">SIMULATED WEBSOCKET DUO QUEUE</span>
+                        <span className="font-extrabold text-emerald-950 text-sm block">ONLINE PVP DUEL</span>
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-0.5">REAL-TIME MULTIPLAYER 1V1</span>
                       </div>
                       <span className="p-1 px-3 bg-emerald-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Queue PVP
+                        Play Online
                       </span>
                     </button>
 
-                    {/* 5. Team 3v3 mode */}
+                    {/* 5. Team 3v3 mode - Real multiplayer */}
                     <button
-                      onClick={() => { audio.playPop(); setMatchmakingMode('3v3'); }}
+                      onClick={() => { audio.playPop(); setShowMultiplayerLobby(true); }}
                       id="matchmake-3v3-btn"
                       className="w-full p-4 hover:shadow-md bg-gradient-to-r from-indigo-50 to-pink-50 hover:from-pink-100/50 border-2 border-pink-200 rounded-2xl cursor-pointer text-left flex items-center justify-between transition-all group"
                     >
                       <div>
                         <span className="font-extrabold text-indigo-950 text-sm block">3V3 TEAM CO-OP BATTLE</span>
-                        <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest mt-0.5">CO-OP CHAT AND wait-LOBBY COHORTS</span>
+                        <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest mt-0.5">REAL-TIME TEAM LOBBY WITH CHAT</span>
                       </div>
                       <span className="p-1 px-3 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase group-hover:scale-105 transition-transform">
-                        Queue 3V3
+                        Play 3V3
                       </span>
                     </button>
                   </div>

@@ -129,6 +129,7 @@ export default function App() {
       onAddStars={handleAddStars}
       stars={stars}
       level={level}
+      userId={user.id}
     />
   );
 }
