@@ -32,36 +32,105 @@ export function LoginScreen() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background:
-          'linear-gradient(180deg, #07111f 0%, #0d1f33 50%, #08111a 100%)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        color: 'white',
-        fontFamily: 'Arial, sans-serif',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 500,
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(120,220,255,0.25)',
-          borderRadius: 16,
-          padding: 32,
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 0 30px rgba(0,180,255,0.15)',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ fontSize: 48, marginBottom: 10 }}>
-          ⚛️
-        </div>
 
+<div className="relative w-full max-w-5xl">
+  <div className="text-center mb-10">
+    <div className="flex justify-center mb-4">
+      <div className="animate-pulse rounded-full bg-cyan-500/20 p-6">
+        <Sparkles className="w-12 h-12 text-cyan-400" />
+      </div>
+    </div>
+
+    <h1 className="text-5xl font-bold tracking-wide">
+      TURNED TABLES
+    </h1>
+
+    <p className="text-cyan-300 text-xl mt-2">
+      Explorer Academy Portal
+    </p>
+
+    <p className="text-slate-400 mt-4 max-w-xl mx-auto">
+      Continue your scientific journey, unlock new discoveries,
+      earn XP, collect badges, and build your legacy within
+      the Academy.
+    </p>
+  </div>
+
+  <div className="grid md:grid-cols-3 gap-6">
+    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <Trophy className="w-5 h-5 text-yellow-400" />
+        <h2 className="font-semibold">Monthly Challenge</h2>
+      </div>
+
+      <p className="text-slate-300 text-sm">
+        Dr. Quark has developed a new strategy.
+        Defeat him this month for bonus XP and
+        exclusive rewards.
+      </p>
+    </div>
+
+    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <BookOpen className="w-5 h-5 text-cyan-400" />
+        <h2 className="font-semibold">Academy News</h2>
+      </div>
+
+      <ul className="text-slate-300 text-sm space-y-2">
+        <li>• Account progression is now online.</li>
+        <li>• XP synchronization arriving soon.</li>
+        <li>• New cosmetics under development.</li>
+      </ul>
+    </div>
+
+    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <Shield className="w-5 h-5 text-emerald-400" />
+        <h2 className="font-semibold">Explorer Account</h2>
+      </div>
+
+      <p className="text-slate-300 text-sm">
+        Your progress, badges, skins, XP, and
+        future rewards are tied to your Academy
+        account.
+      </p>
+    </div>
+  </div>
+
+  <div className="mt-8 bg-slate-900/80 border border-cyan-900 rounded-2xl p-6 max-w-lg mx-auto">
+    <form onSubmit={handleLogin}>
+      <label className="block text-sm text-slate-400 mb-2">
+        Researcher Email Address
+      </label>
+
+      <input
+        type="email"
+        placeholder="you@example.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-cyan-500"
+      />
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full mt-4 flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 transition rounded-xl py-3 font-semibold"
+      >
+        <Send className="w-4 h-4" />
+        {loading
+          ? 'Sending Academy Link...'
+          : 'Enter Explorer Academy'}
+      </button>
+    </form>
+
+    {message && (
+      <div className="mt-4 text-center text-cyan-300 text-sm">
+        {message}
+      </div>
+    )}
+  </div>
+</div>
         <h1
           style={{
             margin: 0,
