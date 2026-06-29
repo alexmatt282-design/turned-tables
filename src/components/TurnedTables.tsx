@@ -4083,352 +4083,282 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
         {/* ========================================= BATTLE ARENA ========================================= */}
         {playMode === 'battle' && (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            {/* DYNAMIC BATTLE STAGE - Characters face off with projectiles */}
-            <div className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 rounded-2xl border-2 border-cyan-500/40 overflow-hidden" style={{ minHeight: '320px' }}>
-
-              {/* Animated grid background */}
-              <div className="absolute inset-0 opacity-15" style={{
-                backgroundImage: 'linear-gradient(rgba(34,211,238,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.2) 1px, transparent 1px)',
-                backgroundSize: '32px 32px'
-              }} />
-
-              {/* Floating particles */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1.5 h-1.5 bg-cyan-400/30 rounded-full"
-                  style={{ left: `${15 + i * 10}%`, top: `${20 + (i * 7) % 40}%` }}
-                  animate={{ y: [-5, 5, -5], opacity: [0.3, 0.7, 0.3] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.4 }}
-                />
-              ))}
-
-              {/* Round indicator */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
-                <div className="bg-slate-800/90 border border-cyan-500/60 rounded-full px-5 py-2 flex items-center gap-3">
-                  <Zap className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-black text-white">Round {currentRound}/5</span>
-                  <div className="flex gap-1.5 ml-2">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className={`w-3 h-3 rounded-full border ${i < p1RoundWins ? 'bg-cyan-400 border-cyan-300' : i < p1RoundWins + p2RoundWins ? 'bg-amber-400 border-amber-300' : 'bg-slate-700 border-slate-600'}`} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* BATTLE CHARACTERS */}
-              <div className="relative flex justify-between items-center px-6 sm:px-12 pt-20 pb-4">
-
-                {/* === PLAYER 1 (LEFT) === */}
-                <motion.div
-                  className="relative flex flex-col items-center"
-                  animate={p1AnimState === 'attack' ? { x: [0, 40, 0] } : p1AnimState === 'hurt' ? { x: [0, -15, 8, 0], rotate: [0, -5, 3, 0] } : {}}
-                  transition={{ duration: 0.5 }}
-                >
-                  {/* Glow ring */}
-                  <div className={`absolute inset-0 scale-150 blur-2xl rounded-full transition-colors duration-300 ${
-                    p1AnimState === 'hurt' ? 'bg-red-500/60' : p1AnimState === 'attack' ? 'bg-cyan-500/50' : 'bg-cyan-500/30'
-                  }`} />
-
-                  {/* Character */}
-                  <div className={`relative transition-all duration-200 ${p1AnimState === 'hurt' ? 'brightness-125 grayscale' : ''} ${p1IsStunned ? 'opacity-50 blur-sm' : ''}`}>
-                    <PixelCharacter
-                      skin={activeSkin}
-                      clothing={charClothing}
-                      accessory={charAccessory}
-                      hair={charHair}
-                      facial={charFacial}
-                      skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
-                      size="lg"
-                    />
-                  </div>
-
-                  {/* Name + HP bar */}
-                  <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-36 text-center">
-                    <span className="text-xs font-black text-cyan-400 uppercase tracking-wider">{player1.name}</span>
-                    {p1IsStunned && <span className="ml-2 text-[10px] text-purple-400 font-black animate-pulse">FROZEN</span>}
-
-                    <div className="mt-1.5 h-3 bg-slate-800 rounded-full overflow-hidden border border-cyan-500/50">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full"
-                        animate={{ width: `${(player1.hp / 500) * 100}%` }}
-                        transition={{ duration: 0.3 }}
+            {/* Main Stage (Left / 8 grid cols) */}
+            <div className="lg:col-span-8 space-y-6">
+              
+              {/* Visual Health panel of fighters */}
+              <div className="grid grid-cols-2 gap-4">
+                
+                {/* Player 1 Card HUD */}
+                <div className={`bg-white border-2 p-5 rounded-3xl shadow-sm transition-all ${currentTurn === 1 ? 'border-cyan-400 ring-2 ring-cyan-100' : 'border-slate-250'}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-cyan-950 rounded-2xl flex items-center justify-center overflow-hidden border border-cyan-800">
+                      <PixelCharacter
+                        skin={activeSkin}
+                        clothing={charClothing}
+                        accessory={charAccessory}
+                        hair={charHair}
+                        facial={charFacial}
+                        skinColor={WARDROBE_SKIN_COLORS.find(s => s.id === charSkinColor)?.value || '#FFD1A9'}
+                        size="sm"
                       />
                     </div>
-                    <div className="flex justify-between text-[10px] text-slate-400 mt-0.5 font-mono px-1">
-                      <span>HP</span>
-                      <span className="text-cyan-400 font-bold">{player1.hp}/500</span>
+                    <div>
+                      <h3 className="text-sm font-black text-slate-800">{player1.name}</h3>
+                      <p className="text-xs text-slate-400 font-bold uppercase">{p1IsStunned ? 'Frozen' : 'Active'}</p>
                     </div>
-
-                    {player1.shield > 0 && (
-                      <div className="flex items-center justify-center gap-1.5 mt-1">
-                        <Shield className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="text-[11px] text-blue-400 font-black">{player1.shield} Shield</span>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-
-                {/* CENTER VS */}
-                <motion.div
-                  className="relative z-10 px-4"
-                  animate={{ scale: [1, 1.15, 1] }}
-                  transition={{ duration: 1.8, repeat: Infinity }}
-                >
-                  <span className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-amber-400 drop-shadow-lg">
-                    VS
-                  </span>
-                </motion.div>
-
-                {/* === PLAYER 2 (RIGHT) === */}
-                <motion.div
-                  className="relative flex flex-col items-center"
-                  animate={p2AnimState === 'attack' ? { x: [0, -40, 0] } : p2AnimState === 'hurt' ? { x: [0, 15, -8, 0], rotate: [0, 5, -3, 0] } : {}}
-                  transition={{ duration: 0.5 }}
-                >
-                  {/* Glow ring */}
-                  <div className={`absolute inset-0 scale-150 blur-2xl rounded-full transition-colors duration-300 ${
-                    p2AnimState === 'hurt' ? 'bg-red-500/60' : p2AnimState === 'attack' ? 'bg-amber-500/50' : 'bg-amber-500/30'
-                  }`} />
-
-                  {/* Character */}
-                  <div className={`relative transition-all duration-200 ${p2AnimState === 'hurt' ? 'brightness-125 grayscale' : ''} ${p2IsStunned ? 'opacity-50 blur-sm' : ''}`}>
-                    <PixelCharacter
-                      skin="solid_slate"
-                      clothing="hazmat"
-                      accessory="safety_goggles"
-                      hair="wild_scientist"
-                      facial="none"
-                      skinColor="#CFD8DC"
-                      size="lg"
-                    />
                   </div>
 
-                  {/* Name + HP bar */}
-                  <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-36 text-center">
-                    <span className="text-xs font-black text-amber-400 uppercase tracking-wider">{player2.name}</span>
-                    {p2IsStunned && <span className="ml-2 text-[10px] text-purple-400 font-black animate-pulse">FROZEN</span>}
-
-                    <div className="mt-1.5 h-3 bg-slate-800 rounded-full overflow-hidden border border-amber-500/50">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full"
-                        animate={{ width: `${(player2.hp / 500) * 100}%` }}
-                        transition={{ duration: 0.3 }}
+                  {/* Health meter */}
+                  <div className="mt-4">
+                    <div className="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                      <span>Atom Health (HP)</span>
+                      <span>{player1.hp} / 500</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border">
+                      <div 
+                        className="bg-cyan-500 h-full transition-all duration-300"
+                        style={{ width: `${(player1.hp / 500) * 100}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-[10px] text-slate-400 mt-0.5 font-mono px-1">
-                      <span>HP</span>
-                      <span className="text-amber-400 font-bold">{player2.hp}/500</span>
-                    </div>
-
-                    {player2.shield > 0 && (
-                      <div className="flex items-center justify-center gap-1.5 mt-1">
-                        <Shield className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="text-[11px] text-blue-400 font-black">{player2.shield} Shield</span>
-                      </div>
-                    )}
                   </div>
-                </motion.div>
-              </div>
 
-              {/* PROJECTILE ANIMATION */}
-              {attackAnim?.projectile && (
-                <motion.div
-                  className="absolute z-30 pointer-events-none"
-                  style={{ top: 100 }}
-                  initial={{ x: attackAnim.projectile.x, y: 0, opacity: 1 }}
-                  animate={{ x: attackAnim.projectile.targetX, y: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                >
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-black text-white"
-                      style={{
-                        backgroundColor: attackAnim.projectile.color,
-                        boxShadow: `0 0 25px ${attackAnim.projectile.color}, 0 0 50px ${attackAnim.projectile.color}50`
-                      }}
-                    >
-                      {attackAnim.projectile.element || '★'}
-                    </div>
-                    {/* Trail */}
-                    <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-12 h-2 rounded-full opacity-60"
-                      style={{ background: `linear-gradient(to right, transparent, ${attackAnim.projectile.color})` }}
-                    />
+                  {/* Shield meter */}
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-cyan-600" />
+                    <span className="text-xs font-black text-cyan-700 bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded">
+                      Shield: {player1.shield}
+                    </span>
                   </div>
-                </motion.div>
-              )}
-
-              {/* IMPACT BURST */}
-              {attackAnim?.impact && (
-                <motion.div
-                  className="absolute z-30 pointer-events-none"
-                  style={{ left: attackAnim.impact.x - 50, top: attackAnim.impact.y - 50 }}
-                  initial={{ scale: 0, opacity: 1 }}
-                  animate={{ scale: 2.5, opacity: 0 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <div className="w-24 h-24 rounded-full border-4 border-white"
-                    style={{ boxShadow: `0 0 40px ${attackAnim.type === 'damage' ? '#f97316' : attackAnim.type === 'heal' ? '#22c55e' : '#a855f7'}` }}
-                  />
-                </motion.div>
-              )}
-
-              {/* DAMAGE POPUP */}
-              {attackAnim?.damage && attackAnim.impact && (
-                <motion.div
-                  className="absolute z-40 pointer-events-none font-black text-2xl sm:text-3xl"
-                  style={{
-                    left: attackAnim.impact.x,
-                    top: attackAnim.impact.y - 80,
-                    color: attackAnim.type === 'damage' ? '#ef4444' : attackAnim.type === 'heal' ? '#22c55e' : '#3b82f6',
-                    textShadow: '0 0 15px currentColor, 2px 2px 0 #000'
-                  }}
-                  initial={{ y: 0, opacity: 1, scale: 0.5 }}
-                  animate={{ y: -40, opacity: 0, scale: 1.3 }}
-                  transition={{ duration: 0.7 }}
-                >
-                  {attackAnim.type === 'damage' ? '-' : '+'}{attackAnim.damage}
-                </motion.div>
-              )}
-
-              {/* Turn indicator line */}
-              <div className={`absolute bottom-0 left-0 right-0 h-1 ${currentTurn === 1 ? 'bg-gradient-to-r from-cyan-500 via-cyan-400 to-transparent' : 'bg-gradient-to-l from-amber-500 via-amber-400 to-transparent'}`} />
-            </div>
-
-            {/* COMBAT HAND - Cards at bottom */}
-            <div className="bg-slate-900/80 border-2 border-cyan-500/30 rounded-2xl p-4 backdrop-blur-sm">
-              {/* Header */}
-              <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-cyan-500/20">
-                <div className="flex items-center gap-3">
-                  <FlaskConical className="w-5 h-5 text-cyan-400" />
-                  <span className="text-sm font-black text-white uppercase">
-                    {vsBot && currentTurn === 2 ? "Opponent's Turn..." : 'Your Combat Hand'}
-                  </span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase ${
-                    currentTurn === 1 ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500' : 'bg-amber-500/30 text-amber-300 border border-amber-500'
-                  }`}>
-                    {currentTurn === 1 ? 'Your Turn' : 'Opponent Turn'}
-                  </span>
+                {/* Player 2 Card HUD */}
+                <div className={`bg-white border-2 p-5 rounded-3xl shadow-sm transition-all ${currentTurn === 2 ? 'border-amber-400 ring-2 ring-amber-100' : 'border-slate-250'}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-slate-950 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800">
+                      <PixelCharacter
+                        skin="solid_slate"
+                        clothing="hazmat"
+                        accessory="safety_goggles"
+                        hair="wild_scientist"
+                        facial="none"
+                        skinColor="#CFD8DC"
+                        size="sm"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-slate-800">{player2.name}</h3>
+                      <p className="text-xs text-slate-400 font-bold uppercase">{p2IsStunned ? 'Frozen' : 'Active'}</p>
+                    </div>
+                  </div>
+
+                  {/* Health meter */}
+                  <div className="mt-4">
+                    <div className="flex justify-between text-xs font-bold text-slate-500 mb-1">
+                      <span>Atom Health (HP)</span>
+                      <span>{player2.hp} / 500</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border">
+                      <div 
+                        className="bg-amber-400 h-full transition-all duration-300"
+                        style={{ width: `${(player2.hp / 500) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Shield meter */}
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-amber-600" />
+                    <span className="text-xs font-black text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      Shield: {player2.shield}
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Hand Casting Panel (Active Player Deck options) */}
+              <div className="bg-white border-2 border-cyan-150 rounded-3xl p-5 shadow-sm space-y-4">
+                <div className="flex justify-between items-center pb-2 border-b">
+                  <h3 className="text-sm font-black text-slate-800 uppercase flex items-center gap-2">
+                    <Wind className="w-4 h-4 text-cyan-600" />
+                    <span>
+                      {vsBot && currentTurn === 2 ? "Opponent Hand Status" : `Your Combat Hand : ${currentTurn === 1 ? player1.name : player2.name}`}
+                    </span>
+                  </h3>
 
                   {!(vsBot && currentTurn === 2) && (
                     <div className="flex gap-2">
-                      <button onClick={skipTurn} className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 font-bold text-xs border border-rose-500/50 rounded-lg transition-all">
-                        Skip
+                      <button
+                        onClick={skipTurn}
+                        className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-[10px] border border-rose-200 rounded-lg shadow-xs cursor-pointer transition-all"
+                      >
+                        ↩ Skip Turn
                       </button>
-                      <button onClick={triggerRecharge} className="px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 font-bold text-xs border border-blue-500/50 rounded-lg transition-all">
-                        +30 Shield
+                      <button
+                        onClick={triggerRecharge}
+                        className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-[10px] rounded-lg shadow-xs cursor-pointer transition-all"
+                      >
+                        Ionic Recharge (+30 Shield)
                       </button>
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Bot thinking state */}
-              {(vsBot && currentTurn === 2) ? (
-                <div className="flex items-center justify-center py-8 gap-3">
-                  <RefreshCw className="w-6 h-6 animate-spin text-amber-400" />
-                  <span className="text-sm text-amber-400 font-bold">Calculating reaction...</span>
-                </div>
-              ) : (
-                <div className="pt-3 space-y-3">
-                  {/* Element cards */}
-                  <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2">
-                    {(currentTurn === 1 ? player1.deck : player2.deck).map(card => {
-                      const cd = getCardCooldown('element', card.number);
-                      return (
-                        <motion.div
-                          key={`b-el-${card.number}`}
-                          onClick={() => {
-                            if (vsBot && currentTurn === 2) return;
-                            if (cd > 0) { triggerToast(`Cooldown: ${cd} turn${cd > 1 ? 's' : ''} left`); return; }
-                            executeCombatMove('element', card.number);
-                          }}
-                          className={`relative cursor-pointer ${cd > 0 ? 'opacity-40 grayscale' : ''}`}
-                          whileHover={cd === 0 ? { scale: 1.08, y: -3 } : {}}
-                          whileTap={cd === 0 ? { scale: 0.95 } : {}}
-                        >
-                          <div className={`p-2 rounded-xl border-2 ${getCategoryColor(card.category)} text-center shadow-lg`}>
+                {(vsBot && currentTurn === 2) ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 text-sm text-amber-700 bg-amber-50/20 rounded-2xl border border-dashed border-amber-200 font-black animate-pulse">
+                    <RefreshCw className="w-8 h-8 animate-spin text-amber-500" />
+                    <span>Doc Proton is formulating a strategic biochemical reaction...</span>
+                  </div>
+                ) : isBotThinking ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 text-sm text-slate-500 font-black">
+                    <RefreshCw className="w-8 h-8 animate-spin text-cyan-500" />
+                    <span>Doc Proton is examining atomic kinetics...</span>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Combine Elements & Compounds cards into a hand display */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      
+                      {/* Element cards */}
+                      {(currentTurn === 1 ? player1.deck : player2.deck).map(card => {
+                        const cd = getCardCooldown('element', card.number);
+                        return (
+                          <div
+                            key={`b-el-${card.number}`}
+                            onClick={() => {
+                              if (vsBot && currentTurn === 2) return;
+                              if (cd > 0) {
+                                triggerToast(`This element is cooling down! Wait ${cd} more turn${cd > 1 ? 's' : ''}.`);
+                                return;
+                              }
+                              executeCombatMove('element', card.number);
+                            }}
+                            className={`border-2 rounded-xl p-3 flex flex-col justify-between relative cursor-pointer transition-all active:scale-95 text-center overflow-hidden ${
+                              cd > 0 ? 'bg-slate-800 text-slate-400 border-slate-600 opacity-50 grayscale' : `${getCategoryColor(card.category)} hover:shadow-lg hover:-translate-y-1`
+                            }`}
+                          >
+                            {/* Cooldown overlay banner */}
                             {cd > 0 && (
-                              <div className="absolute inset-0 bg-slate-900/80 rounded-xl flex items-center justify-center z-10">
-                                <span className="text-sm text-white font-black">{cd}</span>
+                              <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl z-20 text-white font-black text-xs select-none">
+                                <span className="text-lg animate-bounce">⏳</span>
+                                <span className="mt-1 font-mono tracking-widest">{cd} TURN{cd > 1 ? 'S' : ''}</span>
                               </div>
                             )}
-                            <div className="text-xl font-black drop-shadow">{card.symbol}</div>
-                            <div className="text-[8px] truncate font-bold opacity-80">{card.name}</div>
-                            <div className="text-[7px] mt-1 text-white/90 font-semibold">{card.powerup.name}</div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
 
-                  {/* Compound cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                    {(currentTurn === 1 ? player1.compounds : player2.compounds).map(cId => {
-                      const compound = COMPOUND_RECIPES.find(r => r.id === cId);
-                      if (!compound) return null;
-                      const cd = getCardCooldown('compound', compound.id);
-                      return (
-                        <motion.div
-                          key={`b-cp-${compound.id}`}
-                          onClick={() => {
-                            if (vsBot && currentTurn === 2) return;
-                            if (cd > 0) { triggerToast(`Cooldown: ${cd} turn${cd > 1 ? 's' : ''} left`); return; }
-                            executeCombatMove('compound', compound.id);
-                          }}
-                          className={`relative cursor-pointer ${cd > 0 ? 'opacity-40 grayscale' : ''}`}
-                          whileHover={cd === 0 ? { scale: 1.05, y: -2 } : {}}
-                          whileTap={cd === 0 ? { scale: 0.95 } : {}}
-                        >
-                          <div className="p-2.5 rounded-xl bg-gradient-to-b from-emerald-900 to-emerald-950 border-2 border-emerald-500/60 text-center shadow-lg">
+                            {/* Card frame inner border */}
+                            <div className="absolute inset-[3px] rounded-lg border border-white/10 pointer-events-none" />
+
+                            <div className="flex justify-between items-start text-[9px] font-bold">
+                              <span className="bg-black/10 px-1 rounded text-[8px]">#{card.number}</span>
+                              <span className="uppercase text-[6px] tracking-wider opacity-50">{card.category.slice(0, 3)}</span>
+                            </div>
+
+                            <div className="flex-1 flex flex-col items-center justify-center my-1">
+                              <span className="text-2xl font-black drop-shadow-sm">{card.symbol}</span>
+                              <span className="text-[8px] font-bold opacity-60 truncate max-w-full">{card.name}</span>
+                            </div>
+
+                            <div className="border-t border-white/15 pt-1.5 text-[7px] leading-tight font-semibold opacity-70">
+                              {card.powerup.name}
+                            </div>
+
+                            {/* Rarity accent dot */}
+                            <span
+                              className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: getCategoryAccentColor(card.category) }}
+                            />
+                          </div>
+                        );
+                      })}
+
+                      {/* Compound cards */}
+                      {(currentTurn === 1 ? player1.compounds : player2.compounds).map(cId => {
+                        const compound = COMPOUND_RECIPES.find(r => r.id === cId);
+                        if (!compound) return null;
+                        const cd = getCardCooldown('compound', compound.id);
+                        return (
+                          <div 
+                            key={`b-cp-${compound.id}`}
+                            onClick={() => {
+                              if (vsBot && currentTurn === 2) return;
+                              if (cd > 0) {
+                                triggerToast(`This compound is cooling down! Wait ${cd} more turn${cd > 1 ? 's' : ''}.`);
+                                return;
+                              }
+                              executeCombatMove('compound', compound.id);
+                            }}
+                            className={`border-2 rounded-2xl p-3 flex flex-col justify-between relative hover:border-emerald-400 cursor-pointer hover:shadow-md transition-all active:scale-95 text-center ${
+                              cd > 0 ? 'bg-slate-800 text-slate-550 border-slate-600 opacity-60 grayscale' : 'bg-emerald-5 border-emerald-300'
+                            }`}
+                          >
+                            {/* Cooldown overlay banner */}
                             {cd > 0 && (
-                              <div className="absolute inset-0 bg-slate-900/80 rounded-xl flex items-center justify-center z-10">
-                                <span className="text-sm text-white font-black">{cd}</span>
+                              <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xxs flex flex-col items-center justify-center rounded-2xl z-20 text-white font-black text-xs select-none">
+                                <span className="text-lg animate-bounce">⏳</span>
+                                <span className="mt-1 font-mono tracking-widest">{cd} TURN{cd > 1 ? 'S' : ''}</span>
                               </div>
                             )}
-                            <div className="text-xs font-black font-mono text-emerald-300">{compound.formula}</div>
-                            <div className="text-[9px] truncate font-bold text-white mt-0.5">{compound.name}</div>
-                            <div className="text-[8px] mt-1 text-cyan-300 font-semibold">{compound.powerup.name}</div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
+                            <div className="text-right text-[9px] font-extrabold text-emerald-700">COMPOUND</div>
+                            <div className="text-2xl font-bold font-mono tracking-tight text-emerald-800 my-1">{compound.formula}</div>
+                            <p className="text-[10px] font-black text-slate-800 truncate">{compound.name}</p>
 
-                  {/* Empty hand message */}
-                  {((currentTurn === 1 ? player1.deck.length : player2.deck.length) === 0 &&
-                    (currentTurn === 1 ? player1.compounds.length : player2.compounds.length) === 0) && (
-                    <div className="text-center py-6 text-slate-400">
-                      <p className="font-bold">No cards in hand!</p>
-                      <p className="text-xs mt-1">Use Ionic Recharge to shield up.</p>
+                            <div className="border-t border-dashed border-emerald-200 mt-2 pt-2 text-[8px] leading-tight font-semibold text-emerald-700">
+                              <strong>{compound.powerup.name}:</strong> {compound.powerup.desc}
+                            </div>
+                          </div>
+                        );
+                      })}
+
                     </div>
-                  )}
-                </div>
-              )}
+
+                    {((currentTurn === 1 ? player1.deck.length : player2.deck.length) === 0 && 
+                      (currentTurn === 1 ? player1.compounds.length : player2.compounds.length) === 0) && (
+                      <div className="text-center py-8 text-slate-400 text-sm">
+                        <p className="italic font-bold">No atomic cards remaining in hand!</p>
+                        <p className="text-xs text-slate-400 mt-1">Please use "Ionic Recharge" to recharge shields or return to Synthesis Room.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
             </div>
 
-            {/* Battle Log */}
-            <div className="bg-slate-800 border border-cyan-500/30 rounded-xl p-3 h-32 overflow-y-auto">
-              <div className="text-[10px] font-black text-cyan-400 uppercase mb-2 flex items-center gap-1.5">
-                <Zap className="w-3 h-3" /> Reaction Log
+            {/* Reaction Battle log & Side panels (Right / 4 grid cols) */}
+            <div className="lg:col-span-4 space-y-6">
+              
+              {/* Battle logger */}
+              <div className="bg-slate-900 text-cyan-300 border-2 border-cyan-400 rounded-3xl p-5 shadow-lg h-[340px] flex flex-col">
+                <h3 className="text-xs font-black text-cyan-400 uppercase tracking-widest pb-2 border-b border-cyan-800 mb-3 flex items-center justify-between">
+                  <span>Chemical Reaction Log</span>
+                  <Flame className="w-4 h-4 animate-pulse text-rose-450" />
+                </h3>
+
+                <div className="flex-1 overflow-y-auto space-y-2 text-xs font-mono leading-relaxed">
+                  {battleLog.map((log, i) => (
+                    <div key={i} className={`p-1.5 rounded ${i === 0 ? 'bg-cyan-950 text-white font-bold border-l-2 border-cyan-400' : 'text-slate-400 opacity-80'}`}>
+                      &gt; {log}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-1 text-[11px] font-mono">
-                {battleLog.slice(0, 6).map((log, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={`p-1 rounded ${i === 0 ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-400'}`}
-                  >
-                    {log}
-                  </motion.div>
-                ))}
+
+              {/* Back to Synthesis or Periodic shortcut buttons */}
+              <div className="bg-white border-2 border-cyan-150 p-4 rounded-2xl shadow-xs text-center">
+                <p className="text-xs font-bold text-slate-400 mb-2 uppercase">Want to synthesize more molecular cards?</p>
+                <button
+                  onClick={() => setPlayMode('synthesis')}
+                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 border text-slate-700 font-extrabold text-xs rounded-xl cursor-pointer transition-colors"
+                >
+                  OPEN SYNTHESIS PROTOCOL
+                </button>
               </div>
+
             </div>
+
           </div>
         )}
 

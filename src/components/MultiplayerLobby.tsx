@@ -36,29 +36,8 @@ import {
   UserPlus,
   Play,
   ChevronRight,
-  Zap,
 } from 'lucide-react';
 import audio from '../utils/audio';
-
-// Mini Pixel Character for lobby
-const MiniPixelAvatar: React.FC<{ team: 'cyan' | 'amber'; ready?: boolean }> = ({ team, ready }) => {
-  const color = team === 'cyan' ? '#22d3ee' : '#f59e0b';
-  const bgClass = team === 'cyan' ? 'bg-cyan-500/20' : 'bg-amber-500/20';
-  return (
-    <svg viewBox="0 0 16 16" className={`w-10 h-10 ${bgClass} rounded-lg p-1 ${ready ? 'ring-2 ring-green-400' : ''}`} style={{ imageRendering: 'pixelated' }}>
-      {/* Body */}
-      <rect x="4" y="7" width="8" height="5" fill={color} opacity="0.8" />
-      {/* Head */}
-      <rect x="5" y="2" width="6" height="4" fill={color} />
-      {/* Eyes */}
-      <rect x="6" y="3" width="1" height="1" fill="#0f172a" />
-      <rect x="9" y="3" width="1" height="1" fill="#0f172a" />
-      {/* Arms */}
-      <rect x="2" y="8" width="2" height="3" fill={color} opacity="0.6" />
-      <rect x="12" y="8" width="2" height="3" fill={color} opacity="0.6" />
-    </svg>
-  );
-};
 
 interface MultiplayerLobbyProps {
   userId: string;
@@ -379,89 +358,6 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
         </button>
       </div>
 
-      {/* Battle Preview Arena */}
-      <div className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 rounded-2xl border-2 border-cyan-500/30 overflow-hidden mb-6" style={{ minHeight: '140px' }}>
-        {/* Animated grid */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'linear-gradient(rgba(34,211,238,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.3) 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
-        }} />
-
-        {/* VS in center */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <motion.span
-            className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-amber-400"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            VS
-          </motion.span>
-        </div>
-
-        {/* Team Cyan Characters (Left) */}
-        <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-          {cyanPlayers.length > 0 ? (
-            cyanPlayers.map((p, i) => (
-              <motion.div
-                key={p.user_id}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="relative"
-              >
-                <MiniPixelAvatar team="cyan" ready={p.is_ready} />
-                <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-bold text-cyan-300 whitespace-nowrap">
-                  {getPlayerName(p)}
-                </span>
-              </motion.div>
-            ))
-          ) : (
-            <div className="w-10 h-10 rounded-lg border border-dashed border-cyan-500/30 flex items-center justify-center">
-              <UserPlus className="w-4 h-4 text-cyan-500/50" />
-            </div>
-          )}
-        </div>
-
-        {/* Team Amber Characters (Right) */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-          {amberPlayers.length > 0 ? (
-            amberPlayers.map((p, i) => (
-              <motion.div
-                key={p.user_id}
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="relative"
-                style={{ transform: 'scaleX(-1)' }}
-              >
-                <div style={{ transform: 'scaleX(-1)' }}>
-                  <MiniPixelAvatar team="amber" ready={p.is_ready} />
-                </div>
-                <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-bold text-amber-300 whitespace-nowrap" style={{ transform: 'scaleX(-1)' }}>
-                  {getPlayerName(p)}
-                </span>
-              </motion.div>
-            ))
-          ) : (
-            <div className="w-10 h-10 rounded-lg border border-dashed border-amber-500/30 flex items-center justify-center">
-              <UserPlus className="w-4 h-4 text-amber-500/50" />
-            </div>
-          )}
-        </div>
-
-        {/* Ready indicator */}
-        {allReady && (
-          <motion.div
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-green-500/20 border border-green-500/40 rounded-full px-3 py-1"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 0.8, repeat: Infinity }}
-          >
-            <Zap className="w-3 h-3 text-green-400" />
-            <span className="text-[10px] font-black text-green-400 uppercase">All Ready!</span>
-          </motion.div>
-        )}
-      </div>
-
       {/* Teams Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {/* Cyan Team */}
@@ -474,7 +370,9 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
             {cyanPlayers.map((p) => (
               <div key={p.user_id} className="flex items-center justify-between p-2.5 bg-cyan-900/30 border border-cyan-800/30 rounded-xl">
                 <div className="flex items-center gap-2">
-                  <MiniPixelAvatar team="cyan" ready={p.is_ready} />
+                  <div className="w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center text-xs font-black text-cyan-300">
+                    {getPlayerName(p).charAt(0)}
+                  </div>
                   <span className="text-xs font-bold text-cyan-100">{getPlayerName(p)}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -521,7 +419,9 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
             {amberPlayers.map((p) => (
               <div key={p.user_id} className="flex items-center justify-between p-2.5 bg-amber-900/30 border border-amber-800/30 rounded-xl">
                 <div className="flex items-center gap-2">
-                  <MiniPixelAvatar team="amber" ready={p.is_ready} />
+                  <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center text-xs font-black text-amber-300">
+                    {getPlayerName(p).charAt(0)}
+                  </div>
                   <span className="text-xs font-bold text-amber-100">{getPlayerName(p)}</span>
                 </div>
                 <div className="flex items-center gap-2">
