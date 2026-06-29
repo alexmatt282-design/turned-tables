@@ -950,6 +950,18 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
   // Battle Arena States
   const [battleLog, setBattleLog] = useState<string[]>(['Atomic Arena Initiated! Draw energy to prepare.']);
+
+  // Battle animation states
+  const [attackAnim, setAttackAnim] = useState<{
+    active: boolean;
+    attacker: 1 | 2;
+    type: 'damage' | 'heal' | 'shield' | 'stun';
+    projectile?: { x: number; y: number; targetX: number; targetY: number; element?: string; color: string };
+    impact?: { x: number; y: number; frames: number };
+    damage?: number;
+  } | null>(null);
+  const [p1AnimState, setP1AnimState] = useState<'idle' | 'attack' | 'hurt' | 'heal' | 'shield'>('idle');
+  const [p2AnimState, setP2AnimState] = useState<'idle' | 'attack' | 'hurt' | 'heal' | 'shield'>('idle');
   const [selectedSpell, setSelectedSpell] = useState<{ type: 'element' | 'compound'; id: string | number } | null>(null);
   const [battleWinner, setBattleWinner] = useState<1 | 2 | null>(null);
   const [p1IsStunned, setP1IsStunned] = useState<boolean>(false);
@@ -1981,6 +1993,79 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     }
   };
 
+  // Helper to trigger battle animations
+  const triggerBattleAnimation = (attacker: 1 | 2, type: 'damage' | 'heal' | 'shield' | 'stun', element?: string, damage?: number) => {
+    const isP1 = attacker === 1;
+    const startX = isP1 ? 80 : 280;
+    const startY = 120;
+    const targetX = isP1 ? 280 : 80;
+    const targetY = 120;
+
+    const colors: Record<string, string> = {
+      damage: isP1 ? '#f97316' : '#ef4444',
+      heal: '#22c55e',
+      shield: '#3b82f6',
+      stun: '#a855f7',
+      fire: '#f97316',
+      water: '#0ea5e9',
+      electric: '#facc15',
+      ice: '#67e8f9',
+      poison: '#a3e635',
+    };
+
+    // Set attacker animation
+    if (isP1) {
+      setP1AnimState('attack');
+    } else {
+      setP2AnimState('attack');
+    }
+
+    // Trigger projectile animation
+    setAttackAnim({
+      active: true,
+      attacker,
+      type,
+      projectile: {
+        x: startX,
+        y: startY,
+        targetX,
+        targetY,
+        element,
+        color: colors[type] || colors.damage,
+      },
+      damage,
+    });
+
+    // After projectile travels, show impact
+    setTimeout(() => {
+      if (isP1) {
+        setP2AnimState(type === 'damage' ? 'hurt' : type === 'stun' ? 'hurt' : type);
+      } else {
+        setP1AnimState(type === 'damage' ? 'hurt' : type === 'stun' ? 'hurt' : type);
+      }
+      setAttackAnim(prev => prev ? { ...prev, impact: { x: targetX, y: targetY, frames: 15 }, projectile: undefined } : null);
+    }, 400);
+
+    // Reset animations
+    setTimeout(() => {
+      setP1AnimState('idle');
+      setP2AnimState('idle');
+      setAttackAnim(null);
+    }, 900);
+  };
+
+  // Effect to run animation when battle log updates
+  const prevLogLengthRef = useRef(battleLog.length);
+  useEffect(() => {
+    if (battleLog.length > prevLogLengthRef.current && battleLog[0]?.includes('deals')) {
+      const match = battleLog[0].match(/(\d+)/);
+      const damage = match ? parseInt(match[1]) : 50;
+      const attacker = currentTurn === 1 ? 2 : 1; // Previous turn was attacker
+      triggerBattleAnimation(attacker, 'damage', undefined, damage);
+    }
+    prevLogLengthRef.current = battleLog.length;
+  }, [battleLog, currentTurn]);
+
   // Clash Arena Action Execution
   const executeCombatMove = (itemType: 'element' | 'compound', itemId: string | number) => {
     if (playMode !== 'battle') return;
@@ -2179,26 +2264,27 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     setBattleLog(prev => [finalLog, ...prev]);
     setSelectedSpell(null);
 
-    // Turn Check & Death state evaluation
+    // Turn Check & Death state evaluation - check AFTER state updates flush
     setTimeout(() => {
-      setPlayer1(p1 => {
-        setPlayer2(p2 => {
-          if (p1.hp <= 0) {
-            if (!isRoundTransitioningRef.current) {
-              handleRoundEnd(2);
-            }
-            return p2;
-          }
-          if (p2.hp <= 0) {
-            if (!isRoundTransitioningRef.current) {
-              handleRoundEnd(1);
-            }
-            return p2;
+      // Check HP values from current state
+      setPlayer1(currentP1 => {
+        setPlayer2(currentP2 => {
+          const p1Dead = currentP1.hp <= 0;
+          const p2Dead = currentP2.hp <= 0;
+
+          if ((p1Dead || p2Dead) && !isRoundTransitioningRef.current) {
+            // Schedule round end after state updates complete
+            setTimeout(() => {
+              if (!isRoundTransitioningRef.current) {
+                handleRoundEnd(p1Dead ? 2 : 1);
+              }
+            }, 50);
+            return currentP2;
           }
 
           // Check if hand elements or compounds are exhausted for replenishment
-          const p1Replenished = p1.deck.length === 0 && p1.compounds.length === 0;
-          const p2Replenished = p2.deck.length === 0 && p2.compounds.length === 0;
+          const p1Replenished = currentP1.deck.length === 0 && currentP1.compounds.length === 0;
+          const p2Replenished = currentP2.deck.length === 0 && currentP2.compounds.length === 0;
 
           if (p1Replenished) {
             triggerToast("Player 1 has exhausted all cards! Hand cards are Replenished!");
@@ -2215,9 +2301,9 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
           // Move turn forward
           setCurrentTurn(opponentPlayerId as 1 | 2);
-          return p2;
+          return currentP2;
         });
-        return p1;
+        return currentP1;
       });
     }, 450);
   };
@@ -2354,45 +2440,45 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
     setBattleLog(prev => [finalLog, ...prev]);
 
-     // Check Death state evaluation
+     // Check Death state evaluation - check AFTER state updates flush
      setTimeout(() => {
-       setPlayer1(p1 => {
-         setPlayer2(p2 => {
-           if (p1.hp <= 0) {
-             if (!isRoundTransitioningRef.current) {
-               handleRoundEnd(2);
-             }
-             return p2;
-           }
-           if (p2.hp <= 0) {
-             if (!isRoundTransitioningRef.current) {
-               handleRoundEnd(1);
-             }
-             return p2;
-           }
-           
-           // Check if hand elements or compounds are exhausted for replenishment
-           const p1Replenished = p1.deck.length === 0 && p1.compounds.length === 0;
-           const p2Replenished = p2.deck.length === 0 && p2.compounds.length === 0;
+       setPlayer1(currentP1 => {
+         setPlayer2(currentP2 => {
+          const p1Dead = currentP1.hp <= 0;
+          const p2Dead = currentP2.hp <= 0;
 
-           if (p1Replenished) {
-             triggerToast("Player 1 has exhausted all cards! Hand cards are Replenished!");
-             setTimeout(() => {
-               setPlayer1(prev => ({ ...prev, deck: [...p1InitialLineup.elements], compounds: [...p1InitialLineup.compounds] }));
-             }, 0);
-           }
-           if (p2Replenished) {
-             triggerToast(`${player2.name} has exhausted all cards! Hand cards are Replenished!`);
-             setTimeout(() => {
-               setPlayer2(prev => ({ ...prev, deck: [...p2InitialLineup.elements], compounds: [...p2InitialLineup.compounds] }));
-             }, 0);
-           }
+          if ((p1Dead || p2Dead) && !isRoundTransitioningRef.current) {
+            // Schedule round end after state updates complete
+            setTimeout(() => {
+              if (!isRoundTransitioningRef.current) {
+                handleRoundEnd(p1Dead ? 2 : 1);
+              }
+            }, 50);
+            return currentP2;
+          }
 
-           const nextTurnId = opponentPlayerId as 1 | 2;
-           setCurrentTurn(nextTurnId);
-           return p2;
+          // Check if hand elements or compounds are exhausted for replenishment
+          const p1Replenished = currentP1.deck.length === 0 && currentP1.compounds.length === 0;
+          const p2Replenished = currentP2.deck.length === 0 && currentP2.compounds.length === 0;
+
+          if (p1Replenished) {
+            triggerToast("Player 1 has exhausted all cards! Hand cards are Replenished!");
+            setTimeout(() => {
+              setPlayer1(prev => ({ ...prev, deck: [...p1InitialLineup.elements], compounds: [...p1InitialLineup.compounds] }));
+            }, 0);
+          }
+          if (p2Replenished) {
+            triggerToast(`${player2.name} has exhausted all cards! Hand cards are Replenished!`);
+            setTimeout(() => {
+              setPlayer2(prev => ({ ...prev, deck: [...p2InitialLineup.elements], compounds: [...p2InitialLineup.compounds] }));
+            }, 0);
+          }
+
+          const nextTurnId = opponentPlayerId as 1 | 2;
+          setCurrentTurn(nextTurnId);
+          return currentP2;
          });
-         return p1;
+         return currentP1;
        });
      }, 450);
   };
