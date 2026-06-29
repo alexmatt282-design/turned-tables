@@ -7,6 +7,7 @@ import { generateAllCompounds } from '../data/compoundsData';
 import { MultiplayerLobby } from './MultiplayerLobby';
 import type { RoomMode, RoomPlayer } from '../lib/multiplayer';
 import type { UserProfile } from '../App';
+import { filterProfanity } from '../utils/profanityFilter';
 
 interface TurnedTablesProps {
   onBack: () => void;
@@ -1253,7 +1254,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
   const sendChatMessage = () => {
     if (!chatMessageInput.trim()) return;
-    const userMsg = chatMessageInput.trim();
+    const userMsg = filterProfanity(chatMessageInput.trim());
     setLobbyChat(prev => [...prev, {
       sender: p1ConfigName,
       avatar: p1ConfigAvatar,

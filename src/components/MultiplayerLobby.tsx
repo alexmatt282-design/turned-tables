@@ -17,6 +17,7 @@ import {
   type RoomPlayer,
   type ChatMessage,
 } from '../lib/multiplayer';
+import { filterProfanity } from '../utils/profanityFilter';
 import {
   motion,
   AnimatePresence,
@@ -473,7 +474,7 @@ export function MultiplayerLobby({ userId, onGameStart, onBack }: MultiplayerLob
             {chatMessages.map((msg, i) => (
               <div key={msg.id || i} className="text-xs text-slate-300">
                 <span className="font-bold text-cyan-400">{msg.user_id === userId ? 'You' : `Explorer ${msg.user_id.slice(0, 4)}`}:</span>{' '}
-                <span>{msg.message}</span>
+                <span>{filterProfanity(msg.message)}</span>
               </div>
             ))}
           </div>
