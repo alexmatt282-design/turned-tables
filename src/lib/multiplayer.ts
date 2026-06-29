@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import { filterChatMessage } from '../utils/profanityFilter';
 
 export type RoomMode = '1v1' | '3v3';
 export type RoomStatus = 'waiting' | 'ready' | 'in_progress' | 'completed';
@@ -198,12 +197,9 @@ export async function endGame(roomId: string, hostId: string): Promise<boolean> 
 export async function sendChatMessage(roomId: string, userId: string, message: string): Promise<boolean> {
   if (!message.trim()) return false;
 
-  // Filter profanity before sending
-  const { filtered } = filterChatMessage(message.trim());
-
   const { error } = await supabase
     .from('room_chat')
-    .insert({ room_id: roomId, user_id: userId, message: filtered });
+    .insert({ room_id: roomId, user_id: userId, message: message.trim() });
 
   return !error;
 }

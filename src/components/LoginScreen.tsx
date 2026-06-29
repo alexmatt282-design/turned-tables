@@ -23,17 +23,14 @@ export function LoginScreen() {
 
     try {
       if (mode === 'signup') {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ email, password });
         if (error) {
           setIsError(true);
           setMessage(error.message.includes('already registered')
             ? 'This email is already registered. Try signing in instead.'
             : error.message);
-        } else if (data.session) {
-          setMessage('Account created! You are now signed in.');
         } else {
-          setIsError(true);
-          setMessage('Unable to create account. Please try again.');
+          setMessage('Account created! You are now signed in.');
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
