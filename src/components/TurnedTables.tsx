@@ -1867,8 +1867,15 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
   // Helper to handle round endings under turn-based rules
   const handleRoundEnd = (winnerId: 1 | 2) => {
+    // Guard against multiple rapid calls - check AND set atomically
     if (isRoundTransitioningRef.current) return;
     isRoundTransitioningRef.current = true;
+
+    // Additional guard: verify we're in battle mode
+    if (playMode !== 'battle') {
+      isRoundTransitioningRef.current = false;
+      return;
+    }
 
     const winPlayerName = winnerId === 1 ? player1.name : player2.name;
     const initialLineup = winnerId === 1 ? p1InitialLineup : p2InitialLineup;
@@ -2187,15 +2194,21 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     setTimeout(() => {
       setPlayer1(p1 => {
         setPlayer2(p2 => {
-          if (p1.hp <= 0) {
+          // Check death states - use else if to prevent multiple round endings
+          if (p1.hp <= 0 && p2.hp > 0) {
             if (!isRoundTransitioningRef.current) {
               handleRoundEnd(2);
             }
             return p2;
-          }
-          if (p2.hp <= 0) {
+          } else if (p2.hp <= 0 && p1.hp > 0) {
             if (!isRoundTransitioningRef.current) {
               handleRoundEnd(1);
+            }
+            return p2;
+          } else if (p1.hp <= 0 && p2.hp <= 0) {
+            // Both defeated - attacker wins (the one who dealt the damage)
+            if (!isRoundTransitioningRef.current) {
+              handleRoundEnd(activePlayerId as 1 | 2);
             }
             return p2;
           }
@@ -2362,19 +2375,25 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
      setTimeout(() => {
        setPlayer1(p1 => {
          setPlayer2(p2 => {
-           if (p1.hp <= 0) {
+           // Check death states - use else if to prevent multiple round endings
+           if (p1.hp <= 0 && p2.hp > 0) {
              if (!isRoundTransitioningRef.current) {
                handleRoundEnd(2);
              }
              return p2;
-           }
-           if (p2.hp <= 0) {
+           } else if (p2.hp <= 0 && p1.hp > 0) {
              if (!isRoundTransitioningRef.current) {
                handleRoundEnd(1);
              }
              return p2;
+           } else if (p1.hp <= 0 && p2.hp <= 0) {
+             // Both defeated - attacker wins
+             if (!isRoundTransitioningRef.current) {
+               handleRoundEnd(activePlayerId as 1 | 2);
+             }
+             return p2;
            }
-           
+
            // Check if hand elements or compounds are exhausted for replenishment
            const p1Replenished = p1.deck.length === 0 && p1.compounds.length === 0;
            const p2Replenished = p2.deck.length === 0 && p2.compounds.length === 0;
