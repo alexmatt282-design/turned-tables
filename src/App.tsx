@@ -236,6 +236,7 @@ export default function App() {
       stars={profile.tokens}
       level={level}
       userId={user.id}
+      userEmail={user.email}
       profile={profile}
       onSaveProfile={saveProfile}
     />

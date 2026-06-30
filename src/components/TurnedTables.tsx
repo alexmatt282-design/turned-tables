@@ -14,6 +14,7 @@ interface TurnedTablesProps {
   stars: number;
   level: number;
   userId?: string;
+  userEmail?: string;
   profile?: UserProfile;
   onSaveProfile?: (updates: Partial<UserProfile>) => void;
 }
@@ -761,7 +762,7 @@ interface Friend {
   };
 }
 
-export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars, level, userId, profile, onSaveProfile }) => {
+export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, stars, level, userId, userEmail, profile, onSaveProfile }) => {
   // Derive initial state from server profile (falls back to defaults)
   const p = profile;
 
@@ -3242,6 +3243,9 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       />
                       <div className="mt-3 text-center">
                         <span className="text-sm font-black text-cyan-400 block">{p1ConfigName}</span>
+                        {userEmail && (
+                          <span className="text-[8px] text-slate-500 font-medium block mt-0.5 truncate max-w-[180px]">{userEmail}</span>
+                        )}
                         <span className="text-[9px] text-slate-500 font-extrabold uppercase mt-0.5 block">
                           {SKINS_INFO[activeSkin]?.label || 'Active Skin'} • Lvl {SKINS_INFO[activeSkin]?.levelReq} Req
                         </span>
