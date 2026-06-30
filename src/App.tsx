@@ -19,6 +19,51 @@ export interface UserProfile {
   games_won: number;
   compounds_crafted: number;
   elements_drafted: number;
+  monthly_challenge_key?: string | null;
+  monthly_challenge_completed_at?: string | null;
+  weekly_challenge_key?: string | null;
+  weekly_challenge_completed_at?: string | null;
+  daily_challenge_key?: string | null;
+  daily_challenge_completed_at?: string | null;
+}
+
+// Challenge key generators - these create unique identifiers for each period
+export function getMonthlyChallengeKey(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+export function getWeeklyChallengeKey(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const startOfYear = new Date(year, 0, 1);
+  const days = Math.floor((date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
+  const weekNumber = Math.floor((days + startOfYear.getDay() + 6) / 7);
+  return `${year}-W${String(weekNumber).padStart(2, '0')}`;
+}
+
+export function getDailyChallengeKey(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function isChallengeCompleted(
+  profile: UserProfile | undefined,
+  challengeType: 'monthly' | 'weekly' | 'daily',
+  currentKey: string
+): boolean {
+  if (!profile) return false;
+
+  const keyField = `${challengeType}_challenge_key` as keyof UserProfile;
+  const completedField = `${challengeType}_challenge_completed_at` as keyof UserProfile;
+
+  const savedKey = profile[keyField];
+  const completedAt = profile[completedField];
+
+  // If the key matches and there's a completion timestamp, it's completed
+  return savedKey === currentKey && !!completedAt;
 }
 
 const PREFIXES = [
@@ -86,6 +131,12 @@ const DEFAULT_PROFILE: UserProfile = {
   games_won: 0,
   compounds_crafted: 0,
   elements_drafted: 0,
+  monthly_challenge_key: null,
+  monthly_challenge_completed_at: null,
+  weekly_challenge_key: null,
+  weekly_challenge_completed_at: null,
+  daily_challenge_key: null,
+  daily_challenge_completed_at: null,
 };
 
 export default function App() {
@@ -182,6 +233,12 @@ export default function App() {
         games_won: data.games_won ?? 0,
         compounds_crafted: data.compounds_crafted ?? 0,
         elements_drafted: data.elements_drafted ?? 0,
+        monthly_challenge_key: data.monthly_challenge_key ?? null,
+        monthly_challenge_completed_at: data.monthly_challenge_completed_at ?? null,
+        weekly_challenge_key: data.weekly_challenge_key ?? null,
+        weekly_challenge_completed_at: data.weekly_challenge_completed_at ?? null,
+        daily_challenge_key: data.daily_challenge_key ?? null,
+        daily_challenge_completed_at: data.daily_challenge_completed_at ?? null,
       });
     };
 

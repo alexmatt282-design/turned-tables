@@ -1,12 +1,13 @@
 import { supabase } from '../lib/supabase';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, TriangleAlert as AlertTriangle, RefreshCw, Check, X, Circle as HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play, MessageSquare, Award, User, Crown, Send, Dices, Lock, Atom, FlaskConical, TestTube, Microscope, Beaker, Radiation, Eye, Gem, CircleDot, Snowflake, Battery, CircleAlert as AlertCircle, Dice5, Siren, Flag, Heart, Wrench, PenTool, Palette, Wind as WindIcon, Hand, Skull, Bug } from 'lucide-react';
+import { ArrowLeft, Star, Users, Shield, Zap, Sparkles, BookOpen, TriangleAlert as AlertTriangle, RefreshCw, Check, X, Circle as HelpCircle, Flame, Droplet, Wind, Sword, Trophy, Play, MessageSquare, Award, User, Crown, Send, Dices, Lock, Atom, FlaskConical, TestTube, Microscope, Beaker, Radiation, Eye, Gem, CircleDot, Snowflake, Battery, CircleAlert as AlertCircle, Dice5, Siren, Flag, Heart, Wrench, PenTool, Palette, Wind as WindIcon, Hand, Skull, Bug, Calendar, Clock } from 'lucide-react';
 import audio from '../utils/audio';
 import { generateAllCompounds } from '../data/compoundsData';
 import { MultiplayerLobby } from './MultiplayerLobby';
 import type { RoomMode, RoomPlayer } from '../lib/multiplayer';
 import type { UserProfile } from '../App';
+import { getMonthlyChallengeKey, getWeeklyChallengeKey, getDailyChallengeKey, isChallengeCompleted } from '../App';
 
 interface TurnedTablesProps {
   onBack: () => void;
@@ -851,11 +852,85 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     ];
   });
 
-  // --- MONTHLY CHALLENGE BOT STATES ---
+  // --- CHALLENGE SYSTEM STATES ---
   const [isMonthlyChallenge, setIsMonthlyChallenge] = useState<boolean>(false);
-  const [monthlyChallengeDefeated, setMonthlyChallengeDefeated] = useState<boolean>(() => {
-    return localStorage.getItem('tt_monthly_defeated') === 'true';
-  });
+  const [isWeeklyChallenge, setIsWeeklyChallenge] = useState<boolean>(false);
+  const [isDailyChallenge, setIsDailyChallenge] = useState<boolean>(false);
+
+  // Challenge configurations - different bot configurations for each challenge type
+  const CHALLENGE_CONFIGS = {
+    monthly: {
+      botName: 'Dr. Quark (Monthly Boss)',
+      bonusXP: 300,
+      difficulty: 'gamma' as const,
+      bonusShield: 40,
+      description: 'The notorious Dr. Quark has deployed a new quantum strategy. Defeat him at Gamma difficulty to earn +300 XP!'
+    },
+    weekly: {
+      botName: 'Professor Quantum (Weekly Rival)',
+      bonusXP: 150,
+      difficulty: 'gamma' as const,
+      bonusShield: 20,
+      description: 'Professor Quantum awaits your challenge. Complete this weekly trial to earn +150 XP!'
+    },
+    daily: {
+      botName: 'Lab Assistant Delta (Daily Practice)',
+      bonusXP: 50,
+      difficulty: 'beta' as const,
+      bonusShield: 0,
+      description: 'A quick daily training session awaits. Complete it to earn +50 XP!'
+    }
+  };
+
+  // Check if challenges are completed using the profile data
+  const monthlyKey = getMonthlyChallengeKey();
+  const weeklyKey = getWeeklyChallengeKey();
+  const dailyKey = getDailyChallengeKey();
+
+  const monthlyChallengeCompleted = isChallengeCompleted(profile, 'monthly', monthlyKey);
+  const weeklyChallengeCompleted = isChallengeCompleted(profile, 'weekly', weeklyKey);
+  const dailyChallengeCompleted = isChallengeCompleted(profile, 'daily', dailyKey);
+
+  // Helper to mark a challenge as completed
+  const markChallengeCompleted = (type: 'monthly' | 'weekly' | 'daily') => {
+    const keyField = `${type}_challenge_key` as keyof UserProfile;
+    const completedField = `${type}_challenge_completed_at` as keyof UserProfile;
+    const key = type === 'monthly' ? monthlyKey : type === 'weekly' ? weeklyKey : dailyKey;
+
+    onSaveProfile?.({
+      [keyField]: key,
+      [completedField]: new Date().toISOString(),
+    });
+  };
+
+  // Helper to start a challenge
+  const startChallenge = (type: 'monthly' | 'weekly' | 'daily') => {
+    const config = CHALLENGE_CONFIGS[type];
+    audio.playPop();
+
+    if (type === 'monthly') setIsMonthlyChallenge(true);
+    if (type === 'weekly') setIsWeeklyChallenge(true);
+    if (type === 'daily') setIsDailyChallenge(true);
+
+    setPlayer2({
+      id: 2,
+      name: config.botName,
+      hp: 500,
+      shield: config.bonusShield,
+      deck: [],
+      compounds: [],
+      score: 0,
+      isBot: true
+    });
+    setDifficulty(config.difficulty);
+    startNewGame(true);
+    setBattleLog([
+      `${type.toUpperCase()} CHALLENGE INITIATED!`,
+      `Difficulty: ${config.difficulty.toUpperCase()}. ${config.bonusShield > 0 ? `Enemy starts with +${config.bonusShield} shield!` : ''}`,
+      `Complete this challenge to earn +${config.bonusXP} XP.`
+    ]);
+    triggerToast(`${type.charAt(0).toUpperCase() + type.slice(1)} challenge initiated!`);
+  };
 
   // --- SIDE MENU / DIALOG DRAWERS STATES ---
   const [showBadgesMenu, setShowBadgesMenu] = useState<boolean>(false);
@@ -1912,17 +1987,34 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
       const finalWinner = nextP1Wins > nextP2Wins ? 1 : nextP1Wins < nextP2Wins ? 2 : winnerId;
       setBattleWinner(finalWinner);
 
-      // Award XP & quest ticks
+      // Award XP & quest ticks based on challenge type
       if (isMonthlyChallenge) {
         if (finalWinner === 1) {
-          setMonthlyChallengeDefeated(true);
-          localStorage.setItem('tt_monthly_defeated', 'true');
-          setUserXP(prev => prev + 300);
-          triggerToast("MONTHLY BOT DEFEATED! You successfully outperformed Dr. Quark and capitalized on 300 XP!");
+          markChallengeCompleted('monthly');
+          setUserXP(prev => prev + CHALLENGE_CONFIGS.monthly.bonusXP);
+          triggerToast(`MONTHLY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.monthly.bonusXP} XP!`);
         } else {
           triggerToast("Dr. Quark won this battle. Combine elements smartly and challenge him again!");
         }
         setIsMonthlyChallenge(false);
+      } else if (isWeeklyChallenge) {
+        if (finalWinner === 1) {
+          markChallengeCompleted('weekly');
+          setUserXP(prev => prev + CHALLENGE_CONFIGS.weekly.bonusXP);
+          triggerToast(`WEEKLY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.weekly.bonusXP} XP!`);
+        } else {
+          triggerToast("Professor Quantum won this battle. Train harder and try again!");
+        }
+        setIsWeeklyChallenge(false);
+      } else if (isDailyChallenge) {
+        if (finalWinner === 1) {
+          markChallengeCompleted('daily');
+          setUserXP(prev => prev + CHALLENGE_CONFIGS.daily.bonusXP);
+          triggerToast(`DAILY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.daily.bonusXP} XP!`);
+        } else {
+          triggerToast("The Lab Assistant won this time. Try again tomorrow!");
+        }
+        setIsDailyChallenge(false);
       } else if (finalWinner === 1) {
         const isLobbyDuel = player2.name.includes('PVP') || player2.name.includes('Team');
         if (isLobbyDuel) {
@@ -3012,53 +3104,90 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
               </div>
 
               <div className="p-5 space-y-5">
-                {/* Featured Story - Monthly Challenge */}
-                <div className={`rounded-xl p-4 border-2 ${monthlyChallengeDefeated ? 'bg-emerald-50 border-emerald-200' : 'bg-gradient-to-r from-amber-50 to-rose-50 border-amber-200'}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest block mb-1">Featured Challenge</span>
-                      <h4 className="text-sm font-black text-slate-900">Dr. Quark Monthly Boss</h4>
-                      <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-                        The notorious Dr. Quark has deployed a new quantum strategy. Challenge him at Gamma difficulty to earn +300 XP and a permanent trophy.
-                      </p>
-                      <div className="flex items-center gap-2 mt-3">
-                        <button
-                          onClick={() => {
-                            audio.playPop();
-                            setIsMonthlyChallenge(true);
-                            setPlayer2({
-                              id: 2,
-                              name: 'Dr. Quark (Monthly Bot)',
-                              hp: 500,
-                              shield: 40,
-                              deck: [],
-                              compounds: [],
-                              score: 0,
-                              isBot: true
-                            });
-                            setDifficulty('gamma');
-                            startNewGame(true);
-                            setBattleLog([
-                              "DR. QUARK MONTHLY BOSS CHALLENGE INITIATED!",
-                              "Difficulty forced to Gamma level. Dr. Quark gains passive +40 shielding!",
-                              "Defeat Dr. Quark to secure +300 bonus XP."
-                            ]);
-                            triggerToast("Monthly challenge initiated against Dr. Quark!");
-                          }}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase cursor-pointer transition-all ${
-                            monthlyChallengeDefeated ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-amber-600 text-white hover:bg-amber-500'
-                          }`}
-                        >
-                          {monthlyChallengeDefeated ? 'Replay' : 'Challenge'}
-                        </button>
-                        {monthlyChallengeDefeated && (
-                          <span className="px-2 py-0.5 bg-green-100 border border-green-300 text-green-700 text-[9px] font-black rounded uppercase">Defeated</span>
-                        )}
+                {/* Challenge Cards - Monthly, Weekly, Daily */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Monthly Challenge */}
+                  <div className={`rounded-xl p-3 border-2 ${monthlyChallengeCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-rose-50 border-amber-200'}`}>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                      <span className="text-[8px] font-black text-amber-600 uppercase tracking-widest">Monthly</span>
+                      <span className="text-[7px] text-slate-400 ml-auto">{monthlyKey}</span>
+                    </div>
+                    <h4 className="text-[11px] font-black text-slate-900 leading-tight">Dr. Quark Boss</h4>
+                    <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed">Gamma difficulty. +40 enemy shield.</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => startChallenge('monthly')}
+                        className={`flex-1 px-2 py-1 rounded text-[8px] font-black uppercase cursor-pointer transition-all ${
+                          monthlyChallengeCompleted ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-amber-600 text-white hover:bg-amber-500'
+                        }`}
+                      >
+                        {monthlyChallengeCompleted ? 'Replay' : 'Fight'}
+                      </button>
+                      <span className="text-[9px] font-black text-indigo-600">+300 XP</span>
+                    </div>
+                    {monthlyChallengeCompleted && (
+                      <div className="mt-1.5 flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-emerald-600" />
+                        <span className="text-[7px] font-bold text-emerald-600 uppercase">Completed</span>
                       </div>
+                    )}
+                  </div>
+
+                  {/* Weekly Challenge */}
+                  <div className={`rounded-xl p-3 border-2 ${weeklyChallengeCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200'}`}>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Clock className="w-3.5 h-3.5 text-indigo-600" />
+                      <span className="text-[8px] font-black text-indigo-600 uppercase tracking-widest">Weekly</span>
+                      <span className="text-[7px] text-slate-400 ml-auto">{weeklyKey}</span>
                     </div>
-                    <div className="shrink-0 text-right">
-                      <span className="text-xs font-black text-indigo-600">+300 XP</span>
+                    <h4 className="text-[11px] font-black text-slate-900 leading-tight">Prof. Quantum</h4>
+                    <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed">Gamma difficulty. +20 enemy shield.</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => startChallenge('weekly')}
+                        className={`flex-1 px-2 py-1 rounded text-[8px] font-black uppercase cursor-pointer transition-all ${
+                          weeklyChallengeCompleted ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-indigo-600 text-white hover:bg-indigo-500'
+                        }`}
+                      >
+                        {weeklyChallengeCompleted ? 'Replay' : 'Fight'}
+                      </button>
+                      <span className="text-[9px] font-black text-indigo-600">+150 XP</span>
                     </div>
+                    {weeklyChallengeCompleted && (
+                      <div className="mt-1.5 flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-emerald-600" />
+                        <span className="text-[7px] font-bold text-emerald-600 uppercase">Completed</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Daily Challenge */}
+                  <div className={`rounded-xl p-3 border-2 ${dailyChallengeCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-gradient-to-br from-cyan-50 to-teal-50 border-cyan-200'}`}>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Flame className="w-3.5 h-3.5 text-cyan-600" />
+                      <span className="text-[8px] font-black text-cyan-600 uppercase tracking-widest">Daily</span>
+                      <span className="text-[7px] text-slate-400 ml-auto">{dailyKey}</span>
+                    </div>
+                    <h4 className="text-[11px] font-black text-slate-900 leading-tight">Lab Assistant</h4>
+                    <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed">Beta difficulty. Quick practice.</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => startChallenge('daily')}
+                        className={`flex-1 px-2 py-1 rounded text-[8px] font-black uppercase cursor-pointer transition-all ${
+                          dailyChallengeCompleted ? 'bg-emerald-600 text-white hover:bg-emerald-500' : 'bg-cyan-600 text-white hover:bg-cyan-500'
+                        }`}
+                      >
+                        {dailyChallengeCompleted ? 'Replay' : 'Fight'}
+                      </button>
+                      <span className="text-[9px] font-black text-cyan-600">+50 XP</span>
+                    </div>
+                    {dailyChallengeCompleted && (
+                      <div className="mt-1.5 flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5 text-emerald-600" />
+                        <span className="text-[7px] font-bold text-emerald-600 uppercase">Completed</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
