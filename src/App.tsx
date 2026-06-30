@@ -70,13 +70,23 @@ export default function App() {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error || !data) {
-        await supabase.from('profiles').upsert({
+      if (error) {
+        console.error('Error loading profile:', error);
+        setProfile({ ...DEFAULT_PROFILE });
+        return;
+      }
+
+      if (!data) {
+        // Profile doesn't exist yet, create it
+        const { error: insertError } = await supabase.from('profiles').insert({
           id: user.id,
           ...DEFAULT_PROFILE,
         });
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+        }
         setProfile({ ...DEFAULT_PROFILE });
         return;
       }
@@ -106,16 +116,18 @@ export default function App() {
   const saveProfile = useCallback(async (updates: Partial<UserProfile>) => {
     if (!user) return;
 
-    setProfile(prev => {
-      const next = { ...prev, ...updates };
-      supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
-        .then();
-      return next;
-    });
-  }, [user]);
+    const next = { ...profile, ...updates };
+    setProfile(next);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error saving profile:', error);
+    }
+  }, [user, profile]);
 
   const level = (() => {
     const xp = profile.xp;

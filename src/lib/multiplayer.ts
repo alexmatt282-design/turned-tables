@@ -51,7 +51,7 @@ export async function createRoom(mode: RoomMode, hostId: string): Promise<GameRo
     .from('game_rooms')
     .insert({ code, mode, host_id: hostId, max_players: maxPlayers })
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('createRoom error:', error);
@@ -67,10 +67,15 @@ export async function joinRoom(code: string, userId: string, preferredTeam?: Tea
     .select()
     .eq('code', code.toUpperCase())
     .eq('status', 'waiting')
-    .single();
+    .maybeSingle();
 
-  if (roomError || !room) {
-    console.error('joinRoom: room not found', roomError);
+  if (roomError) {
+    console.error('joinRoom: error finding room', roomError);
+    return null;
+  }
+
+  if (!room) {
+    console.error('joinRoom: room not found with code', code);
     return null;
   }
 
@@ -80,7 +85,7 @@ export async function joinRoom(code: string, userId: string, preferredTeam?: Tea
     .select()
     .eq('room_id', room.id)
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     return { room, player: existing };
@@ -109,10 +114,15 @@ export async function joinRoom(code: string, userId: string, preferredTeam?: Tea
     .from('room_players')
     .insert({ room_id: room.id, user_id: userId, team })
     .select()
-    .single();
+    .maybeSingle();
 
   if (playerError) {
     console.error('joinRoom insert error:', playerError);
+    return null;
+  }
+
+  if (!player) {
+    console.error('joinRoom: player insert returned no data');
     return null;
   }
 

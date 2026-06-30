@@ -1058,11 +1058,31 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     }));
   };
 
+  // Sync XP changes to server profile
+  useEffect(() => {
+    if (p?.xp !== userXP) {
+      syncToProfile({ xp: userXP });
+    }
+  }, [userXP, syncToProfile, p?.xp]);
+
+  // Sync badges to server profile
+  useEffect(() => {
+    if (p?.equipped_badges !== userBadges) {
+      syncToProfile({ equipped_badges: userBadges });
+    }
+  }, [userBadges, syncToProfile, p?.equipped_badges]);
+
+  // Sync skins to server profile
+  useEffect(() => {
+    if (p?.unlocked_skins !== userSkins) {
+      syncToProfile({ unlocked_skins: userSkins });
+    }
+  }, [userSkins, syncToProfile, p?.unlocked_skins]);
+
   // Sync profile badges & storage on XP shifts
   useEffect(() => {
-    localStorage.setItem('tt_user_xp', userXP.toString());
     const currentLvl = Math.floor(userXP / 350) + 1;
-    
+
     // Auto unlock badges on milestones
     setUserBadges(prev => {
       const tempBadges = [...prev];
@@ -1104,7 +1124,6 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
       }
 
       if (changed) {
-        localStorage.setItem('tt_user_badges', JSON.stringify(tempBadges));
         return tempBadges;
       }
       return prev;
@@ -1123,25 +1142,11 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         }
       });
       if (changed) {
-        localStorage.setItem('tt_user_skins', JSON.stringify(tempSkins));
         return tempSkins;
       }
       return prev;
     });
   }, [userXP]);
-
-  // Sync active skin choice and custom wardrobe options to LocalStorage
-  useEffect(() => {
-    localStorage.setItem('tt_active_skin', activeSkin);
-  }, [activeSkin]);
-
-  useEffect(() => {
-    localStorage.setItem('tt_char_clothing', charClothing);
-    localStorage.setItem('tt_char_accessory', charAccessory);
-    localStorage.setItem('tt_char_hair', charHair);
-    localStorage.setItem('tt_char_skin_color', charSkinColor);
-    localStorage.setItem('tt_char_facial', charFacial);
-  }, [charClothing, charAccessory, charHair, charSkinColor, charFacial]);
 
   // Handle manual badge selection toggles
   const handleToggleBadgeDisplay = (badgeId: string) => {
