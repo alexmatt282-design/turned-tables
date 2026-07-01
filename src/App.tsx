@@ -143,13 +143,16 @@ const DEFAULT_PROFILE: UserProfile = {
 export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
 
   useEffect(() => {
     const initAuth = async () => {
       const { data } = await supabase.auth.getSession();
       setUser(data.session?.user ?? null);
-      setLoading(false);
+      if (!data.session?.user) {
+        setLoading(false);
+      }
     };
 
     initAuth();
@@ -158,6 +161,10 @@ export default function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setProfileLoaded(false);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -176,6 +183,8 @@ export default function App() {
       if (error) {
         console.error('Error loading profile:', error);
         setProfile({ ...DEFAULT_PROFILE });
+        setProfileLoaded(true);
+        setLoading(false);
         return;
       }
 
@@ -192,14 +201,9 @@ export default function App() {
           console.error('Error creating profile:', insertError);
         }
         setProfile({ ...DEFAULT_PROFILE, display_name: uniqueName });
+        setProfileLoaded(true);
+        setLoading(false);
         return;
-      }
-
-      // If display_name is empty or null, generate a unique name and save it
-      if (!data.display_name || data.display_name === '') {
-        const uniqueName = await generateUniqueName();
-        await supabase.from('profiles').update({ display_name: uniqueName }).eq('id', user.id);
-        data.display_name = uniqueName; // Update local data to use the new name
       }
 
       // Update last_seen to mark user as online
@@ -229,6 +233,8 @@ export default function App() {
         daily_challenge_completed_at: data.daily_challenge_completed_at ?? null,
         last_seen: data.last_seen ?? null,
       });
+      setProfileLoaded(true);
+      setLoading(false);
     };
 
     loadProfile();
@@ -269,7 +275,7 @@ export default function App() {
     return Math.floor((xp - 1000) / 500) + 6;
   })();
 
-  if (loading) {
+  if (loading || !profileLoaded) {
     return (
       <div className="min-h-screen bg-[#070c15] flex items-center justify-center">
         <div className="text-center">

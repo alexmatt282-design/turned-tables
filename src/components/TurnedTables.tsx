@@ -908,6 +908,24 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
   const [customDisplayedBadges, setCustomDisplayedBadges] = useState<string[]>(p?.equipped_badges ?? []);
 
+  // Sync profile changes to local state when profile prop updates (e.g., after login)
+  useEffect(() => {
+    if (p) {
+      if (p.xp !== undefined) setUserXP(p.xp);
+      if (p.unlocked_skins) setUserSkins(p.unlocked_skins);
+      if (p.active_skin) setActiveSkin(p.active_skin);
+      if (p.equipped_badges) {
+        setUserBadges(p.equipped_badges);
+        setCustomDisplayedBadges(p.equipped_badges);
+      }
+      if (p.clothing) setCharClothing(p.clothing);
+      if (p.accessory) setCharAccessory(p.accessory);
+      if (p.hair) setCharHair(p.hair);
+      if (p.skin_color) setCharSkinColor(p.skin_color);
+      if (p.facial) setCharFacial(p.facial);
+    }
+  }, [p]);
+
   // Sync wardrobe changes to server profile
   const syncToProfile = useCallback((updates: Partial<UserProfile>) => {
     onSaveProfile?.(updates);
