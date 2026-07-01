@@ -193,28 +193,11 @@ export default function App() {
         return;
       }
 
-      // If display_name is empty, generate a unique name
-      if (data.display_name === '') {
+      // If display_name is empty or null, generate a unique name and save it
+      if (!data.display_name || data.display_name === '') {
         const uniqueName = await generateUniqueName();
         await supabase.from('profiles').update({ display_name: uniqueName }).eq('id', user.id);
-        setProfile({
-          tokens: data.tokens ?? 0,
-          xp: data.xp ?? 0,
-          display_name: uniqueName,
-          active_skin: data.active_skin ?? 'spectral_cyan',
-          unlocked_skins: data.unlocked_skins ?? ['spectral_cyan'],
-          equipped_badges: data.equipped_badges ?? [],
-          clothing: data.clothing ?? 'lab_coat',
-          accessory: data.accessory ?? 'safety_goggles',
-          hair: data.hair ?? 'wild_scientist',
-          facial: data.facial ?? 'none',
-          skin_color: data.skin_color ?? 'warm_peach',
-          games_played: data.games_played ?? 0,
-          games_won: data.games_won ?? 0,
-          compounds_crafted: data.compounds_crafted ?? 0,
-          elements_drafted: data.elements_drafted ?? 0,
-        });
-        return;
+        data.display_name = uniqueName; // Update local data to use the new name
       }
 
       setProfile({

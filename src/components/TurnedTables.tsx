@@ -250,20 +250,67 @@ const GAME_THEMED_NAMES = [
 
 const generateRandomThemedName = () => {
   const prefixes = [
-    "Quantum", "Alkali", "Atomic", "Valence", "Kinetic", "Isotopic", 
-    "Neutron", "Molecular", "Catalytic", "Gaseous", "Ionic", "Halogen", 
-    "Thermal", "Covalent", "Subatomic", "Spectral", "Reactive", "Magnetic", 
+    "Quantum", "Alkali", "Atomic", "Valence", "Kinetic", "Isotopic",
+    "Neutron", "Molecular", "Catalytic", "Gaseous", "Ionic", "Halogen",
+    "Thermal", "Covalent", "Subatomic", "Spectral", "Reactive", "Magnetic",
     "Periodic", "Organic", "Luminescent", "Aerobic", "Synthesized", "Metallic", "Anhydrous"
   ];
   const suffixes = [
-    "Alchemist", "Catalyst", "Reactor", "Proton", "Electron", "Isotope", 
-    "Molecule", "Polymer", "Titanium", "Silicon", "Radical", "Spectra", 
-    "Vanguard", "Pioneer", "Crucible", "Fission", "Fusion", "Entropy", 
+    "Alchemist", "Catalyst", "Reactor", "Proton", "Electron", "Isotope",
+    "Molecule", "Polymer", "Titanium", "Silicon", "Radical", "Spectra",
+    "Vanguard", "Pioneer", "Crucible", "Fission", "Fusion", "Entropy",
     "Synthesizer", "Anion", "Cation", "Chamber", "Element", "Noble"
   ];
   const p = prefixes[Math.floor(Math.random() * prefixes.length)];
   const s = suffixes[Math.floor(Math.random() * suffixes.length)];
   return `${p} ${s}`;
+};
+
+// Profanity filter for chat
+const PROFANITY_LIST = [
+  // Common profanity
+  'fuck', 'shit', 'ass', 'bitch', 'bastard', 'damn', 'hell', 'crap',
+  'dick', 'cock', 'piss', 'pussy', 'whore', 'slut', 'bastard',
+  // Variations
+  'fck', 'fuk', 'sh!t', 'f*ck', 'sh*t', '@ss', 'b!tch', 'b*tch',
+  'd*ck', 'c*ck', 'p*ss', 'p*ssy', 'wh*re', 'sl*t',
+  // Hate speech
+  'nazi', 'nigger', 'nigga', 'chink', 'spic', 'kike', 'fag', 'faggot',
+  // Adult content
+  'porn', 'xxx', 'nsfw', 'nude', 'naked', 'sex', 'sexy', 'horny', 'orgasm',
+  'masturbat', 'ejacul', 'penis', 'vagina', 'boob', 'tit', 'breast',
+  // Violence
+  'kill yourself', 'kys', 'suicide', 'murder', 'rape', 'terrorist'
+];
+
+const censorText = (text: string): string => {
+  let censored = text;
+  const lowerText = text.toLowerCase();
+
+  for (const word of PROFANITY_LIST) {
+    // Create a regex that matches the word with optional spaces/symbols between letters
+    const regex = new RegExp(word.split('').join('\\s*'), 'gi');
+    censored = censored.replace(regex, '***');
+  }
+
+  // Also check for common leet speak substitutions
+  const leetMap: Record<string, string> = { '4': 'a', '3': 'e', '1': 'i', '0': 'o', '5': 's', '7': 't' };
+  let normalized = censored.toLowerCase();
+  for (const [leet, letter] of Object.entries(leetMap)) {
+    normalized = normalized.replace(new RegExp(leet, 'g'), letter);
+  }
+
+  // Check normalized text against profanity list
+  if (normalized !== censored.toLowerCase()) {
+    for (const word of PROFANITY_LIST) {
+      if (normalized.includes(word)) {
+        // Replace the entire message if profanity detected in normalized form
+        censored = censored.replace(new RegExp('.*' + word.split('').join('.*') + '.*', 'gi'), '***');
+      }
+    }
+  }
+
+  return censored;
 };
 
 const GAME_AVATARS = [
@@ -391,6 +438,14 @@ const WARDROBE_CLOTHING = [
   { id: 'plasma_suit', name: 'Plasma Exosuit', icon: 'zap', fill: '#06B6D4' },
   { id: 'fire_fighter', name: 'Furnace Fireproof', icon: 'flame', fill: '#DC2626' },
   { id: 'solar_robe', name: 'Solar Photon Cloak', icon: 'sparkles', fill: '#F59E0B' },
+  { id: 'nebula_gown', name: 'Nebula Scientist Gown', icon: 'sparkles', fill: '#7C3AED' },
+  { id: 'quantum_tux', name: 'Quantum Formal Tuxedo', icon: 'user', fill: '#1E293B' },
+  { id: 'electron_jacket', name: 'Electron Leather Jacket', icon: 'zap', fill: '#292524' },
+  { id: 'proton_tank', name: 'Proton Tank Top', icon: 'flame', fill: '#EF4444' },
+  { id: 'neutron_hoodie', name: 'Neutron Street Hoodie', icon: 'user', fill: '#374151' },
+  { id: 'molecule_vest', name: 'Molecule Science Vest', icon: 'beaker', fill: '#059669' },
+  { id: 'isotope_dress', name: 'Isotope Research Dress', icon: 'sparkles', fill: '#EC4899' },
+  { id: 'fusion_robe', name: 'Fusion Master Robe', icon: 'crown', fill: '#7C2D12' },
 ];
 
 const WARDROBE_ACCESSORIES = [
@@ -399,6 +454,12 @@ const WARDROBE_ACCESSORIES = [
   { id: 'alchemist_crown', name: 'Elemental Crown', icon: 'crown' },
   { id: 'reactor_core', name: 'Reactor Core Necklace', icon: 'gem' },
   { id: 'quantum_band', name: 'Quantum Headband', icon: 'circle-dot' },
+  { id: 'molecule_earring', name: 'Molecule Stud Earring', icon: 'gem' },
+  { id: 'holo_monocle', name: 'Holographic Monocle', icon: 'eye' },
+  { id: 'plasma_earrings', name: 'Plasma Drop Earrings', icon: 'sparkles' },
+  { id: 'science_pins', name: 'Science Pin Collection', icon: 'award' },
+  { id: 'particle_mask', name: 'Particle Respirator', icon: 'shield' },
+  { id: 'antenna', name: 'Quantum Antenna', icon: 'zap' },
   { id: 'none', name: 'No Accessory', icon: 'x' }
 ];
 
@@ -409,6 +470,12 @@ const WARDROBE_HAIR = [
   { id: 'plasma_mohawk', name: 'Plasma Mohawk', icon: 'flame' },
   { id: 'frost_tips', name: 'Cryo Frost Tips', icon: 'snowflake' },
   { id: 'golden_wave', name: 'Golden Wave', icon: 'sparkles' },
+  { id: 'electro_shock', name: 'Electro Shock', icon: 'zap' },
+  { id: 'quantum_curls', name: 'Quantum Curls', icon: 'sparkles' },
+  { id: 'nebula_dreads', name: 'Nebula Dreads', icon: 'user' },
+  { id: 'particle_bangs', name: 'Particle Bangs', icon: 'user' },
+  { id: 'noble_braid', name: 'Noble Science Braid', icon: 'user' },
+  { id: 'isotope_undercut', name: 'Isotope Undercut', icon: 'user' },
   { id: 'none', name: 'Sleek/Bald', icon: 'user' }
 ];
 
@@ -418,6 +485,11 @@ const WARDROBE_FACIAL = [
   { id: 'mask', name: 'Half Respirator', icon: 'shield' },
   { id: 'scar', name: 'Battle Scar', icon: 'sword' },
   { id: 'war_paint', name: 'Tribal War Paint', icon: 'palette' },
+  { id: 'full_beard', name: 'Full Scientist Beard', icon: 'user' },
+  { id: 'handlebar', name: 'Handlebar Mustache', icon: 'user' },
+  { id: 'cyber_tattoo', name: 'Cyber Circuit Tattoo', icon: 'zap' },
+  { id: 'molecule_mark', name: 'Molecule Birthmark', icon: 'gem' },
+  { id: 'star_freckles', name: 'Star Constellation Freckles', icon: 'sparkles' },
 ];
 
 const WARDROBE_SKIN_COLORS = [
@@ -431,6 +503,10 @@ const WARDROBE_SKIN_COLORS = [
   { id: 'crimson_haze', name: 'Crimson Haze', value: '#FF6B6B' },
   { id: 'violet_shift', name: 'Violet Phase Shift', value: '#C084FC' },
   { id: 'gold_fusion', name: 'Gold Fusion', value: '#FBBF24' },
+  { id: 'emerald_glow', name: 'Emerald Radiation', value: '#34D399' },
+  { id: 'silver_nano', name: 'Silver Nanobots', value: '#94A3B8' },
+  { id: 'obsidian_dark', name: 'Obsidian Dark', value: '#1C1917' },
+  { id: 'copper_alloy', name: 'Copper Alloy', value: '#C2410C' },
 ];
 
 // --- LUCIDE ICON BY NAME HELPER ---
@@ -938,12 +1014,79 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const [showGalleryMenu, setShowGalleryMenu] = useState<boolean>(false);
   const [showPracticeParamsModal, setShowPracticeParamsModal] = useState<boolean>(false);
   const [showFriendInspectModal, setShowFriendInspectModal] = useState<boolean>(false);
+  const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
+
+  // Leaderboard state
+  interface LeaderboardEntry {
+    id: string;
+    display_name: string;
+    xp: number;
+    level: number;
+    games_played: number;
+    games_won: number;
+    win_rate: number | null;
+    equipped_badges: string[];
+    active_skin: string;
+  }
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState<boolean>(false);
+
+  // Fetch leaderboard data
+  const fetchLeaderboard = useCallback(async () => {
+    setLeaderboardLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, display_name, xp, games_played, games_won, equipped_badges, active_skin')
+        .not('display_name', 'is', null)
+        .neq('display_name', '')
+        .order('xp', { ascending: false })
+        .limit(50);
+
+      if (error) throw error;
+
+      const processedData = (data || []).map((entry: any) => {
+        const xp = entry.xp || 0;
+        let level = 1;
+        if (xp >= 1000) level = Math.floor((xp - 1000) / 500) + 6;
+        else if (xp >= 700) level = 5;
+        else if (xp >= 450) level = 4;
+        else if (xp >= 250) level = 3;
+        else if (xp >= 100) level = 2;
+
+        return {
+          ...entry,
+          level,
+          win_rate: entry.games_played > 0 ? (entry.games_won / entry.games_played) * 100 : null,
+        };
+      });
+
+      setLeaderboardData(processedData);
+    } catch (err) {
+      console.error('Failed to fetch leaderboard:', err);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  }, []);
 
   // Setup Player Names & Avatars Configuration
   const [p1ConfigName, setP1ConfigName] = useState<string>(p?.display_name || 'Cyan Force');
   const [p1ConfigAvatar, setP1ConfigAvatar] = useState<string>('flask');
   const [p2ConfigName, setP2ConfigName] = useState<string>('Amber Glow');
   const [p2ConfigAvatar, setP2ConfigAvatar] = useState<string>('zap');
+
+  // Sync name changes to server profile
+  const handleSetP1ConfigName = useCallback((v: string) => {
+    setP1ConfigName(v);
+    syncToProfile({ display_name: v });
+  }, [syncToProfile]);
+
+  // Keep p1ConfigName in sync with profile updates
+  useEffect(() => {
+    if (p?.display_name && p.display_name !== p1ConfigName) {
+      setP1ConfigName(p.display_name);
+    }
+  }, [p?.display_name, p1ConfigName]);
 
   // Multi-player simulated matchmaking arrays & logs
   const [matchmakingMode, setMatchmakingMode] = useState<'none' | '1v1' | '3v3'>('none');
@@ -1323,6 +1466,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
   const randomizeP1Name = () => {
     const rNm = generateRandomThemedName();
     setP1ConfigName(rNm);
+    syncToProfile({ display_name: rNm });
     audio.playPop();
   };
 
@@ -1334,7 +1478,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
 
   const sendChatMessage = () => {
     if (!chatMessageInput.trim()) return;
-    const userMsg = chatMessageInput.trim();
+    const userMsg = censorText(chatMessageInput.trim());
+    if (userMsg.replace(/\*/g, '').trim() === '') {
+      triggerToast("Message contains inappropriate content and was blocked.");
+      setChatMessageInput('');
+      return;
+    }
     setLobbyChat(prev => [...prev, {
       sender: p1ConfigName,
       avatar: p1ConfigAvatar,
@@ -3074,6 +3223,13 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                       );
                     })}
                   </div>
+                  <button
+                    onClick={() => { audio.playPop(); fetchLeaderboard(); setShowLeaderboard(true); }}
+                    className="px-3 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 active:scale-95 border border-indigo-400/30 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-1.5 transition-all cursor-pointer text-indigo-300"
+                  >
+                    <Trophy className="w-3.5 h-3.5" />
+                    Rankings
+                  </button>
                   <button
                     onClick={() => { audio.playPop(); setSetupScreen('wardrobe'); }}
                     className="px-3 py-2 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 rounded-xl text-xs font-black uppercase tracking-wide flex items-center gap-1.5 transition-all cursor-pointer"
@@ -5496,6 +5652,146 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 </div>
               </motion.div>
             </div>
+          )}
+        </AnimatePresence>
+
+        {/* ========================================= LEADERBOARD MODAL ========================================= */}
+        <AnimatePresence>
+          {showLeaderboard && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+              onClick={() => setShowLeaderboard(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={e => e.stopPropagation()}
+                className="bg-white border-2 border-indigo-200 rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl"
+              >
+                {/* Header */}
+                <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Trophy className="w-6 h-6 text-amber-300" />
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-wider">Global Leaderboard</h3>
+                      <p className="text-[10px] text-indigo-200 font-bold">Top 50 Scientists Worldwide</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowLeaderboard(false)}
+                    className="p-2 rounded-full hover:bg-white/20 transition-colors cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Leaderboard Content */}
+                <div className="p-4 overflow-y-auto max-h-[60vh]">
+                  {leaderboardLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                    </div>
+                  ) : leaderboardData.length === 0 ? (
+                    <div className="text-center py-12 text-slate-500">
+                      <Trophy className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                      <p className="font-bold">No players on the leaderboard yet!</p>
+                      <p className="text-sm">Be the first to earn XP!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {leaderboardData.map((entry, index) => {
+                        const isCurrentUser = entry.id === userId;
+                        const rank = index + 1;
+                        const rankStyle = rank === 1 ? 'bg-amber-100 border-amber-300 text-amber-700' :
+                                          rank === 2 ? 'bg-slate-100 border-slate-300 text-slate-600' :
+                                          rank === 3 ? 'bg-orange-100 border-orange-300 text-orange-700' :
+                                          'bg-slate-50 border-slate-200 text-slate-500';
+
+                        return (
+                          <div
+                            key={entry.id}
+                            className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${
+                              isCurrentUser ? 'bg-indigo-50 border-indigo-300 ring-2 ring-indigo-200' : 'bg-white border-slate-100 hover:border-slate-200'
+                            }`}
+                          >
+                            {/* Rank */}
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm border ${rankStyle}`}>
+                              {rank <= 3 ? <Award className="w-4 h-4" /> : rank}
+                            </div>
+
+                            {/* Character */}
+                            <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">
+                              <PixelCharacter
+                                skin={entry.active_skin || 'spectral_cyan'}
+                                clothing="lab_coat"
+                                accessory="safety_goggles"
+                                hair="wild_scientist"
+                                facial="none"
+                                skinColor="#FFD1A9"
+                                size="sm"
+                              />
+                            </div>
+
+                            {/* Name & Level */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className={`font-black text-sm truncate ${isCurrentUser ? 'text-indigo-700' : 'text-slate-900'}`}>
+                                  {entry.display_name}
+                                </span>
+                                {isCurrentUser && (
+                                  <span className="text-[8px] font-black text-indigo-500 bg-indigo-100 px-1.5 py-0.5 rounded uppercase">You</span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                                <span className="font-bold">Lvl {entry.level}</span>
+                                <span>•</span>
+                                <span>{entry.games_played || 0} games</span>
+                                {entry.win_rate !== null && (
+                                  <>
+                                    <span>•</span>
+                                    <span className="text-emerald-600 font-bold">{entry.win_rate.toFixed(1)}% win</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* XP */}
+                            <div className="text-right">
+                              <div className="text-lg font-black text-indigo-600">{entry.xp || 0}</div>
+                              <div className="text-[9px] text-slate-400 font-bold uppercase">XP</div>
+                            </div>
+
+                            {/* Badges */}
+                            {entry.equipped_badges && entry.equipped_badges.length > 0 && (
+                              <div className="flex gap-0.5">
+                                {entry.equipped_badges.slice(0, 2).map((badgeId: string) => {
+                                  const bInfo = ALL_GAME_BADGES[badgeId];
+                                  if (!bInfo) return null;
+                                  return (
+                                    <div key={badgeId} className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-br ${bInfo.gradient}`}>
+                                      <IconByName name={bInfo.icon} className="w-3.5 h-3.5 text-white" />
+                                    </div>
+                                  );
+                                })}
+                                {entry.equipped_badges.length > 2 && (
+                                  <div className="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-[8px] font-black text-slate-600">
+                                    +{entry.equipped_badges.length - 2}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
           )}
         </AnimatePresence>
 
