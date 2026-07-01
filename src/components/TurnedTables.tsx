@@ -5633,23 +5633,24 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                   {createdCompounds.length === 0 ? (
                     <p className="text-xs text-slate-400 italic text-center py-8">No compounds spelling-crafted yet! Venture into Lab Practice Mode or shared battles and synthesize formulas like Water (H2O) to record your achievements here.</p>
                   ) : (
-                    createdCompounds.map((compLog, idx) => {
-                      const recipe = COMPOUND_RECIPES.find(r => r.id === compLog.id || r.name.toLowerCase() === compLog.name.toLowerCase());
+                    createdCompounds.map((compoundId, idx) => {
+                      const recipe = COMPOUND_RECIPES.find(r => r.id === compoundId || r.formula === compoundId);
+                      if (!recipe) return null;
                       return (
-                        <div key={idx} className="p-4 border border-slate-150 rounded-2xl bg-slate-50/50 space-y-2 text-left">
+                        <div key={idx} className="p-4 border border-slate-200 rounded-2xl bg-slate-50/50 space-y-2 text-left hover:border-slate-300 transition-colors">
                           <div className="flex justify-between items-center">
                             <div>
-                              <h4 className="text-xs font-black text-slate-800">{compLog.name}</h4>
-                              <span className="text-[10px] font-mono font-black text-indigo-700">{compLog.formula}</span>
+                              <h4 className="text-xs font-black text-slate-800">{recipe.name}</h4>
+                              <span className="text-[10px] font-mono font-black text-indigo-700">{recipe.formula}</span>
                             </div>
-                            <span className="text-[9px] font-extrabold text-slate-400">
-                              {new Date(compLog.timestamp).toLocaleDateString()}
-                            </span>
+                            <div className="px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase">
+                              Synthesized
+                            </div>
                           </div>
                           <p className="text-[10px] text-slate-500 font-medium">
-                            {recipe?.powerup.desc || "A cohesive atomic structure serving robust battle properties."}
+                            {recipe.powerup?.desc || "A cohesive atomic structure serving robust battle properties."}
                           </p>
-                          {recipe?.required && (
+                          {recipe.required && (
                             <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-dashed border-slate-200">
                               <span className="text-[8px] font-bold uppercase text-slate-400">Ingredients:</span>
                               {recipe.required.map(req => (
