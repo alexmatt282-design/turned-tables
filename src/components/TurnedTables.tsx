@@ -416,15 +416,65 @@ const ALL_GAME_BADGES: Record<string, GameBadge> = {
     text: 'text-yellow-50',
     unlockDesc: 'Unlock at 1500 XP'
   },
+  daily_champion: {
+    id: 'daily_champion',
+    name: 'Daily Champion',
+    desc: 'Conquered the Daily Lab Assistant Challenge and proved daily dedication.',
+    icon: 'flag',
+    gradient: 'from-cyan-400 via-teal-500 to-cyan-800',
+    border: 'border-cyan-300/70 shadow-cyan-400/50',
+    text: 'text-cyan-50',
+    unlockDesc: 'Complete a Daily Challenge'
+  },
+  weekly_warrior: {
+    id: 'weekly_warrior',
+    name: 'Weekly Warrior',
+    desc: 'Defeated Professor Quantum in the Weekly Trial of atomic mastery.',
+    icon: 'sword',
+    gradient: 'from-violet-500 via-purple-600 to-indigo-900',
+    border: 'border-violet-400/70 shadow-violet-500/50',
+    text: 'text-violet-50',
+    unlockDesc: 'Complete a Weekly Challenge'
+  },
   monthly_slayer: {
     id: 'monthly_slayer',
     name: 'Monthly Slayer',
     desc: 'Eradicated the Chrono-Fusion Monthly Boss Challenger.',
-    icon: 'siren',
-    gradient: 'from-fuchsia-600 via-fuchsia-800 to-slate-900',
-    border: 'border-fuchsia-400/60 shadow-fuchsia-500/30',
-    text: 'text-fuchsia-50',
-    unlockDesc: 'Defeat the Monthly Bot'
+    icon: 'trophy',
+    gradient: 'from-amber-400 via-orange-500 to-red-700',
+    border: 'border-amber-400/70 shadow-amber-500/50',
+    text: 'text-amber-50',
+    unlockDesc: 'Complete a Monthly Challenge'
+  },
+  daily_streak_7: {
+    id: 'daily_streak_7',
+    name: 'Week Warrior',
+    desc: 'Completed 7 daily challenges in a row. True dedication!',
+    icon: 'award',
+    gradient: 'from-emerald-400 via-green-500 to-emerald-800',
+    border: 'border-emerald-300/70 shadow-emerald-400/50',
+    text: 'text-emerald-50',
+    unlockDesc: '7 Day Challenge Streak'
+  },
+  weekly_streak_4: {
+    id: 'weekly_streak_4',
+    name: 'Month Master',
+    desc: 'Completed 4 weekly challenges consecutively. Unstoppable!',
+    icon: 'flame',
+    gradient: 'from-rose-400 via-red-500 to-rose-800',
+    border: 'border-rose-300/70 shadow-rose-400/50',
+    text: 'text-rose-50',
+    unlockDesc: '4 Week Challenge Streak'
+  },
+  monthly_streak_3: {
+    id: 'monthly_streak_3',
+    name: 'Quarterly King',
+    desc: 'Conquered 3 monthly bosses in a row. Legendary status!',
+    icon: 'crown',
+    gradient: 'from-yellow-300 via-amber-400 to-yellow-700',
+    border: 'border-yellow-300/80 shadow-yellow-400/60',
+    text: 'text-yellow-50',
+    unlockDesc: '3 Month Challenge Streak'
   }
 };
 
@@ -1027,9 +1077,18 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     win_rate: number | null;
     equipped_badges: string[];
     active_skin: string;
+    last_seen: string | null;
+    is_online: boolean;
   }
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState<boolean>(false);
+
+  // Function to check if user is online (active within last 5 minutes)
+  const isUserOnline = (lastSeen: string | null): boolean => {
+    if (!lastSeen) return false;
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    return new Date(lastSeen) > fiveMinutesAgo;
+  };
 
   // Fetch leaderboard data
   const fetchLeaderboard = useCallback(async () => {
@@ -1037,11 +1096,11 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, display_name, xp, games_played, games_won, equipped_badges, active_skin')
+        .select('id, display_name, xp, games_played, games_won, equipped_badges, active_skin, last_seen')
         .not('display_name', 'is', null)
         .neq('display_name', '')
         .order('xp', { ascending: false })
-        .limit(50);
+        .limit(100);
 
       if (error) throw error;
 
@@ -1058,6 +1117,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
           ...entry,
           level,
           win_rate: entry.games_played > 0 ? (entry.games_won / entry.games_played) * 100 : null,
+          is_online: isUserOnline(entry.last_seen),
         };
       });
 
@@ -2141,6 +2201,15 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         if (finalWinner === 1) {
           markChallengeCompleted('monthly');
           setUserXP(prev => prev + CHALLENGE_CONFIGS.monthly.bonusXP);
+          // Award monthly badge
+          setUserBadges(prev => {
+            if (!prev.includes('monthly_slayer')) {
+              triggerToast(`BADGE UNLOCKED: Monthly Slayer! You conquered Dr. Quark!`);
+              syncToProfile({ equipped_badges: [...prev, 'monthly_slayer'] });
+              return [...prev, 'monthly_slayer'];
+            }
+            return prev;
+          });
           triggerToast(`MONTHLY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.monthly.bonusXP} XP!`);
         } else {
           triggerToast("Dr. Quark won this battle. Combine elements smartly and challenge him again!");
@@ -2150,6 +2219,15 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         if (finalWinner === 1) {
           markChallengeCompleted('weekly');
           setUserXP(prev => prev + CHALLENGE_CONFIGS.weekly.bonusXP);
+          // Award weekly badge
+          setUserBadges(prev => {
+            if (!prev.includes('weekly_warrior')) {
+              triggerToast(`BADGE UNLOCKED: Weekly Warrior! You defeated Professor Quantum!`);
+              syncToProfile({ equipped_badges: [...prev, 'weekly_warrior'] });
+              return [...prev, 'weekly_warrior'];
+            }
+            return prev;
+          });
           triggerToast(`WEEKLY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.weekly.bonusXP} XP!`);
         } else {
           triggerToast("Professor Quantum won this battle. Train harder and try again!");
@@ -2159,6 +2237,15 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         if (finalWinner === 1) {
           markChallengeCompleted('daily');
           setUserXP(prev => prev + CHALLENGE_CONFIGS.daily.bonusXP);
+          // Award daily badge
+          setUserBadges(prev => {
+            if (!prev.includes('daily_champion')) {
+              triggerToast(`BADGE UNLOCKED: Daily Champion! You completed your first daily challenge!`);
+              syncToProfile({ equipped_badges: [...prev, 'daily_champion'] });
+              return [...prev, 'daily_champion'];
+            }
+            return prev;
+          });
           triggerToast(`DAILY CHALLENGE COMPLETE! You earned +${CHALLENGE_CONFIGS.daily.bonusXP} XP!`);
         } else {
           triggerToast("The Lab Assistant won this time. Try again tomorrow!");
@@ -5398,7 +5485,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
         <AnimatePresence>
           {showBadgesMenu && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-end p-4 z-50">
-              <motion.div 
+              <motion.div
                 initial={{ x: 250, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 250, opacity: 0 }}
@@ -5407,7 +5494,12 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 {/* Header */}
                 <div className="flex items-center justify-between border-b pb-4 shrink-0">
                   <div className="flex items-center gap-2.5 text-left">
-                    <Award className="w-5 h-5 text-indigo-500 animate-bounce" />
+                    <div className="relative">
+                      <Award className="w-5 h-5 text-amber-500" />
+                      <div className="absolute inset-0 animate-ping">
+                        <Award className="w-5 h-5 text-amber-400 opacity-30" />
+                      </div>
+                    </div>
                     <div>
                       <h3 className="text-xl font-black text-slate-800">EXPLORER HONORS & BADGES</h3>
                       <p className="text-[10px] text-slate-400 font-extrabold uppercase mt-0.5">Customize up to 5 badges to display on your profile</p>
@@ -5422,7 +5514,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                 </div>
 
                 {/* Badges Tally Info */}
-                <div className="my-4 bg-indigo-50/50 p-4 border border-indigo-100 rounded-2xl shrink-0 text-left">
+                <div className="my-4 bg-gradient-to-r from-indigo-50 to-violet-50 p-4 border border-indigo-200 rounded-2xl shrink-0 text-left">
                   <p className="text-xs font-semibold text-slate-600 leading-normal">
                     {userBadges.length > 5 ? (
                       <span>You have unlocked <strong className="text-indigo-600">{userBadges.length} badges!</strong> Pick up to 5 to display on your profile card below. Unearned badges remain locked.</span>
@@ -5451,7 +5543,7 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         }}
                         className={`relative p-4 border-2 rounded-2xl flex items-center justify-between gap-4 transition-all overflow-hidden ${
                           isUnlocked
-                            ? (isSelected ? 'border-indigo-500 bg-indigo-50/30' : 'border-slate-200 hover:border-slate-300 bg-white cursor-pointer')
+                            ? (isSelected ? 'border-indigo-500 bg-indigo-50/30 shadow-lg shadow-indigo-200/50' : 'border-slate-200 hover:border-slate-300 bg-white cursor-pointer hover:shadow-md')
                             : 'border-slate-100 bg-slate-50/50 opacity-50 grayscale'
                         }`}
                       >
@@ -5461,13 +5553,21 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                         )}
 
                         <div className="flex items-center gap-3 pl-2">
-                          {/* Badge icon as card face */}
-                          <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${isUnlocked ? bInfo.gradient : 'from-slate-200 to-slate-300'} shadow-md flex items-center justify-center overflow-hidden`}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-transparent" />
-                            <span className="text-xl relative z-10 drop-shadow-sm"><IconByName name={bInfo.icon} className="w-5 h-5" /></span>
+                          {/* Badge icon as card face with enhanced styling */}
+                          <div className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${isUnlocked ? bInfo.gradient : 'from-slate-200 to-slate-300'} shadow-lg flex items-center justify-center overflow-hidden`}>
+                            {/* Shine effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent" />
+                            {/* Animated glow for selected badges */}
+                            {isSelected && isUnlocked && (
+                              <div className="absolute inset-0 animate-pulse bg-white/20" />
+                            )}
+                            {/* Icon */}
+                            <span className="relative z-10 drop-shadow-lg">
+                              <IconByName name={bInfo.icon} className="w-6 h-6 text-white" />
+                            </span>
                           </div>
                           <div>
-                            <h4 className="text-xs font-black text-slate-800 leading-none">{bInfo.name}</h4>
+                            <h4 className="text-sm font-black text-slate-800 leading-none">{bInfo.name}</h4>
                             <p className="text-[10px] text-slate-500 mt-1 leading-snug">{bInfo.desc}</p>
                             {isUnlocked && (
                               <p className="text-[9px] text-indigo-500 mt-0.5 font-bold">{bInfo.unlockDesc}</p>
@@ -5723,16 +5823,25 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                               {rank <= 3 ? <Award className="w-4 h-4" /> : rank}
                             </div>
 
-                            {/* Character */}
-                            <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">
-                              <PixelCharacter
-                                skin={entry.active_skin || 'spectral_cyan'}
-                                clothing="lab_coat"
-                                accessory="safety_goggles"
-                                hair="wild_scientist"
-                                facial="none"
-                                skinColor="#FFD1A9"
-                                size="sm"
+                            {/* Character with online indicator */}
+                            <div className="relative">
+                              <div className="w-10 h-10 bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">
+                                <PixelCharacter
+                                  skin={entry.active_skin || 'spectral_cyan'}
+                                  clothing="lab_coat"
+                                  accessory="safety_goggles"
+                                  hair="wild_scientist"
+                                  facial="none"
+                                  skinColor="#FFD1A9"
+                                  size="sm"
+                                />
+                              </div>
+                              {/* Online/Offline indicator */}
+                              <div
+                                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${
+                                  entry.is_online ? 'bg-emerald-500' : 'bg-red-400'
+                                }`}
+                                title={entry.is_online ? 'Online' : 'Offline'}
                               />
                             </div>
 
@@ -5745,6 +5854,10 @@ export const TurnedTables: React.FC<TurnedTablesProps> = ({ onBack, onAddStars, 
                                 {isCurrentUser && (
                                   <span className="text-[8px] font-black text-indigo-500 bg-indigo-100 px-1.5 py-0.5 rounded uppercase">You</span>
                                 )}
+                                {/* Online/Offline text indicator */}
+                                <span className={`text-[8px] font-bold uppercase ${entry.is_online ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                  {entry.is_online ? 'Online' : 'Offline'}
+                                </span>
                               </div>
                               <div className="flex items-center gap-2 text-[10px] text-slate-500">
                                 <span className="font-bold">Lvl {entry.level}</span>

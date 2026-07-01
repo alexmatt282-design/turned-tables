@@ -25,6 +25,7 @@ export interface UserProfile {
   weekly_challenge_completed_at?: string | null;
   daily_challenge_key?: string | null;
   daily_challenge_completed_at?: string | null;
+  last_seen?: string | null;
 }
 
 // Challenge key generators - these create unique identifiers for each period
@@ -185,6 +186,7 @@ export default function App() {
           id: user.id,
           ...DEFAULT_PROFILE,
           display_name: uniqueName,
+          last_seen: new Date().toISOString(),
         });
         if (insertError) {
           console.error('Error creating profile:', insertError);
@@ -199,6 +201,9 @@ export default function App() {
         await supabase.from('profiles').update({ display_name: uniqueName }).eq('id', user.id);
         data.display_name = uniqueName; // Update local data to use the new name
       }
+
+      // Update last_seen to mark user as online
+      await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', user.id);
 
       setProfile({
         tokens: data.tokens ?? 0,
@@ -222,10 +227,20 @@ export default function App() {
         weekly_challenge_completed_at: data.weekly_challenge_completed_at ?? null,
         daily_challenge_key: data.daily_challenge_key ?? null,
         daily_challenge_completed_at: data.daily_challenge_completed_at ?? null,
+        last_seen: data.last_seen ?? null,
       });
     };
 
     loadProfile();
+
+    // Set up interval to update last_seen every 2 minutes while active
+    const lastSeenInterval = setInterval(async () => {
+      if (user) {
+        await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', user.id);
+      }
+    }, 2 * 60 * 1000);
+
+    return () => clearInterval(lastSeenInterval);
   }, [user]);
 
   const saveProfile = useCallback(async (updates: Partial<UserProfile>) => {
